@@ -1,9 +1,9 @@
-8<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel de Administración - NexoServ</title>
+  <title>Panel de Control - NexoServ</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Supabase JS Library -->
@@ -24,7 +24,7 @@
 
   <main class="max-w-2xl mx-auto px-4 mt-6 space-y-6">
 
-    <!-- PESTAÑAS -->
+    <!-- PESTAÑAS DE NAVEGACIÓN -->
     <div class="flex border-b border-gray-200 bg-white rounded-t-xl p-1 gap-1 shadow-sm">
       <button onclick="cambiarPestana('productos')" id="tab-btn-productos" class="flex-1 py-2 text-sm font-bold rounded-lg bg-gray-900 text-white transition-all">🛍️ Productos</button>
       <button onclick="cambiarPestana('configuracion')" id="tab-btn-configuracion" class="flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-900 transition-all">⚙️ Ajustes Local</button>
@@ -54,6 +54,11 @@
           </div>
 
           <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">Descripción / Ingredientes</label>
+            <textarea id="prod-descripcion" rows="2" placeholder="Ej. Doble medallón de carne, queso cheddar, panceta crocante y salsa de la casa." class="w-full p-2.5 border rounded-lg text-sm"></textarea>
+          </div>
+
+          <div>
             <label class="block text-xs font-semibold text-gray-600 mb-1">Foto del Producto (Desde dispositivo)</label>
             <input type="file" id="prod-imagen" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200">
           </div>
@@ -64,7 +69,7 @@
         </form>
       </div>
 
-      <!-- LISTA DE PRODUCTOS -->
+      <!-- LISTA DE PRODUCTOS CON OPCIÓN PAUSAR / PLAY -->
       <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-4">
         <h2 class="font-bold text-gray-700 text-sm border-b pb-2">PRODUCTOS EXISTENTES</h2>
         <div id="lista-productos" class="space-y-3">
@@ -190,7 +195,7 @@
 
         if (error) {
           console.error("Error en Storage:", error);
-          alert("Asegúrate de haber creado el Bucket público 'imagenes-productos' en Supabase.");
+          alert("Error al subir la imagen. Verifica que exista el bucket 'imagenes-productos' en Supabase.");
           return null;
         }
 
@@ -214,6 +219,7 @@
       const nombre = document.getElementById('prod-nombre').value;
       const precio = parseFloat(document.getElementById('prod-precio').value);
       const categoria = document.getElementById('prod-categoria').value;
+      const descripcion = document.getElementById('prod-descripcion').value.trim();
       const fileInput = document.getElementById('prod-imagen');
       
       let imagen_url = null;
@@ -225,12 +231,13 @@
         nombre,
         precio,
         categoria,
+        descripcion,
         imagen_url,
         disponible: true
       }]);
 
       if (error) {
-        alert("Error al guardar el producto.");
+        alert("Error al guardar el producto: " + error.message);
       } else {
         document.getElementById('form-producto').reset();
         cargarListaProductos();
@@ -250,22 +257,43 @@
       }
 
       contenedor.innerHTML = productos.map(p => `
-        <div class="flex items-center justify-between bg-gray-50 p-2.5 rounded-lg border border-gray-200">
-          <div class="flex items-center gap-2.5">
+        <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-200 gap-2 ${!p.disponible ? 'opacity-60 bg-gray-100' : ''}">
+          <div class="flex items-center gap-3">
             ${p.imagen_url 
-              ? `<img src="${p.imagen_url}" class="w-10 h-10 object-cover rounded-md">`
-              : `<div class="w-10 h-10 bg-gray-200 rounded-md flex items-center justify-center text-xs">🍽️</div>`
+              ? `<img src="${p.imagen_url}" class="w-12 h-12 object-cover rounded-md">`
+              : `<div class="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center text-xs">🍽️</div>`
             }
             <div>
-              <p class="font-bold text-xs text-gray-800">${p.nombre}</p>
+              <div class="flex items-center gap-1.5">
+                <p class="font-bold text-xs text-gray-800">${p.nombre}</p>
+                ${!p.disponible ? '<span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-1.5 py-0.5 rounded">Pausado</span>' : ''}
+              </div>
               <p class="text-xs text-gray-500">$${p.precio} | <span class="text-gray-400">${p.categoria}</span></p>
+              ${p.descripcion ? `<p class="text-[11px] text-gray-400 line-clamp-1 mt-0.5">${p.descripcion}</p>` : ''}
             </div>
           </div>
-          <button onclick="eliminarProducto(${p.id})" class="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-2.5 py-1.5 rounded-lg font-bold">
-            🗑️ Borrar
-          </button>
+          <div class="flex items-center gap-1.5">
+            <button onclick="toggleEstadoProducto(${p.id}, ${p.disponible})" class="text-xs ${p.disponible ? 'bg-amber-100 hover:bg-amber-200 text-amber-800' : 'bg-emerald-100 hover:bg-emerald-200 text-emerald-800'} px-2.5 py-1.5 rounded-lg font-bold transition-colors">
+              ${p.disponible ? '⏸️ Pausar' : '▶️ Activar'}
+            </button>
+            <button onclick="eliminarProducto(${p.id})" class="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-2 py-1.5 rounded-lg font-bold">
+              🗑️
+            </button>
+          </div>
         </div>
       `).join('');
+    }
+
+    async function toggleEstadoProducto(id, estadoActual) {
+      const { error } = await db.from('productos')
+        .update({ disponible: !estadoActual })
+        .eq('id', id);
+
+      if (error) {
+        alert("Error al cambiar el estado del producto: " + error.message);
+      } else {
+        cargarListaProductos();
+      }
     }
 
     async function eliminarProducto(id) {
@@ -320,8 +348,7 @@
       });
 
       if (error) {
-        alert("Error: " + JSON.stringify(error));
-
+        alert("Error al actualizar los ajustes: " + error.message);
       } else {
         alert("¡Ajustes del local guardados con éxito!");
       }
