@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Menú Digital</title>
+  
+  <!-- Etiquetas Open Graph iniciales para WhatsApp (se actualizan solas con el logo de Supabase) -->
+  <meta property="og:title" content="Menú Digital - NexoServ">
+  <meta property="og:description" content="Haz tu pedido rápido y fácil por WhatsApp. ¡Conoce nuestro menú!">
+  <meta property="og:image" content="">
+  <meta property="og:type" content="website">
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Supabase JS Library -->
@@ -182,6 +189,8 @@
 
       if (configNegocio.nombre) {
         document.getElementById('comercio-nombre').textContent = configNegocio.nombre;
+        document.title = "Menú Digital - " + configNegocio.nombre;
+        actualizarMetaTag('og:title', "Menú Digital - " + configNegocio.nombre);
       }
 
       if (configNegocio.logo_url) {
@@ -189,6 +198,9 @@
         img.src = configNegocio.logo_url;
         img.classList.remove('hidden');
         document.getElementById('logo-fallback').classList.add('hidden');
+
+        // Actualizar etiqueta Open Graph dinámicamente para WhatsApp
+        actualizarMetaTag('og:image', configNegocio.logo_url);
       }
 
       const badge = document.getElementById('estado-badge');
@@ -199,6 +211,16 @@
         badge.textContent = '🔴 Cerrado';
         badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800 shadow-sm flex-shrink-0';
       }
+    }
+
+    function actualizarMetaTag(property, content) {
+      let element = document.querySelector(`meta[property="${property}"]`);
+      if (!element) {
+        element = document.createElement('meta');
+        element.setAttribute('property', property);
+        document.head.appendChild(element);
+      }
+      element.setAttribute('content', content);
     }
 
     async function cargarProductos() {
