@@ -241,13 +241,13 @@
         return;
       }
 
-      let mensaje = `*NUEVO PEDIDO - MENÚ WEB*\n\n`;
-      mensaje += `*Cliente:* ${nombre}\n`;
-      mensaje += `*Modalidad:* ${tipoEntrega}\n`;
-      if (tipoEntrega !== 'Retiro') {
-        mensaje += `*Ubicación/Detalle:* ${direccion}\n`;
-      }
-      mensaje += `\n*DETALLE DEL PEDIDO:*\n`;
+let mensajeWhatsApp = `*NUEVO PEDIDO*\n\n`;
+mensajeWhatsApp += `*Cliente:* ${nombre}\n`;
+mensajeWhatsApp += `*Total:* $${total}\n\n`;
+mensajeWhatsApp += `💳 *Datos de Pago (Mercado Pago):*\n`;
+mensajeWhatsApp += `• *Alias:* mi.comercio.mp\n`;
+mensajeWhatsApp += `• *Titular:* Nombre del Local\n\n`;
+mensajeWhatsApp += `Por favor, envía el comprobante por aquí al realizar la transferencia.`;
 
       let total = 0;
       Object.values(carrito).forEach(item => {
