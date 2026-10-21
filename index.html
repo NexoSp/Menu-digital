@@ -23,16 +23,16 @@
   <header id="header-bg" class="bg-custom-primary text-white py-6 px-4 shadow-md transition-colors duration-300">
     <div class="max-w-md mx-auto flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div id="logo-container" class="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-sm">
+        <div id="logo-container" class="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-sm flex-shrink-0">
           <span id="logo-fallback" class="text-2xl">🍔</span>
           <img id="logo-img" src="" alt="Logo" class="w-full h-full object-cover hidden">
         </div>
-        <div>
-          <h1 id="comercio-nombre" class="text-xl font-bold leading-tight">Cargando...</h1>
-          <p class="text-xs text-white/90">Haz tu pedido rápido por WhatsApp</p>
+        <div class="overflow-hidden">
+          <h1 id="comercio-nombre" class="text-xl font-bold leading-tight truncate">Cargando...</h1>
+          <p class="text-xs text-white/90 truncate">Haz tu pedido rápido por WhatsApp</p>
         </div>
       </div>
-      <span id="estado-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-white text-gray-800 shadow-sm">
+      <span id="estado-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-white text-gray-800 shadow-sm flex-shrink-0">
         Cargando...
       </span>
     </div>
@@ -69,42 +69,42 @@
 
   </main>
 
-  <!-- MODAL FLOTANTE DE DETALLE DE PRODUCTO -->
-  <div id="modal-detalle" class="fixed inset-0 bg-black/60 z-50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden transition-opacity">
-    <div class="bg-white w-full max-w-md rounded-t-2xl sm:rounded-2xl overflow-hidden shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto relative animate-in fade-in slide-in-from-bottom duration-200">
+  <!-- MODAL FLOTANTE DE DETALLE DE PRODUCTO ADAPTATIVO -->
+  <div id="modal-detalle" class="fixed inset-0 bg-black/60 z-50 backdrop-blur-sm flex items-center justify-center p-4 hidden transition-opacity">
+    <div class="bg-white w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl space-y-0 max-h-[90vh] flex flex-col relative animate-in fade-in zoom-in-95 duration-200">
       
       <!-- BOTÓN CERRAR (X) -->
-      <button onclick="cerrarModalDetalle()" class="absolute top-3 right-3 bg-gray-900/60 hover:bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-base transition-colors z-10 shadow-md">
+      <button onclick="cerrarModalDetalle()" class="absolute top-3 right-3 bg-gray-900/70 hover:bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-colors z-10 shadow-md">
         ✕
       </button>
 
-      <!-- FOTO EN MODAL -->
-      <div id="modal-img-container" class="w-full h-48 bg-gray-100 flex items-center justify-center overflow-hidden relative">
-        <span id="modal-fallback-icon" class="text-4xl">🍽️</span>
+      <!-- FOTO ADAPTATIVA EN MODAL -->
+      <div id="modal-img-container" class="w-full h-52 bg-gray-100 flex items-center justify-center overflow-hidden relative flex-shrink-0">
+        <span id="modal-fallback-icon" class="text-5xl">🍽️</span>
         <img id="modal-img" src="" class="w-full h-full object-cover hidden">
       </div>
 
       <!-- CONTENIDO MODAL -->
-      <div class="p-5 space-y-3">
-        <div class="flex items-start justify-between gap-2">
-          <div>
+      <div class="p-5 space-y-4 overflow-y-auto flex-1">
+        <div>
+          <div class="flex items-start justify-between gap-2">
             <h3 id="modal-titulo" class="font-bold text-lg text-gray-800 leading-tight"></h3>
-            <span id="modal-categoria" class="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-medium inline-block mt-1"></span>
+            <p id="modal-precio" class="text-lg font-bold text-custom-primary flex-shrink-0"></p>
           </div>
-          <p id="modal-precio" class="text-lg font-bold text-custom-primary"></p>
+          <span id="modal-categoria" class="text-[11px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-medium inline-block mt-1"></span>
         </div>
 
         <div>
-          <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Descripción</p>
-          <p id="modal-descripcion" class="text-sm text-gray-600 leading-relaxed bg-gray-50 p-3 rounded-lg border border-gray-100"></p>
+          <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1">Descripción</p>
+          <p id="modal-descripcion" class="text-xs text-gray-600 leading-relaxed bg-gray-50 p-3 rounded-lg border border-gray-100 break-words"></p>
         </div>
+      </div>
 
-        <!-- CONTROLES CARRITO EN MODAL -->
-        <div class="pt-2 flex items-center justify-between border-t border-gray-100">
-          <span class="text-xs font-bold text-gray-500">Cantidad:</span>
-          <div id="modal-controles" class="flex items-center gap-3">
-            <!-- Se inserta dinámicamente -->
-          </div>
+      <!-- CONTROLES CARRITO EN FOOTER DEL MODAL -->
+      <div class="p-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between flex-shrink-0">
+        <span class="text-xs font-bold text-gray-600">Cantidad:</span>
+        <div id="modal-controles" class="flex items-center gap-3">
+          <!-- Se inserta dinámicamente -->
         </div>
       </div>
 
@@ -112,13 +112,13 @@
   </div>
 
   <!-- BARRA FLOTANTE DEL CARRITO -->
-  <div id="cart-bar" class="fixed bottom-12 left-0 right-0 max-w-md mx-auto px-4 hidden">
-    <div class="bg-gray-900 text-white p-4 rounded-xl shadow-xl flex items-center justify-between gap-3">
+  <div id="cart-bar" class="fixed bottom-4 left-0 right-0 max-w-md mx-auto px-4 hidden z-40">
+    <div class="bg-gray-900 text-white p-3.5 rounded-xl shadow-xl flex items-center justify-between gap-3 border border-gray-800">
       <div>
         <p id="cart-count" class="text-xs text-gray-400">0 productos seleccionados</p>
-        <p id="cart-total" class="text-lg font-bold text-white">$0</p>
+        <p id="cart-total" class="text-base font-bold text-white">$0</p>
       </div>
-      <button onclick="enviarPedidoWhatsApp()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 px-4 rounded-lg text-sm flex items-center gap-2 transition-all active:scale-95">
+      <button onclick="enviarPedidoWhatsApp()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg text-xs flex items-center gap-2 transition-all active:scale-95">
         <span>Enviar Pedido</span>
         <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.892-1.99-.001-3.951-.5-5.688-1.448l-6.205 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
       </button>
@@ -193,10 +193,10 @@
       const badge = document.getElementById('estado-badge');
       if (configNegocio.abierto) {
         badge.textContent = '🟢 Abierto';
-        badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 shadow-sm';
+        badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 shadow-sm flex-shrink-0';
       } else {
         badge.textContent = '🔴 Cerrado';
-        badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800 shadow-sm';
+        badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800 shadow-sm flex-shrink-0';
       }
     }
 
@@ -205,7 +205,6 @@
       const contenedor = document.getElementById('menu-categorias');
 
       try {
-        // FILTRAR SOLO PRODUCTOS DISPONIBLES (NO PAUSADOS)
         const { data: productos, error } = await db.from('productos').select('*').eq('disponible', true);
 
         if (error || !productos || productos.length === 0) {
@@ -215,7 +214,7 @@
 
         const categorias = {};
         productos.forEach(p => {
-          productosCache[p.id] = p; // Guardar en caché para abrir modal
+          productosCache[p.id] = p;
           const cat = p.categoria || 'General';
           if (!categorias[cat]) categorias[cat] = [];
           categorias[cat].push(p);
@@ -230,20 +229,20 @@
             <h3 class="font-bold text-gray-800 text-base border-b pb-1 border-gray-200">${cat}</h3>
             <div class="grid gap-3">
               ${prods.map(p => `
-                <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between gap-3 cursor-pointer hover:border-gray-200 transition-all" onclick="abrirModalDetalle(${p.id})">
-                  <div class="flex items-center gap-3 overflow-hidden">
+                <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between gap-3 cursor-pointer hover:border-gray-200 transition-all min-h-[84px]" onclick="abrirModalDetalle(${p.id})">
+                  <div class="flex items-center gap-3 overflow-hidden min-w-0 flex-1">
                     ${p.imagen_url 
                       ? `<img src="${p.imagen_url}" class="w-16 h-16 object-cover rounded-lg bg-gray-100 flex-shrink-0">`
                       : `<div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-xl flex-shrink-0">🍽️</div>`
                     }
-                    <div class="overflow-hidden">
-                      <h4 class="font-bold text-gray-800 text-sm truncate">${p.nombre}</h4> <p class="text-custom-primary font-bold text-sm">$${p.precio}</p>${p.descripcion ? `<p class="text-xs text-gray-400 truncate mt-0.5">${p.descripcion}</p>` : ''}
+                    <div class="overflow-hidden min-w-0 flex-1">
+                      <h4 class="font-bold text-gray-800 text-sm truncate">${p.nombre}</h4> <p class="text-custom-primary font-bold text-sm">$${p.precio}</p>${p.descripcion ? `<p class="text-xs text-gray-400 line-clamp-2 break-words mt-0.5 leading-snug">${p.descripcion}</p>` : ''}
                     </div>
                   </div>
-                  <div class="flex items-center gap-2" onclick="event.stopPropagation()">
-                    <button onclick="cambiarCantidad(${p.id}, -1, '${p.nombre.replace(/'/g, "\\'")}', ${p.precio})" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-lg flex items-center justify-center">-</button>
+                  <div class="flex items-center gap-2 flex-shrink-0 self-center" onclick="event.stopPropagation()">
+                    <button onclick="cambiarCantidad(${p.id}, -1, '${p.nombre.replace(/'/g, "\\'")}', ${p.precio})" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-lg flex items-center justify-center active:scale-90 transition-transform">-</button>
                     <span id="cant-${p.id}" class="font-bold text-sm text-gray-700 w-4 text-center">${carrito[p.id] ? carrito[p.id].cantidad : 0}</span>
-                    <button onclick="cambiarCantidad(${p.id}, 1, '${p.nombre.replace(/'/g, "\\'")}', ${p.precio})" class="w-8 h-8 rounded-full bg-custom-primary text-white font-bold text-lg flex items-center justify-center">+</button>
+                    <button onclick="cambiarCantidad(${p.id}, 1, '${p.nombre.replace(/'/g, "\\'")}', ${p.precio})" class="w-8 h-8 rounded-full bg-custom-primary text-white font-bold text-lg flex items-center justify-center active:scale-90 transition-transform">+</button>
                   </div>
                 </div>
               `).join('')}
@@ -260,7 +259,6 @@
       }
     }
 
-    // ABRIR Y CERRAR MODAL DE DETALLES
     function abrirModalDetalle(id) {
       const p = productosCache[id];
       if (!p) return;
@@ -289,9 +287,9 @@
       const cant = carrito[p.id] ? carrito[p.id].cantidad : 0;
       const controles = document.getElementById('modal-controles');
       controles.innerHTML = `
-        <button onclick="cambiarCantidad(${p.id}, -1, '${p.nombre.replace(/'/g, "\\'")}', ${p.precio}); actualizarControlesModal(productosCache[${p.id}])" class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xl flex items-center justify-center">-</button>
+        <button onclick="cambiarCantidad(${p.id}, -1, '${p.nombre.replace(/'/g, "\\'")}', ${p.precio}); actualizarControlesModal(productosCache[${p.id}])" class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xl flex items-center justify-center active:scale-90 transition-transform">-</button>
         <span class="font-bold text-base text-gray-800 w-6 text-center">${cant}</span>
-        <button onclick="cambiarCantidad(${p.id}, 1, '${p.nombre.replace(/'/g, "\\'")}', ${p.precio}); actualizarControlesModal(productosCache[${p.id}])" class="w-9 h-9 rounded-full bg-custom-primary text-white font-bold text-xl flex items-center justify-center">+</button>
+        <button onclick="cambiarCantidad(${p.id}, 1, '${p.nombre.replace(/'/g, "\\'")}', ${p.precio}); actualizarControlesModal(productosCache[${p.id}])" class="w-9 h-9 rounded-full bg-custom-primary text-white font-bold text-xl flex items-center justify-center active:scale-90 transition-transform">+</button>
       `;
     }
 
