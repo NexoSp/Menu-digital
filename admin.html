@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+8<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -320,7 +320,8 @@
       });
 
       if (error) {
-        alert("Error al actualizar los ajustes.");
+        alert("Error: " + JSON.stringify(error));
+
       } else {
         alert("¡Ajustes del local guardados con éxito!");
       }
