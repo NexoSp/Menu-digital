@@ -151,6 +151,7 @@
     let configNegocio = {
       abierto: true,
       whatsapp: '',
+      whatsapp_2: '',
       nombre: 'Mi Comercio',
       mp_alias: '',
       mp_titular: '',
@@ -392,9 +393,25 @@
         mensaje += `_Envía el comprobante por aquí una vez realizado el pago._\n`;
       }
 
-      const numTel = configNegocio.whatsapp || '';
-      const url = `https://wa.me/${numTel.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(mensaje)}`;
-      window.open(url, '_blank');
+      const num1 = (configNegocio.whatsapp || '').replace(/[^0-9]/g, '');
+      const num2 = (configNegocio.whatsapp_2 || '').replace(/[^0-9]/g, '');
+
+      if (!num1) {
+        alert("El comercio no ha configurado un número de WhatsApp de recepción.");
+        return;
+      }
+
+      // 1. Envío al WhatsApp Principal
+      const url1 = `https://wa.me/${num1}?text=${encodeURIComponent(mensaje)}`;
+      window.open(url1, '_blank');
+
+      // 2. Envío al WhatsApp Secundario (Cocina/Copia) si existe
+      if (num2) {
+        setTimeout(() => {
+          const url2 = `https://wa.me/${num2}?text=${encodeURIComponent(mensaje)}`;
+          window.open(url2, '_blank');
+        }, 800);
+      }
     }
   </script>
 </body>
