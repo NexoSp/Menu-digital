@@ -97,15 +97,21 @@
             </select>
           </div>
 
-          <!-- NOMBRE Y WHATSAPP -->
+          <!-- NOMBRE DEL LOCAL -->
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">Nombre del Local</label>
+            <input type="text" id="cfg-nombre" required class="w-full p-2.5 border rounded-lg text-sm">
+          </div>
+
+          <!-- NÚMEROS DE WHATSAPP (DOS NÚMEROS) -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1">Nombre del Local</label>
-              <input type="text" id="cfg-nombre" required class="w-full p-2.5 border rounded-lg text-sm">
+              <label class="block text-xs font-semibold text-gray-600 mb-1">WhatsApp 1 (Principal / Pedidos)</label>
+              <input type="text" id="cfg-whatsapp" placeholder="Ej. 5491122334455" required class="w-full p-2.5 border rounded-lg text-sm">
             </div>
             <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1">WhatsApp de Recepción (sin +)</label>
-              <input type="text" id="cfg-whatsapp" placeholder="Ej. 5491122334455" required class="w-full p-2.5 border rounded-lg text-sm">
+              <label class="block text-xs font-semibold text-gray-600 mb-1">WhatsApp 2 (Opcional - Cocina / Copia)</label>
+              <input type="text" id="cfg-whatsapp-2" placeholder="Ej. 5491166778899" class="w-full p-2.5 border rounded-lg text-sm">
             </div>
           </div>
 
@@ -195,7 +201,7 @@
 
         if (error) {
           console.error("Error en Storage:", error);
-          alert("Error al subir la imagen. Verifica que exista el bucket 'imagenes-productos' en Supabase.");
+          alert("Error al subir la imagen a Supabase Storage.");
           return null;
         }
 
@@ -237,7 +243,7 @@
       }]);
 
       if (error) {
-        alert("Error al guardar el producto: " + error.message);
+        alert("Error al guardar el producto: " + JSON.stringify(error));
       } else {
         document.getElementById('form-producto').reset();
         cargarListaProductos();
@@ -290,7 +296,7 @@
         .eq('id', id);
 
       if (error) {
-        alert("Error al cambiar el estado del producto: " + error.message);
+        alert("Error al cambiar el estado del producto: " + JSON.stringify(error));
       } else {
         cargarListaProductos();
       }
@@ -308,6 +314,7 @@
         document.getElementById('cfg-abierto').value = data.abierto ? "true" : "false";
         document.getElementById('cfg-nombre').value = data.nombre || '';
         document.getElementById('cfg-whatsapp').value = data.whatsapp || '';
+        document.getElementById('cfg-whatsapp-2').value = data.whatsapp_2 || '';
         document.getElementById('cfg-mp-alias').value = data.mp_alias || '';
         document.getElementById('cfg-mp-titular').value = data.mp_titular || '';
         if (data.tema_color) document.getElementById('cfg-tema-color').value = data.tema_color;
@@ -324,6 +331,7 @@
       const abierto = document.getElementById('cfg-abierto').value === 'true';
       const nombre = document.getElementById('cfg-nombre').value;
       const whatsapp = document.getElementById('cfg-whatsapp').value;
+      const whatsapp_2 = document.getElementById('cfg-whatsapp-2').value;
       const mp_alias = document.getElementById('cfg-mp-alias').value;
       const mp_titular = document.getElementById('cfg-mp-titular').value;
       const tema_color = document.getElementById('cfg-tema-color').value;
@@ -341,6 +349,7 @@
         abierto,
         nombre,
         whatsapp,
+        whatsapp_2,
         mp_alias,
         mp_titular,
         tema_color,
@@ -348,7 +357,7 @@
       });
 
       if (error) {
-        alert("Error al actualizar los ajustes: " + error.message);
+        alert("Error al actualizar los ajustes: " + JSON.stringify(error));
       } else {
         alert("¡Ajustes del local guardados con éxito!");
       }
