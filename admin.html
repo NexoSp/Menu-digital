@@ -34,6 +34,14 @@
         </div>
 
         <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Estado del Local</label>
+          <select id="cfg-abierto" class="w-full p-2.5 border rounded-xl text-sm bg-white focus:ring-2 focus:ring-red-400 focus:outline-none font-medium">
+            <option value="true">🟢 Abierto (Aceptando pedidos)</option>
+            <option value="false">🔴 Cerrado (Local no disponible)</option>
+          </select>
+        </div>
+
+        <div>
           <label class="block text-xs font-semibold text-gray-600 mb-1">WhatsApp 1 (Sin + ni espacios)</label>
           <input type="text" id="cfg-ws1" placeholder="Ej: 5491122334455" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
         </div>
@@ -168,7 +176,6 @@
         inputHex.value = e.target.value;
       });
 
-      // Ejecutar de forma independiente para asegurar que si uno falla, el otro cargue igual
       try {
         await cargarConfiguracionAdmin();
       } catch (e) {
@@ -226,6 +233,10 @@
           document.getElementById('cfg-titular').value = data.titular || '';
           document.getElementById('cfg-logo').value = data.logo_url || '';
           
+          if (data.abierto !== undefined) {
+            document.getElementById('cfg-abierto').value = data.abierto ? "true" : "false";
+          }
+          
           if (data.logo_url) {
             document.getElementById('logo-status').textContent = "✓ Logo actual cargado correctamente.";
             document.getElementById('logo-status').className = "text-[11px] text-emerald-600 font-semibold mt-1";
@@ -243,6 +254,7 @@
       const msgElem = document.getElementById('cfg-msg');
       const colorSeleccionado = document.getElementById('cfg-color').value;
       const fileInput = document.getElementById('file-logo');
+      const estadoAbierto = document.getElementById('cfg-abierto').value === 'true';
 
       let logoUrl = document.getElementById('cfg-logo').value.trim();
 
@@ -265,7 +277,8 @@
         alias: document.getElementById('cfg-alias').value.trim(),
         titular: document.getElementById('cfg-titular').value.trim(),
         logo_url: logoUrl,
-        color_primario: colorSeleccionado
+        color_primario: colorSeleccionado,
+        abierto: estadoAbierto
       };
 
       try {
@@ -278,10 +291,11 @@
           error = res.error;
         }
 
-        // Si alguna columna de diseño no existe en Supabase todavía, reintentamos limpiando esas propiedades para no bloquear
-        if (error && (error.message.includes('color_primario') || error.message.includes('logo_url') || error.message.includes('column'))) {
+        // Reintento inteligente si alguna columna nueva no existe en la base de datos
+        if (error && (error.message.includes('color_primario') || error.message.includes('logo_url') || error.message.includes('abierto') || error.message.includes('column'))) {
           delete datos.color_primario;
           delete datos.logo_url;
+          delete datos.abierto;
           if (configActualId) {
             const resRetry = await _supabaseClient.from('configuracion').update(datos).eq('id', configActualId);
             error = resRetry.error;
@@ -319,16 +333,22 @@
         }
 
         listaProductos.forEach(p => {
+          const estaPausado = p.pausado === true;
+          const estadoClase = estaPausado ? 'bg-amber-50 border-amber-200 opacity-75' : 'bg-gray-50';
+          const botonPausarTexto = estaPausado ? '🟢 Activar' : '⏸️ Pausar';
+          const botonPausarClase = estaPausado ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-amber-100 text-amber-700 hover:bg-amber-200';
+
           container.innerHTML += `
-            <div class="flex items-center justify-between p-3 border rounded-xl bg-gray-50 gap-3">
+            <div class="flex items-center justify-between p-3 border rounded-xl ${estadoClase} gap-3">
               <img src="${p.imagen_url || 'https://via.placeholder.com/80'}" class="w-12 h-12 rounded-lg object-cover bg-gray-200">
               <div class="flex-1">
-                <h3 class="font-bold text-sm text-gray-800">${p.nombre}</h3>
+                <h3 class="font-bold text-sm text-gray-800">${p.nombre} ${estaPausado ? '<span class="text-[10px] bg-amber-200 text-amber-800 px-1.5 py-0.5 rounded font-bold">Pausado</span>' : ''}</h3>
                 <p class="text-xs text-gray-500">${p.categoria || 'Sin categoría'} - <span class="font-bold text-emerald-600">$${p.precio}</span></p>
               </div>
-              <div class="flex items-center gap-2">
-                <button onclick="prepararEdicion(${p.id})" class="p-2 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold rounded-lg">✏️</button>
-                <button onclick="eliminarProducto(${p.id})" class="p-2 text-xs bg-red-100 hover:bg-red-200 text-red-700 font-bold rounded-lg">🗑️</button>
+              <div class="flex items-center gap-1.5">
+                <button onclick="togglePausarProducto(${p.id}, ${!estaPausado})" class="p-2 text-xs ${botonPausarClase} font-bold rounded-lg transition-colors" title="Pausar o Activar">${botonPausarTexto}</button>
+                <button onclick="prepararEdicion(${p.id})" class="p-2 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold rounded-lg" title="Editar">✏️</button>
+                <button onclick="eliminarProducto(${p.id})" class="p-2 text-xs bg-red-100 hover:bg-red-200 text-red-700 font-bold rounded-lg" title="Eliminar">🗑️</button>
               </div>
             </div>
           `;
@@ -336,6 +356,29 @@
       } catch (err) {
         console.error("Error al cargar productos:", err);
         document.getElementById('lista-admin-productos').innerHTML = '<p class="text-center text-red-500 text-xs py-4">Error al conectar con la tabla de productos.</p>';
+      }
+    }
+
+    // --- PAUSAR / ACTIVAR PRODUCTO ---
+    async function togglePausarProducto(id, nuevoEstado) {
+      try {
+        const { error } = await _supabaseClient
+          .from('productos')
+          .update({ pausado: nuevoEstado })
+          .eq('id', id);
+
+        if (error) {
+          // Si la columna pausado no existe todavía, avisamos al usuario amablemente
+          if (error.message.includes('column') || error.message.includes('pausado')) {
+            alert("Atención: Para usar la función de pausar productos, asegúrate de agregar una columna booleana llamada 'pausado' en tu tabla 'productos' de Supabase.");
+          } else {
+            throw error;
+          }
+        }
+
+        await cargarProductosAdmin();
+      } catch (err) {
+        alert("Error al actualizar el estado del producto: " + err.message);
       }
     }
 
