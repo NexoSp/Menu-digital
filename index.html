@@ -23,13 +23,26 @@
   <!-- Supabase JS Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+  <!-- CONFIGURACIÓN DE TAILWIND Y VARIABLE DE COLOR DINÁMICO -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'custom-primary': 'var(--primary-color, #ef4444)',
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
     :root {
       --primary-color: #ef4444;
     }
-    .bg-custom-primary { background-color: var(--primary-color); }
-    .text-custom-primary { color: var(--primary-color); }
-    .border-custom-primary { border-color: var(--primary-color); }
+    .bg-custom-primary { background-color: var(--primary-color) !important; }
+    .text-custom-primary { color: var(--primary-color) !important; }
+    .border-custom-primary { border-color: var(--primary-color) !important; }
   </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans pb-28">
@@ -130,7 +143,7 @@
     </div>
   </div>
 
-      <!-- LÓGICA JAVASCRIPT CORREGIDA -->
+  <!-- LÓGICA JAVASCRIPT CON LECTURA DE COLOR -->
   <script>
     // --- CONFIGURACIÓN DE SUPABASE ---
     const SUPABASE_URL = 'https://ahyvmupqzgcrxrbvjzsb.supabase.co';
@@ -162,15 +175,26 @@
         const { data, error } = await _supabaseClient.from('configuracion').select('*').limit(1).maybeSingle();
         if (data) {
           configNegocio = data;
+
+          // Aplicar el color primario si está configurado en Supabase
+          const colorGuardado = data.color_primario || data.color;
+          if (colorGuardado) {
+            document.documentElement.style.setProperty('--primary-color', colorGuardado);
+          }
+
           if (data.nombre) {
             document.getElementById('nombre-negocio').textContent = data.nombre;
             document.title = `Menú Digital - ${data.nombre}`;
           }
-          if (data.alias) {
-            document.getElementById('mp-alias').textContent = data.alias;
+          
+          const aliasVal = data.alias || data.mp_alias;
+          if (aliasVal) {
+            document.getElementById('mp-alias').textContent = aliasVal;
           }
-          if (data.titular) {
-            document.getElementById('mp-titular').textContent = data.titular;
+
+          const titularVal = data.titular || data.mp_titular;
+          if (titularVal) {
+            document.getElementById('mp-titular').textContent = titularVal;
           }
         }
       } catch (err) {
@@ -351,7 +375,7 @@
       mensaje += `💰 *TOTAL:* $${total}\n\n`;
       mensaje += `¡Muchas gracias!`;
 
-      const numWhatsApp = configNegocio.whatsapp_1 || configNegocio.whatsapp_2;
+      const numWhatsApp = configNegocio.whatsapp_1 || configNegocio.whatsapp || configNegocio.whatsapp_2;
       
       if (!numWhatsApp) {
         alert("No hay un número de WhatsApp configurado en el sistema.");
@@ -362,6 +386,5 @@
       window.open(urlWs, '_blank');
     }
   </script>
-
-
+</body>
 </html>
