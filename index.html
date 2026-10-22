@@ -11,9 +11,9 @@
   <meta property="og:description" content="Haz tu pedido rápido y fácil por WhatsApp. ¡Conoce nuestro menú!">
   <meta property="og:url" content="https://nexosp.github.io/Menu-digital/">
 
-  <!-- LOGO DIRECTO DE SUPABASE -->
-  <meta property="og:image" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png">
-  <meta property="og:image:secure_url" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png">
+  <!-- LOGO DINÁMICO OPEN GRAPH -->
+  <meta id="og-image" property="og:image" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png">
+  <meta id="og-image-secure" property="og:image:secure_url" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="500">
   <meta property="og:image:height" content="500">
@@ -162,6 +162,7 @@
   <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-3 shadow-lg z-50">
     <div class="max-w-md mx-auto flex items-center justify-between gap-3">
       <div>
+        <p id="label-delivery-info" class="text-[10px] text-gray-400 hidden">Incluye delivery: $<span id="val-delivery">0</span></p>
         <p class="text-xs text-gray-500">Total a Pagar</p>
         <p id="total-pedido" class="font-bold text-xl text-gray-800">$0</p>
       </div>
@@ -190,7 +191,8 @@
       nombre: 'PERE Y EL FLACO',
       alias: '',
       titular: '',
-      abierto: true
+      abierto: true,
+      costo_delivery: 0
     };
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -216,9 +218,13 @@
 
           if (data.logo_url) {
             document.getElementById('logo-header').src = data.logo_url;
+
+            const metaOgImg = document.getElementById('og-image');
+            const metaOgImgSecure = document.getElementById('og-image-secure');
+            if (metaOgImg) metaOgImg.setAttribute('content', data.logo_url);
+            if (metaOgImgSecure) metaOgImgSecure.setAttribute('content', data.logo_url);
           }
 
-          // EVALUACIÓN DE ESTADO ABIERTO / CERRADO FLEXIBLE
           const estaAbierto = !(data.abierto === false || data.abierto === 'false' || data.abierto === 0 || data.abierto === '0');
           configNegocio.abierto = estaAbierto;
 
@@ -243,6 +249,9 @@
           if (data.titular || data.mp_titular) {
             document.getElementById('mp-titular').textContent = data.titular || data.mp_titular;
           }
+
+          document.getElementById('val-delivery').textContent = data.costo_delivery || 0;
+          toggleDireccion();
         }
       } catch (err) {
         console.error("Error cargando configuración:", err);
@@ -286,7 +295,6 @@
       const container = document.getElementById('productos-container');
       container.innerHTML = '';
 
-      // Filtrar productos no pausados y por categoría
       const listaFiltrada = productos.filter(p => {
         const noEstaPausado = !(p.pausado === true || p.pausado === 'true' || p.pausado === 1);
         const coincideCat = categoriaSeleccionada === 'todas' || p.categoria === categoriaSeleccionada;
@@ -366,21 +374,37 @@
     }
 
     function actualizarTotal() {
-      let total = 0;
+      let subtotal = 0;
       Object.values(carrito).forEach(item => {
-        total += item.producto.precio * item.cantidad;
+        subtotal += item.producto.precio * item.cantidad;
       });
-      document.getElementById('total-pedido').textContent = `$${total}`;
+
+      const tipoEntrega = document.getElementById('tipo-entrega').value;
+      const costoDelivery = parseFloat(configNegocio.costo_delivery) || 0;
+      
+      let totalFinal = subtotal;
+      if (tipoEntrega === 'Delivery' && subtotal > 0) {
+        totalFinal += costoDelivery;
+      }
+
+      document.getElementById('total-pedido').textContent = `$${totalFinal}`;
     }
 
     function toggleDireccion() {
       const tipo = document.getElementById('tipo-entrega').value;
       const campo = document.getElementById('campo-direccion');
+      const labelDeliveryInfo = document.getElementById('label-delivery-info');
+
       if (tipo === 'Retiro') {
         campo.classList.add('hidden');
+        labelDeliveryInfo.classList.add('hidden');
       } else {
         campo.classList.remove('hidden');
+        if (configNegocio.costo_delivery > 0) {
+          labelDeliveryInfo.classList.remove('hidden');
+        }
       }
+      actualizarTotal();
     }
 
     function toggleDatosTransferencia() {
@@ -466,15 +490,23 @@
       mensaje += `-----------------------------------\n`;
       mensaje += `*DETALLE DEL PEDIDO:*\n`;
 
-      let total = 0;
+      let subtotal = 0;
       Object.values(carrito).forEach(item => {
-        const subtotal = item.producto.precio * item.cantidad;
-        total += subtotal;
-        mensaje += `• ${item.cantidad}x ${item.producto.nombre} - $${subtotal}\n`;
+        const itemSub = item.producto.precio * item.cantidad;
+        subtotal += itemSub;
+        mensaje += `• ${item.cantidad}x ${item.producto.nombre} - $${itemSub}\n`;
       });
 
+      const costoDelivery = parseFloat(configNegocio.costo_delivery) || 0;
+      let totalFinal = subtotal;
+
+      if (tipoEntrega === 'Delivery' && costoDelivery > 0) {
+        totalFinal += costoDelivery;
+        mensaje += `• Envío a domicilio: $${costoDelivery}\n`;
+      }
+
       mensaje += `-----------------------------------\n`;
-      mensaje += `💰 *TOTAL:* $${total}\n\n`;
+      mensaje += `💰 *TOTAL:* $${totalFinal}\n\n`;
       mensaje += `¡Muchas gracias!`;
 
       const numWhatsApp = configNegocio.whatsapp_1 || configNegocio.whatsapp || configNegocio.whatsapp_2;
