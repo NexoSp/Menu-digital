@@ -174,7 +174,7 @@
         if (data) {
           configActualId = data.id;
           document.getElementById('cfg-nombre').value = data.nombre || '';
-          document.getElementById('cfg-ws1').value = data.whatsapp || '';
+          document.getElementById('cfg-ws1').value = data.whatsapp_1 || '';
           document.getElementById('cfg-alias').value = data.alias || '';
           document.getElementById('cfg-titular').value = data.titular || '';
         }
@@ -186,10 +186,10 @@
     async function guardarConfiguracion() {
       const msgElem = document.getElementById('cfg-msg');
 
-      // Objeto limpio que utiliza únicamente los nombres de columnas reales de la tabla configuracion
+      // Objeto ajustado exactamente con la columna 'whatsapp_1' que maneja tu base de datos
       const datos = {
         nombre: document.getElementById('cfg-nombre').value.trim(),
-        whatsapp: document.getElementById('cfg-ws1').value.trim(),
+        whatsapp_1: document.getElementById('cfg-ws1').value.trim(),
         alias: document.getElementById('cfg-alias').value.trim(),
         titular: document.getElementById('cfg-titular').value.trim()
       };
