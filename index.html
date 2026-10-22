@@ -116,12 +116,17 @@
     </div>
   </div>
 
-  <!-- LÓGICA JAVASCRIPT -->
+    <!-- LÓGICA JAVASCRIPT CORREGIDA -->
   <script>
     // --- CONFIGURACIÓN DE SUPABASE ---
     const SUPABASE_URL = 'https://ahyvmupqzgcrxrbvjzsb.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_zXDGyQ8Sphn0F1gIr7s9jQ_pOOKf08w'; // Reemplazar con tu Anon Key de Supabase
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    // ⚠️ Coloca tu API Key 'anon' 'public' completa que obtienes en:
+    // Supabase Dashboard -> Project Settings -> API -> Project API keys -> anon public
+    const SUPABASE_ANON_KEY = 'TU_ANON_KEY_COMPLETA_AQUI'; 
+
+    // Se cambia el nombre a _supabaseClient para evitar conflicto de variables
+    const _supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let productos = [];
     let carrito = {};
@@ -139,24 +144,34 @@
     });
 
     async function cargarConfiguracion() {
-      const { data, error } = await supabase.from('configuracion').select('*').single();
-      if (data) {
-        configNegocio = data;
-        if (data.nombre) {
-          document.getElementById('nombre-negocio').textContent = data.nombre;
-          document.title = `Menú Digital - ${data.nombre}`;
+      try {
+        const { data, error } = await _supabaseClient.from('configuracion').select('*').single();
+        if (data) {
+          configNegocio = data;
+          if (data.nombre) {
+            document.getElementById('nombre-negocio').textContent = data.nombre;
+            document.title = `Menú Digital - ${data.nombre}`;
+          }
         }
+      } catch (err) {
+        console.error("Error cargando configuración:", err);
       }
     }
 
     async function cargarProductos() {
-      const { data, error } = await supabase.from('productos').select('*');
-      if (error) {
-        document.getElementById('productos-container').innerHTML = '<p class="text-center text-red-500 text-sm">Error al cargar el menú.</p>';
-        return;
+      try {
+        const { data, error } = await _supabaseClient.from('productos').select('*');
+        if (error) {
+          console.error("Error Supabase:", error);
+          document.getElementById('productos-container').innerHTML = `<p class="text-center text-red-500 text-sm py-4">Error de conexión: ${error.message}</p>`;
+          return;
+        }
+        productos = data || [];
+        renderizarProductos(productos);
+      } catch (err) {
+        console.error("Error cargando productos:", err);
+        document.getElementById('productos-container').innerHTML = '<p class="text-center text-red-500 text-sm py-4">Error al conectar con la base de datos.</p>';
       }
-      productos = data || [];
-      renderizarProductos(productos);
     }
 
     function renderizarProductos(lista) {
@@ -316,5 +331,6 @@
       window.open(urlWs, '_blank');
     }
   </script>
+
 </body>
 </html>
