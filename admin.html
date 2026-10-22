@@ -3,367 +3,290 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel de Control - NexoServ</title>
+  <title>Panel de Administración - Menú Digital</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Supabase JS Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-gray-100 min-h-screen text-gray-800 pb-12">
+<body class="bg-gray-100 text-gray-800 font-sans pb-12">
 
-  <!-- ENCABEZADO ADMIN -->
-  <header class="bg-gray-900 text-white py-4 px-4 shadow-md">
-    <div class="max-w-2xl mx-auto flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <span class="text-xl">⚙️</span>
-        <h1 class="font-bold text-lg">Panel de Control</h1>
-      </div>
-      <a href="index.html" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-1.5 rounded-lg border border-gray-700">Ver Menú Cliente ↗</a>
+  <!-- HEADER / CABECERA -->
+  <header class="bg-white shadow-sm sticky top-0 z-40">
+    <div class="max-w-2xl mx-auto p-4 flex items-center justify-between">
+      <h1 class="font-bold text-lg text-gray-800">⚙️ Panel de Control Admin</h1>
+      <a href="index.html" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg border font-medium">Ver Menú ↗</a>
     </div>
   </header>
 
-  <main class="max-w-2xl mx-auto px-4 mt-6 space-y-6">
+  <main class="max-w-2xl mx-auto p-4 space-y-6">
 
-    <!-- PESTAÑAS DE NAVEGACIÓN -->
-    <div class="flex border-b border-gray-200 bg-white rounded-t-xl p-1 gap-1 shadow-sm">
-      <button onclick="cambiarPestana('productos')" id="tab-btn-productos" class="flex-1 py-2 text-sm font-bold rounded-lg bg-gray-900 text-white transition-all">🛍️ Productos</button>
-      <button onclick="cambiarPestana('configuracion')" id="tab-btn-configuracion" class="flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-900 transition-all">⚙️ Ajustes Local</button>
-    </div>
+    <!-- SECCIÓN 1: CONFIGURACIÓN DEL NEGOCIO & MERCADO PAGO -->
+    <section class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 space-y-4">
+      <h2 class="font-bold text-base text-gray-800 flex items-center gap-2 border-b pb-2">
+        <span>🏪 Datos del Negocio y Pagos</span>
+      </h2>
 
-    <!-- SECCIÓN 1: PRODUCTOS -->
-    <section id="sec-productos" class="space-y-6">
-      
-      <!-- FORMULARIO CREAR PRODUCTO -->
-      <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-4">
-        <h2 class="font-bold text-gray-700 text-sm border-b pb-2">AGREGAR NUEVO PRODUCTO</h2>
-        <form id="form-producto" onsubmit="guardarProducto(event)" class="space-y-3">
-          <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">Nombre del Producto</label>
-            <input type="text" id="prod-nombre" required placeholder="Ej. Hamburguesa Doble con Cheddar" class="w-full p-2.5 border rounded-lg text-sm">
-          </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Nombre del Local</label>
+          <input type="text" id="cfg-nombre" placeholder="Ej: PERE Y EL FLACO" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
+        </div>
 
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1">Precio ($)</label>
-              <input type="number" id="prod-precio" required placeholder="Ej. 6500" class="w-full p-2.5 border rounded-lg text-sm">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1">Categoría</label>
-              <input type="text" id="prod-categoria" required placeholder="Ej. Hamburguesas" class="w-full p-2.5 border rounded-lg text-sm">
-            </div>
-          </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">WhatsApp 1 (Sin + ni espacios)</label>
+          <input type="text" id="cfg-ws1" placeholder="Ej: 5491122334455" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
+        </div>
 
-          <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">Descripción / Ingredientes</label>
-            <textarea id="prod-descripcion" rows="2" placeholder="Ej. Doble medallón de carne, queso cheddar, panceta crocante y salsa de la casa." class="w-full p-2.5 border rounded-lg text-sm"></textarea>
-          </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">WhatsApp 2 (Opcional)</label>
+          <input type="text" id="cfg-ws2" placeholder="Ej: 5491199887766" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
+        </div>
 
-          <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">Foto del Producto (Desde dispositivo)</label>
-            <input type="file" id="prod-imagen" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200">
-          </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Alias Mercado Pago / CBU</label>
+          <input type="text" id="cfg-alias" placeholder="Ej: pere.el.flaco.mp" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
+        </div>
 
-          <button type="submit" id="btn-guardar-prod" class="w-full bg-gray-900 hover:bg-black text-white font-bold py-2.5 rounded-lg text-sm transition-all">
-            + Guardar Producto
-          </button>
-        </form>
-      </div>
-
-      <!-- LISTA DE PRODUCTOS CON OPCIÓN PAUSAR / PLAY -->
-      <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-4">
-        <h2 class="font-bold text-gray-700 text-sm border-b pb-2">PRODUCTOS EXISTENTES</h2>
-        <div id="lista-productos" class="space-y-3">
-          <p class="text-xs text-gray-400 text-center py-4">Cargando lista de productos...</p>
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Titular de la Cuenta</label>
+          <input type="text" id="cfg-titular" placeholder="Ej: Juan Pérez / Pere y El Flaco SRL" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
         </div>
       </div>
 
+      <button onclick="guardarConfiguracion()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm transition-colors shadow-sm">
+        💾 Guardar Configuración
+      </button>
+      <p id="cfg-msg" class="text-xs text-center font-semibold hidden"></p>
     </section>
 
-    <!-- SECCIÓN 2: AJUSTES DEL LOCAL -->
-    <section id="sec-configuracion" class="space-y-6 hidden">
-      <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-4">
-        <h2 class="font-bold text-gray-700 text-sm border-b pb-2">CONFIGURACIÓN GENERAL</h2>
-        
-        <form id="form-config" onsubmit="guardarConfiguracion(event)" class="space-y-4">
-          <!-- ESTADO DEL LOCAL -->
-          <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
-            <div>
-              <p class="font-bold text-sm text-gray-800">Estado del Comercio</p>
-              <p class="text-xs text-gray-500">Abre o pausa la recepción de pedidos en el menú</p>
-            </div>
-            <select id="cfg-abierto" class="p-2 border rounded-lg text-sm font-bold">
-              <option value="true">🟢 ABIERTO</option>
-              <option value="false">🔴 CERRADO</option>
-            </select>
-          </div>
 
-          <!-- NOMBRE DEL LOCAL -->
+    <!-- SECCIÓN 2: AGREGAR / EDITAR PRODUCTO -->
+    <section class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 space-y-4">
+      <h2 class="font-bold text-base text-gray-800 flex items-center gap-2 border-b pb-2">
+        <span id="form-title">🍔 Agregar Nuevo Producto</span>
+      </h2>
+
+      <input type="hidden" id="prod-id">
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Nombre del Producto</label>
+          <input type="text" id="prod-nombre" placeholder="Ej: Hamburguesa Doble Con Queso" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">Nombre del Local</label>
-            <input type="text" id="cfg-nombre" required class="w-full p-2.5 border rounded-lg text-sm">
+            <label class="block text-xs font-semibold text-gray-600 mb-1">Precio ($)</label>
+            <input type="number" id="prod-precio" placeholder="4500" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
           </div>
-
-          <!-- NÚMEROS DE WHATSAPP (DOS NÚMEROS) -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1">WhatsApp 1 (Principal / Pedidos)</label>
-              <input type="text" id="cfg-whatsapp" placeholder="Ej. 5491122334455" required class="w-full p-2.5 border rounded-lg text-sm">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1">WhatsApp 2 (Opcional - Cocina / Copia)</label>
-              <input type="text" id="cfg-whatsapp-2" placeholder="Ej. 5491166778899" class="w-full p-2.5 border rounded-lg text-sm">
-            </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">Categoría</label>
+            <input type="text" id="prod-categoria" placeholder="Ej: Hamburguesas" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
           </div>
+        </div>
 
-          <!-- MERCADO PAGO ALIAS / TITULAR -->
-          <div class="border-t pt-3 space-y-3">
-            <p class="font-bold text-xs text-gray-700">DATOS DE COBRO (MERCADO PAGO / TRANSFERENCIA)</p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1">Alias de Mercado Pago</label>
-                <input type="text" id="cfg-mp-alias" placeholder="Ej. local.mp" class="w-full p-2.5 border rounded-lg text-sm">
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1">Nombre del Titular</label>
-                <input type="text" id="cfg-mp-titular" placeholder="Ej. Juan Pérez" class="w-full p-2.5 border rounded-lg text-sm">
-              </div>
-            </div>
-          </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Descripción</label>
+          <textarea id="prod-descripcion" rows="2" placeholder="Medallón doble de carne, cheddar, bacon y salsa especial..." class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none"></textarea>
+        </div>
 
-          <!-- TEMA DE COLOR Y LOGO -->
-          <div class="border-t pt-3 space-y-3">
-            <p class="font-bold text-xs text-gray-700">PERSONALIZACIÓN DE LA INTERFAZ</p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1">Color Principal del Menú</label>
-                <input type="color" id="cfg-tema-color" value="#ef4444" class="w-full h-10 p-1 border rounded-lg cursor-pointer">
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1">Logo del Comercio (Subir foto)</label>
-                <input type="file" id="cfg-logo-file" accept="image/*" class="w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:bg-gray-100">
-              </div>
-            </div>
-          </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">URL de la Imagen</label>
+          <input type="text" id="prod-imagen" placeholder="https://..." class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
+        </div>
+      </div>
 
-          <button type="submit" id="btn-guardar-cfg" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-sm transition-all">
-            💾 Guardar Cambios
-          </button>
-        </form>
+      <div class="flex gap-2 pt-2">
+        <button onclick="guardarProducto()" class="flex-1 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl text-sm transition-colors shadow-sm">
+          Guardar Producto
+        </button>
+        <button id="btn-cancelar" onclick="limpiarFormularioProducto()" class="hidden py-3 px-4 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl text-sm transition-colors">
+          Cancelar
+        </button>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: LISTADO DE PRODUCTOS -->
+    <section class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 space-y-4">
+      <h2 class="font-bold text-base text-gray-800 border-b pb-2">📋 Productos Cargados</h2>
+      <div id="lista-admin-productos" class="space-y-3">
+        <p class="text-center text-sm text-gray-400 py-4">Cargando productos...</p>
       </div>
     </section>
 
   </main>
 
-  <!-- FOOTER DESARROLLADOR NEXOSERV -->
-  <footer class="text-center text-xs text-gray-400 mt-8">
-    Sistema administrado por <a href="https://wa.me/5491122334455" target="_blank" class="font-bold text-gray-600 hover:underline">NexoServ</a>
-  </footer>
-
   <!-- LÓGICA JAVASCRIPT ADMIN -->
   <script>
-    // ⚠️ REEMPLAZAR CON TUS CLAVES REALES DE SUPABASE
+    // --- CONFIGURACIÓN DE SUPABASE ---
     const SUPABASE_URL = 'https://ahyvmupqzgcrxrbvjzsb.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_zXDGyQ8Sphn0F1gIr7s9jQ_pOOKf08w';
     
-    const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // API Key de Supabase limpia y continua
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFoeXZtdXBxemdjcnhyYnZqenNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1MTg5MzcsImV4cCI6MjEwODA5NDkzN30.oBfYP5Pf0hXDymQtMqE2pFbWCVllRKWcYGew0iuca4Q';
 
-    let logoUrlActual = '';
+    const _supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    document.addEventListener('DOMContentLoaded', () => {
-      cargarListaProductos();
-      cargarConfiguracionAdmin();
+    let listaProductos = [];
+    let configActualId = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await cargarConfiguracionAdmin();
+      await cargarProductosAdmin();
     });
 
-    function cambiarPestana(p) {
-      if (p === 'productos') {
-        document.getElementById('sec-productos').classList.remove('hidden');
-        document.getElementById('sec-configuracion').classList.add('hidden');
-        document.getElementById('tab-btn-productos').className = 'flex-1 py-2 text-sm font-bold rounded-lg bg-gray-900 text-white transition-all';
-        document.getElementById('tab-btn-configuracion').className = 'flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-900 transition-all';
-      } else {
-        document.getElementById('sec-productos').classList.add('hidden');
-        document.getElementById('sec-configuracion').classList.remove('hidden');
-        document.getElementById('tab-btn-productos').className = 'flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-900 transition-all';
-        document.getElementById('tab-btn-configuracion').className = 'flex-1 py-2 text-sm font-bold rounded-lg bg-gray-900 text-white transition-all';
+    // --- CARGAR Y GUARDAR CONFIGURACIÓN (DEL NEGOCIO & MP) ---
+    async function cargarConfiguracionAdmin() {
+      try {
+        const { data, error } = await _supabaseClient.from('configuracion').select('*').limit(1).maybeSingle();
+        if (data) {
+          configActualId = data.id;
+          document.getElementById('cfg-nombre').value = data.nombre || '';
+          document.getElementById('cfg-ws1').value = data.whatsapp_1 || '';
+          document.getElementById('cfg-ws2').value = data.whatsapp_2 || '';
+          document.getElementById('cfg-alias').value = data.alias || '';
+          document.getElementById('cfg-titular').value = data.titular || '';
+        }
+      } catch (err) {
+        console.error("Error al cargar la configuración:", err);
       }
     }
 
-    // SUBIR IMAGEN A SUPABASE STORAGE
-    async function subirImagenASupabase(file, carpeta = 'productos') {
-      if (!file) return null;
-      try {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${carpeta}/${Date.now()}.${fileExt}`;
-        
-        const { data, error } = await db.storage
-          .from('imagenes-productos')
-          .upload(fileName, file, { upsert: true });
+    async function guardarConfiguracion() {
+      const msgElem = document.getElementById('cfg-msg');
+      const datos = {
+        nombre: document.getElementById('cfg-nombre').value.trim(),
+        whatsapp_1: document.getElementById('cfg-ws1').value.trim(),
+        whatsapp_2: document.getElementById('cfg-ws2').value.trim(),
+        alias: document.getElementById('cfg-alias').value.trim(),
+        titular: document.getElementById('cfg-titular').value.trim()
+      };
 
-        if (error) {
-          console.error("Error en Storage:", error);
-          alert("Error al subir la imagen a Supabase Storage.");
-          return null;
+      try {
+        let error;
+        if (configActualId) {
+          const res = await _supabaseClient.from('configuracion').update(datos).eq('id', configActualId);
+          error = res.error;
+        } else {
+          const res = await _supabaseClient.from('configuracion').insert([datos]);
+          error = res.error;
         }
 
-        const { data: urlData } = db.storage
-          .from('imagenes-productos')
-          .getPublicUrl(fileName);
+        if (error) throw error;
 
-        return urlData.publicUrl;
+        msgElem.textContent = "✓ Configuración guardada exitosamente.";
+        msgElem.className = "text-xs text-center font-semibold text-emerald-600 pt-1";
+        msgElem.classList.remove('hidden');
+        setTimeout(() => msgElem.classList.add('hidden'), 3000);
+
       } catch (err) {
-        console.error(err);
-        return null;
+        alert("Error guardando la configuración: " + err.message);
       }
     }
 
-    async function guardarProducto(e) {
-      e.preventDefault();
-      const btn = document.getElementById('btn-guardar-prod');
-      btn.disabled = true;
-      btn.textContent = '⏳ Guardando...';
+    // --- CARGAR Y RENDERIZAR PRODUCTOS ---
+    async function cargarProductosAdmin() {
+      try {
+        const { data, error } = await _supabaseClient.from('productos').select('*').order('id', { ascending: false });
+        if (error) throw error;
 
-      const nombre = document.getElementById('prod-nombre').value;
+        listaProductos = data || [];
+        const container = document.getElementById('lista-admin-productos');
+        container.innerHTML = '';
+
+        if (listaProductos.length === 0) {
+          container.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">No hay productos registrados.</p>';
+          return;
+        }
+
+        listaProductos.forEach(p => {
+          container.innerHTML += `
+            <div class="flex items-center justify-between p-3 border rounded-xl bg-gray-50 gap-3">
+              <img src="${p.imagen_url || 'https://via.placeholder.com/80'}" class="w-12 h-12 rounded-lg object-cover bg-gray-200">
+              <div class="flex-1">
+                <h3 class="font-bold text-sm text-gray-800">${p.nombre}</h3>
+                <p class="text-xs text-gray-500">${p.categoria || 'Sin categoría'} - <span class="font-bold text-emerald-600">$${p.precio}</span></p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="prepararEdicion(${p.id})" class="p-2 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold rounded-lg">✏️</button>
+                <button onclick="eliminarProducto(${p.id})" class="p-2 text-xs bg-red-100 hover:bg-red-200 text-red-700 font-bold rounded-lg">🗑️</button>
+              </div>
+            </div>
+          `;
+        });
+      } catch (err) {
+        console.error("Error al cargar productos:", err);
+      }
+    }
+
+    // --- CREAR Y EDITAR PRODUCTO ---
+    async function guardarProducto() {
+      const id = document.getElementById('prod-id').value;
+      const nombre = document.getElementById('prod-nombre').value.trim();
       const precio = parseFloat(document.getElementById('prod-precio').value);
-      const categoria = document.getElementById('prod-categoria').value;
+      const categoria = document.getElementById('prod-categoria').value.trim();
       const descripcion = document.getElementById('prod-descripcion').value.trim();
-      const fileInput = document.getElementById('prod-imagen');
-      
-      let imagen_url = null;
-      if (fileInput.files.length > 0) {
-        imagen_url = await subirImagenASupabase(fileInput.files[0], 'productos');
-      }
+      const imagen_url = document.getElementById('prod-imagen').value.trim();
 
-      const { error } = await db.from('productos').insert([{
-        nombre,
-        precio,
-        categoria,
-        descripcion,
-        imagen_url,
-        disponible: true
-      }]);
-
-      if (error) {
-        alert("Error al guardar el producto: " + JSON.stringify(error));
-      } else {
-        document.getElementById('form-producto').reset();
-        cargarListaProductos();
-      }
-
-      btn.disabled = false;
-      btn.textContent = '+ Guardar Producto';
-    }
-
-    async function cargarListaProductos() {
-      const contenedor = document.getElementById('lista-productos');
-      const { data: productos, error } = await db.from('productos').select('*').order('id', { ascending: false });
-
-      if (error || !productos || productos.length === 0) {
-        contenedor.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">No hay productos cargados todavía.</p>';
+      if (!nombre || isNaN(precio)) {
+        alert("Por favor, completa al menos el nombre y el precio del producto.");
         return;
       }
 
-      contenedor.innerHTML = productos.map(p => `
-        <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-200 gap-2 ${!p.disponible ? 'opacity-60 bg-gray-100' : ''}">
-          <div class="flex items-center gap-3">
-            ${p.imagen_url 
-              ? `<img src="${p.imagen_url}" class="w-12 h-12 object-cover rounded-md">`
-              : `<div class="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center text-xs">🍽️</div>`
-            }
-            <div>
-              <div class="flex items-center gap-1.5">
-                <p class="font-bold text-xs text-gray-800">${p.nombre}</p>
-                ${!p.disponible ? '<span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-1.5 py-0.5 rounded">Pausado</span>' : ''}
-              </div>
-              <p class="text-xs text-gray-500">$${p.precio} | <span class="text-gray-400">${p.categoria}</span></p>
-              ${p.descripcion ? `<p class="text-[11px] text-gray-400 line-clamp-1 mt-0.5">${p.descripcion}</p>` : ''}
-            </div>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <button onclick="toggleEstadoProducto(${p.id}, ${p.disponible})" class="text-xs ${p.disponible ? 'bg-amber-100 hover:bg-amber-200 text-amber-800' : 'bg-emerald-100 hover:bg-emerald-200 text-emerald-800'} px-2.5 py-1.5 rounded-lg font-bold transition-colors">
-              ${p.disponible ? '⏸️ Pausar' : '▶️ Activar'}
-            </button>
-            <button onclick="eliminarProducto(${p.id})" class="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-2 py-1.5 rounded-lg font-bold">
-              🗑️
-            </button>
-          </div>
-        </div>
-      `).join('');
-    }
+      const datosProd = { nombre, precio, categoria, descripcion, imagen_url };
 
-    async function toggleEstadoProducto(id, estadoActual) {
-      const { error } = await db.from('productos')
-        .update({ disponible: !estadoActual })
-        .eq('id', id);
+      try {
+        if (id) {
+          await _supabaseClient.from('productos').update(datosProd).eq('id', id);
+        } else {
+          await _supabaseClient.from('productos').insert([datosProd]);
+        }
 
-      if (error) {
-        alert("Error al cambiar el estado del producto: " + JSON.stringify(error));
-      } else {
-        cargarListaProductos();
+        limpiarFormularioProducto();
+        await cargarProductosAdmin();
+      } catch (err) {
+        alert("Error al guardar el producto: " + err.message);
       }
     }
 
+    function prepararEdicion(id) {
+      const p = listaProductos.find(item => item.id === id);
+      if (!p) return;
+
+      document.getElementById('prod-id').value = p.id;
+      document.getElementById('prod-nombre').value = p.nombre || '';
+      document.getElementById('prod-precio').value = p.precio || '';
+      document.getElementById('prod-categoria').value = p.categoria || '';
+      document.getElementById('prod-descripcion').value = p.descripcion || '';
+      document.getElementById('prod-imagen').value = p.imagen_url || '';
+
+      document.getElementById('form-title').textContent = "✏️ Editar Producto";
+      document.getElementById('btn-cancelar').classList.remove('hidden');
+      window.scrollTo({ top: 300, behavior: 'smooth' });
+    }
+
+    function limpiarFormularioProducto() {
+      document.getElementById('prod-id').value = '';
+      document.getElementById('prod-nombre').value = '';
+      document.getElementById('prod-precio').value = '';
+      document.getElementById('prod-categoria').value = '';
+      document.getElementById('prod-descripcion').value = '';
+      document.getElementById('prod-imagen').value = '';
+
+      document.getElementById('form-title').textContent = "🍔 Agregar Nuevo Producto";
+      document.getElementById('btn-cancelar').classList.add('hidden');
+    }
+
+    // --- ELIMINAR PRODUCTO ---
     async function eliminarProducto(id) {
-      if (!confirm("¿Seguro que deseas eliminar este producto?")) return;
-      await db.from('productos').delete().eq('id', id);
-      cargarListaProductos();
-    }
+      if (!confirm("¿Estás seguro de que deseas eliminar este producto?")) return;
 
-    async function cargarConfiguracionAdmin() {
-      const { data } = await db.from('configuracion').select('*').single();
-      if (data) {
-        document.getElementById('cfg-abierto').value = data.abierto ? "true" : "false";
-        document.getElementById('cfg-nombre').value = data.nombre || '';
-        document.getElementById('cfg-whatsapp').value = data.whatsapp || '';
-        document.getElementById('cfg-whatsapp-2').value = data.whatsapp_2 || '';
-        document.getElementById('cfg-mp-alias').value = data.mp_alias || '';
-        document.getElementById('cfg-mp-titular').value = data.mp_titular || '';
-        if (data.tema_color) document.getElementById('cfg-tema-color').value = data.tema_color;
-        logoUrlActual = data.logo_url || '';
+      try {
+        await _supabaseClient.from('productos').delete().eq('id', id);
+        await cargarProductosAdmin();
+      } catch (err) {
+        alert("Error al eliminar el producto: " + err.message);
       }
-    }
-
-    async function guardarConfiguracion(e) {
-      e.preventDefault();
-      const btn = document.getElementById('btn-guardar-cfg');
-      btn.disabled = true;
-      btn.textContent = '⏳ Guardando...';
-
-      const abierto = document.getElementById('cfg-abierto').value === 'true';
-      const nombre = document.getElementById('cfg-nombre').value;
-      const whatsapp = document.getElementById('cfg-whatsapp').value;
-      const whatsapp_2 = document.getElementById('cfg-whatsapp-2').value;
-      const mp_alias = document.getElementById('cfg-mp-alias').value;
-      const mp_titular = document.getElementById('cfg-mp-titular').value;
-      const tema_color = document.getElementById('cfg-tema-color').value;
-
-      const logoFile = document.getElementById('cfg-logo-file').files[0];
-      let logo_url = logoUrlActual;
-
-      if (logoFile) {
-        const nuevaUrl = await subirImagenASupabase(logoFile, 'logos');
-        if (nuevaUrl) logo_url = nuevaUrl;
-      }
-
-      const { error } = await db.from('configuracion').upsert({
-        id: 1,
-        abierto,
-        nombre,
-        whatsapp,
-        whatsapp_2,
-        mp_alias,
-        mp_titular,
-        tema_color,
-        logo_url
-      });
-
-      if (error) {
-        alert("Error al actualizar los ajustes: " + JSON.stringify(error));
-      } else {
-        alert("¡Ajustes del local guardados con éxito!");
-      }
-
-      btn.disabled = false;
-      btn.textContent = '💾 Guardar Cambios';
     }
   </script>
 </body>
