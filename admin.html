@@ -11,7 +11,7 @@
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans pb-12">
 
-  <!-- MODAL DE LOGIN (SE OCULTA AL INICIAR SESIÓN) -->
+  <!-- MODAL DE LOGIN -->
   <div id="modal-login" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
     <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl space-y-4">
       <div class="text-center space-y-1">
@@ -53,7 +53,7 @@
     <!-- SECCIÓN 1: CONFIGURACIÓN DEL NEGOCIO, PAGOS Y DISEÑO -->
     <section class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 space-y-4">
       <h2 class="font-bold text-base text-gray-800 flex items-center gap-2 border-b pb-2">
-        <span>🏪 Datos del Negocio, Pagos y Diseño</span>
+        <span>🏪 Datos del Negocio, Pagos y Envío</span>
       </h2>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -68,6 +68,11 @@
             <option value="true">🟢 Abierto (Aceptando pedidos)</option>
             <option value="false">🔴 Cerrado (Local no disponible)</option>
           </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Costo Envío / Delivery ($)</label>
+          <input type="number" id="cfg-delivery" placeholder="Ej: 500" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
         </div>
 
         <div>
@@ -90,7 +95,7 @@
           <input type="text" id="cfg-titular" placeholder="Ej: Juan Pérez / Pere y El Flaco SRL" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
         </div>
 
-        <!-- LOGO DEL LOCAL (Subir archivo o URL) -->
+        <!-- LOGO DEL LOCAL -->
         <div class="sm:col-span-2">
           <label class="block text-xs font-semibold text-gray-700 mb-1">🖼️ Logo del Local (Sube una imagen desde tu dispositivo)</label>
           <input type="hidden" id="cfg-logo">
@@ -107,7 +112,6 @@
             <input type="color" id="cfg-color" value="#e11d48" class="w-12 h-10 p-1 border rounded-xl cursor-pointer bg-white">
             <input type="text" id="cfg-color-hex" value="#e11d48" readonly class="w-24 p-2 border rounded-xl text-xs text-center font-mono font-bold bg-gray-50 text-gray-600">
             
-            <!-- Paleta rápida de colores -->
             <div class="flex items-center gap-1.5 ml-auto">
               <button type="button" onclick="seleccionarColor('#e11d48')" class="w-6 h-6 rounded-full bg-rose-600 border border-black/10"></button>
               <button type="button" onclick="seleccionarColor('#16a34a')" class="w-6 h-6 rounded-full bg-green-600 border border-black/10"></button>
@@ -188,11 +192,9 @@
 
   <!-- LÓGICA JAVASCRIPT ADMIN -->
   <script>
-    // --- CREDENCIALES DE ACCESO (Modifícalas aquí si deseas) ---
     const ADMIN_USER = "admin";
-    const ADMIN_PASS = "104289";
+    const ADMIN_PASS = "1234";
 
-    // --- CONFIGURACIÓN DE SUPABASE ---
     const SUPABASE_URL = 'https://ahyvmupqzgcrxrbvjzsb.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFoeXZtdXBxemdjcnhyYnZqenNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1MTg5MzcsImV4cCI6MjEwODA5NDkzN30.oBfYP5Pf0hXDymQtMqE2pFbWCVllRKWcYGew0iuca4Q';
 
@@ -203,7 +205,6 @@
     let configActualId = null;
 
     document.addEventListener('DOMContentLoaded', async () => {
-      // Verificar si ya inició sesión en esta pestaña
       if (sessionStorage.getItem('admin_logueado') === 'true') {
         document.getElementById('modal-login').classList.add('hidden');
       }
@@ -214,21 +215,10 @@
         inputHex.value = e.target.value;
       });
 
-      try {
-        await cargarConfiguracionAdmin();
-      } catch (e) {
-        console.error("Error al inicializar configuración:", e);
-      }
-
-      try {
-        await cargarProductosAdmin();
-      } catch (e) {
-        console.error("Error al inicializar productos:", e);
-        document.getElementById('lista-admin-productos').innerHTML = '<p class="text-center text-red-500 text-xs py-4">Error al cargar la lista de productos.</p>';
-      }
+      try { await cargarConfiguracionAdmin(); } catch (e) { console.error(e); }
+      try { await cargarProductosAdmin(); } catch (e) { console.error(e); }
     });
 
-    // --- SISTEMA DE LOGIN ---
     function verificarLogin() {
       const userInput = document.getElementById('login-user').value.trim();
       const passInput = document.getElementById('login-pass').value.trim();
@@ -253,7 +243,6 @@
       document.getElementById('cfg-color-hex').value = hex;
     }
 
-    // --- FUNCIÓN PARA SUBIR ARCHIVOS A SUPABASE STORAGE ---
     async function subirImagenASupabase(file, carpeta = 'general') {
       try {
         const fileExt = file.name.split('.').pop();
@@ -272,13 +261,11 @@
 
         return publicData.publicUrl;
       } catch (err) {
-        console.error("Error al subir imagen:", err);
         alert("Error al subir la imagen: " + err.message);
         return null;
       }
     }
 
-    // --- CARGAR Y GUARDAR CONFIGURACIÓN ---
     async function cargarConfiguracionAdmin() {
       try {
         const { data, error } = await _supabaseClient.from('configuracion').select('*').limit(1).maybeSingle();
@@ -290,14 +277,10 @@
           document.getElementById('cfg-alias').value = data.alias || '';
           document.getElementById('cfg-titular').value = data.titular || '';
           document.getElementById('cfg-logo').value = data.logo_url || '';
+          document.getElementById('cfg-delivery').value = data.costo_delivery || 0;
           
           if (data.abierto !== undefined && data.abierto !== null) {
             document.getElementById('cfg-abierto').value = data.abierto.toString();
-          }
-          
-          if (data.logo_url) {
-            document.getElementById('logo-status').textContent = "✓ Logo actual cargado correctamente.";
-            document.getElementById('logo-status').className = "text-[11px] text-emerald-600 font-semibold mt-1";
           }
           
           const colorGuardado = data.color_primario || data.color || '#e11d48';
@@ -313,6 +296,7 @@
       const colorSeleccionado = document.getElementById('cfg-color').value;
       const fileInput = document.getElementById('file-logo');
       const estadoAbierto = document.getElementById('cfg-abierto').value === 'true';
+      const costoDelivery = parseFloat(document.getElementById('cfg-delivery').value) || 0;
 
       let logoUrl = document.getElementById('cfg-logo').value.trim();
 
@@ -336,33 +320,32 @@
         titular: document.getElementById('cfg-titular').value.trim(),
         logo_url: logoUrl,
         color_primario: colorSeleccionado,
-        abierto: estadoAbierto
+        abierto: estadoAbierto,
+        costo_delivery: costoDelivery
       };
 
       try {
-        let error;
+        let res;
         if (configActualId) {
-          const res = await _supabaseClient.from('configuracion').update(datos).eq('id', configActualId);
-          error = res.error;
+          res = await _supabaseClient.from('configuracion').update(datos).eq('id', configActualId);
         } else {
-          const res = await _supabaseClient.from('configuracion').insert([datos]);
-          error = res.error;
+          res = await _supabaseClient.from('configuracion').insert([datos]);
         }
 
-        if (error && (error.message.includes('abierto') || error.message.includes('color_primario') || error.message.includes('logo_url') || error.message.includes('column'))) {
-          delete datos.abierto;
-          delete datos.color_primario;
-          delete datos.logo_url;
+        if (res.error) {
+          if (res.error.message.includes('costo_delivery')) delete datos.costo_delivery;
+          if (res.error.message.includes('abierto')) delete datos.abierto;
+          if (res.error.message.includes('color_primario')) delete datos.color_primario;
+          if (res.error.message.includes('logo_url')) delete datos.logo_url;
+
           if (configActualId) {
-            const resRetry = await _supabaseClient.from('configuracion').update(datos).eq('id', configActualId);
-            error = resRetry.error;
+            res = await _supabaseClient.from('configuracion').update(datos).eq('id', configActualId);
           } else {
-            const resRetry = await _supabaseClient.from('configuracion').insert([datos]);
-            error = resRetry.error;
+            res = await _supabaseClient.from('configuracion').insert([datos]);
           }
-        }
 
-        if (error) throw error;
+          if (res.error) throw res.error;
+        }
 
         msgElem.textContent = "✓ Configuración guardada exitosamente.";
         msgElem.className = "text-xs text-center font-semibold text-emerald-600 pt-1";
@@ -374,7 +357,6 @@
       }
     }
 
-    // --- CARGAR Y RENDERIZAR PRODUCTOS ---
     async function cargarProductosAdmin() {
       try {
         const { data, error } = await _supabaseClient.from('productos').select('*').order('id', { ascending: false });
@@ -390,7 +372,7 @@
         }
 
         listaProductos.forEach(p => {
-          const estaPausado = p.pausado === true;
+          const estaPausado = p.pausado === true || p.pausado === 'true' || p.pausado === 1;
           const estadoClase = estaPausado ? 'bg-amber-50 border-amber-200 opacity-75' : 'bg-gray-50';
           const botonPausarTexto = estaPausado ? '🟢 Activar' : '⏸️ Pausar';
           const botonPausarClase = estaPausado ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-amber-100 text-amber-700 hover:bg-amber-200';
@@ -411,12 +393,10 @@
           `;
         });
       } catch (err) {
-        console.error("Error al cargar productos:", err);
         document.getElementById('lista-admin-productos').innerHTML = '<p class="text-center text-red-500 text-xs py-4">Error al conectar con la tabla de productos.</p>';
       }
     }
 
-    // --- PAUSAR / ACTIVAR PRODUCTO ---
     async function togglePausarProducto(id, nuevoEstado) {
       try {
         const { error } = await _supabaseClient
@@ -425,20 +405,15 @@
           .eq('id', id);
 
         if (error) {
-          if (error.message.includes('column') || error.message.includes('pausado')) {
-            alert("Atención: Asegúrate de tener la columna 'pausado' en tu tabla 'productos' de Supabase.");
-          } else {
-            throw error;
-          }
+          alert("Error al actualizar el estado del producto: " + error.message);
+        } else {
+          await cargarProductosAdmin();
         }
-
-        await cargarProductosAdmin();
       } catch (err) {
-        alert("Error al actualizar el estado del producto: " + err.message);
+        alert("Error: " + err.message);
       }
     }
 
-    // --- CREAR Y EDITAR PRODUCTO ---
     async function guardarProducto() {
       const id = document.getElementById('prod-id').value;
       const nombre = document.getElementById('prod-nombre').value.trim();
@@ -455,13 +430,9 @@
       let imagenUrl = document.getElementById('prod-imagen').value.trim();
 
       if (fileInput.files.length > 0) {
-        document.getElementById('prod-img-status').textContent = "⌛ Subiendo imagen de producto...";
-        document.getElementById('prod-img-status').className = "text-[11px] text-blue-600 font-semibold mt-1";
-        
+        document.getElementById('prod-img-status').textContent = "⌛ Subiendo imagen...";
         const uploadedUrl = await subirImagenASupabase(fileInput.files[0], 'productos');
-        if (uploadedUrl) {
-          imagenUrl = uploadedUrl;
-        }
+        if (uploadedUrl) imagenUrl = uploadedUrl;
       }
 
       const datosProd = { nombre, precio, categoria, descripcion, imagen_url: imagenUrl };
@@ -493,7 +464,6 @@
 
       document.getElementById('form-title').textContent = "✏️ Editar Producto";
       document.getElementById('file-producto').value = '';
-      document.getElementById('prod-img-status').textContent = p.imagen_url ? "✓ Producto con imagen cargada." : "Selecciona una foto nueva si deseas cambiarla.";
       document.getElementById('btn-cancelar').classList.remove('hidden');
       window.scrollTo({ top: 300, behavior: 'smooth' });
     }
@@ -506,16 +476,13 @@
       document.getElementById('prod-descripcion').value = '';
       document.getElementById('prod-imagen').value = '';
       document.getElementById('file-producto').value = '';
-      document.getElementById('prod-img-status').textContent = "Selecciona una foto para subirla al servidor.";
 
       document.getElementById('form-title').textContent = "🍔 Agregar Nuevo Producto";
       document.getElementById('btn-cancelar').classList.add('hidden');
     }
 
-    // --- ELIMINAR PRODUCTO ---
     async function eliminarProducto(id) {
       if (!confirm("¿Estás seguro de que deseas eliminar este producto?")) return;
-
       try {
         await _supabaseClient.from('productos').delete().eq('id', id);
         await cargarProductosAdmin();
