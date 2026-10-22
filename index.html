@@ -9,16 +9,14 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="Menú Digital - PERE Y EL FLACO">
   <meta property="og:description" content="Haz tu pedido rápido y fácil por WhatsApp. ¡Conoce nuestro menú!">
-    <meta property="og:url" content="https://nexosp.github.io/Menu-digital/">
-  
-  <!-- LOGO DIRECTO DE SUPABASE -->
-  <meta property="og:image" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792629512777.jpg">
-  <meta property="og:image:secure_url" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792629512777.jpg">
+  <meta property="og:url" content="https://nexosp.github.io/Menu-digital/">
+
+  <!-- LOGO DIRECTO DE SUPABASE (JPG optimizado) -->
+  <meta property="og:image" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png">
+  <meta property="og:image:secure_url" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png">
   <meta property="og:image:type" content="image/png">
-  <meta property="og:image:width" content="300">
-  <meta property="og:image:height" content="300">
-
-
+  <meta property="og:image:width" content="500">
+  <meta property="og:image:height" content="500">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -34,34 +32,40 @@
     .border-custom-primary { border-color: var(--primary-color); }
   </style>
 </head>
+<body class="bg-gray-50 text-gray-800 font-sans pb-24">
 
-<body class="bg-gray-100 min-h-screen pb-24 text-gray-800">
-
-  <!-- ENCABEZADO Y LOGO DE LA EMPRESA -->
-  <header id="header-bg" class="bg-custom-primary text-white py-6 px-4 shadow-md transition-colors duration-300">
-    <div class="max-w-md mx-auto flex items-center justify-between">
+  <!-- HEADER / CABECERA -->
+  <header class="bg-white shadow-sm sticky top-0 z-40">
+    <div class="max-w-md mx-auto p-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div id="logo-container" class="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-sm flex-shrink-0">
-          <span id="logo-fallback" class="text-2xl">🍔</span>
-          <img id="logo-img" src="" alt="Logo" class="w-full h-full object-cover hidden">
-        </div>
-        <div class="overflow-hidden">
-          <h1 id="comercio-nombre" class="text-xl font-bold leading-tight truncate">Cargando...</h1>
-          <p class="text-xs text-white/90 truncate">Haz tu pedido rápido por WhatsApp</p>
+        <img id="logo-header" src="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png" alt="Logo" class="w-12 h-12 rounded-full object-cover border border-gray-100 shadow-sm">
+        <div>
+          <h1 id="nombre-negocio" class="font-bold text-lg text-gray-800 leading-tight">PERE Y EL FLACO</h1>
+          <p class="text-xs text-emerald-600 font-medium flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Abierto ahora
+          </p>
         </div>
       </div>
-      <span id="estado-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-white text-gray-800 shadow-sm flex-shrink-0">
-        Cargando...
-      </span>
     </div>
   </header>
 
   <!-- CONTENIDO PRINCIPAL -->
-  <main class="max-w-md mx-auto px-4 mt-6 space-y-6">
+  <main class="max-w-md mx-auto p-4 space-y-6">
 
-    <!-- 1. DATOS DE ENTREGA -->
+    <!-- FILTRO DE CATEGORÍAS -->
+    <div id="categorias-container" class="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <button onclick="filtrarCategoria('todas')" class="cat-btn bg-custom-primary text-white text-xs px-4 py-2 rounded-full font-medium whitespace-nowrap shadow-sm">Todas</button>
+    </div>
+
+    <!-- LISTA DE PRODUCTOS -->
+    <div id="productos-container" class="space-y-3">
+      <p class="text-center text-sm text-gray-500 py-8">Cargando menú...</p>
+    </div>
+
+    <!-- SECCIÓN DE DATOS DE ENTREGA -->
     <section class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 space-y-3">
-      <h2 class="font-bold text-gray-700 text-sm tracking-wide">1. TUS DATOS DE ENTREGA</h2>
+      <h2 class="font-bold text-gray-700 text-sm tracking-wide uppercase">1. Datos de Entrega</h2>
+      
       <input type="text" id="cliente-nombre" placeholder="Tu Nombre completo" class="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-400">
       
       <select id="tipo-entrega" onchange="toggleDireccion()" class="w-full p-2.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red-400">
@@ -69,333 +73,186 @@
         <option value="Retiro">🛍️ Retiro en el Local</option>
       </select>
 
-      <input type="text" id="cliente-direccion" placeholder="Dirección completa y altura" class="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-400">
-    </section>
-
-    <!-- 2. CATÁLOGO DE PRODUCTOS -->
-    <section class="space-y-4">
-      <h2 class="font-bold text-gray-700 text-sm tracking-wide">2. ELIGE TUS PRODUCTOS</h2>
-      
-      <div id="loading-menu" class="text-center py-10 text-gray-400 text-sm">
-        <p>🔄 Cargando menú...</p>
+      <div id="campo-direccion" class="space-y-2">
+        <input type="text" id="cliente-direccion" placeholder="Dirección completa y altura" class="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-400">
+        
+        <!-- Botón GPS para el Delivery -->
+        <button type="button" onclick="obtenerUbicacionGPS()" class="w-full py-2.5 px-3 bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium text-xs rounded-lg flex items-center justify-center gap-2 border border-blue-200 transition-colors">
+          <span>📍 Adjuntar mi ubicación GPS exacta</span>
+        </button>
+        <p id="gps-status" class="text-[11px] text-emerald-600 font-medium hidden">✓ Ubicación GPS capturada correctamente</p>
       </div>
 
-      <div id="menu-categorias" class="space-y-6 hidden">
-        <!-- Los productos agrupados por categoría se muestran aquí -->
-      </div>
+      <!-- FORMA DE PAGO -->
+      <h2 class="font-bold text-gray-700 text-sm tracking-wide uppercase pt-2">2. Forma de Pago</h2>
+      <select id="forma-pago" class="w-full p-2.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red-400">
+        <option value="Efectivo">💵 Efectivo</option>
+        <option value="Transferencia">📱 Transferencia bancaria / Alias</option>
+      </select>
     </section>
 
   </main>
 
-  <!-- MODAL FLOTANTE DE DETALLE DE PRODUCTO ADAPTATIVO -->
-  <div id="modal-detalle" class="fixed inset-0 bg-black/60 z-50 backdrop-blur-sm flex items-center justify-center p-4 hidden transition-opacity">
-    <div class="bg-white w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl space-y-0 max-h-[90vh] flex flex-col relative animate-in fade-in zoom-in-95 duration-200">
-      
-      <!-- BOTÓN CERRAR (X) -->
-      <button onclick="cerrarModalDetalle()" class="absolute top-3 right-3 bg-gray-900/70 hover:bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-colors z-10 shadow-md">
-        ✕
-      </button>
-
-      <!-- FOTO ADAPTATIVA EN MODAL -->
-      <div id="modal-img-container" class="w-full h-52 bg-gray-100 flex items-center justify-center overflow-hidden relative flex-shrink-0">
-        <span id="modal-fallback-icon" class="text-5xl">🍽️</span>
-        <img id="modal-img" src="" class="w-full h-full object-cover hidden">
-      </div>
-
-      <!-- CONTENIDO MODAL -->
-      <div class="p-5 space-y-4 overflow-y-auto flex-1">
-        <div>
-          <div class="flex items-start justify-between gap-2">
-            <h3 id="modal-titulo" class="font-bold text-lg text-gray-800 leading-tight"></h3>
-            <p id="modal-precio" class="text-lg font-bold text-custom-primary flex-shrink-0"></p>
-          </div>
-          <span id="modal-categoria" class="text-[11px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-medium inline-block mt-1"></span>
-        </div>
-
-        <div>
-          <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1">Descripción</p>
-          <p id="modal-descripcion" class="text-xs text-gray-600 leading-relaxed bg-gray-50 p-3 rounded-lg border border-gray-100 break-words"></p>
-        </div>
-      </div>
-
-      <!-- CONTROLES CARRITO EN FOOTER DEL MODAL -->
-      <div class="p-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between flex-shrink-0">
-        <span class="text-xs font-bold text-gray-600">Cantidad:</span>
-        <div id="modal-controles" class="flex items-center gap-3">
-          <!-- Se inserta dinámicamente -->
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- BARRA FLOTANTE DEL CARRITO -->
-  <div id="cart-bar" class="fixed bottom-4 left-0 right-0 max-w-md mx-auto px-4 hidden z-40">
-    <div class="bg-gray-900 text-white p-3.5 rounded-xl shadow-xl flex items-center justify-between gap-3 border border-gray-800">
+  <!-- BARRA INFERIOR DEL CARRITO FIJA -->
+  <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-3 shadow-lg z-50">
+    <div class="max-w-md mx-auto flex items-center justify-between gap-3">
       <div>
-        <p id="cart-count" class="text-xs text-gray-400">0 productos seleccionados</p>
-        <p id="cart-total" class="text-base font-bold text-white">$0</p>
+        <p class="text-xs text-gray-500">Total a Pagar</p>
+        <p id="total-pedido" class="font-bold text-xl text-gray-800">$0</p>
       </div>
-      <button onclick="enviarPedidoWhatsApp()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg text-xs flex items-center gap-2 transition-all active:scale-95">
+      <button onclick="enviarPedidoWhatsApp()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl text-sm flex items-center gap-2 shadow-md transition-all">
         <span>Enviar Pedido</span>
-        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.892-1.99-.001-3.951-.5-5.688-1.448l-6.205 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12.031 0c-6.627 0-12 5.373-12 12 0 2.159.572 4.187 1.57 5.951l-1.601 5.849 6.012-1.576c1.716.936 3.682 1.455 5.769 1.455 6.627 0 12-5.373 12-12 0-6.627-5.373-12-12-12zm6.657 16.924c-.281.79-1.385 1.448-2.274 1.637-.607.129-1.399.232-4.062-.868-3.411-1.408-5.612-4.887-5.782-5.114-.17-.227-1.386-1.847-1.386-3.52 0-1.674.878-2.497 1.19-2.838.312-.341.681-.426.908-.426.227 0 .454.002.653.011.213.009.497-.081.778.595.284.682.966 2.358 1.05 2.529.085.17.142.369.028.596-.114.227-.17.369-.341.568-.17.199-.356.444-.509.596-.17.17-.347.355-.149.696.199.341.884 1.459 1.898 2.362 1.306 1.163 2.408 1.523 2.749 1.694.341.17.54.142.739-.085.199-.227.852-.994 1.079-1.335.227-.341.454-.284.767-.17.312.114 1.989.938 2.33 1.108.341.17.568.256.653.398.085.142.085.824-.196 1.614z"/></svg>
       </button>
     </div>
   </div>
-
-  <!-- PIE DE PÁGINA SUTIL DE MARCA NEXOSERV -->
-  <footer class="w-full py-4 bg-gray-50 border-t border-gray-200 mt-12 text-center">
-    <a href="https://wa.me/5491122334455?text=Hola%20NexoServ,%20me%20interesa%20un%20menú%20digital%20para%20mi%20comercio" 
-       target="_blank" 
-       rel="noopener noreferrer"
-       class="inline-flex items-center justify-center gap-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors">
-      <span>Desarrollado por <strong class="font-medium text-gray-500">NexoServ</strong></span>
-      <svg class="w-3.5 h-3.5 fill-emerald-500 opacity-80" viewBox="0 0 24 24">
-        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.892-1.99-.001-3.951-.5-5.688-1.448l-6.205 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
-      </svg>
-    </a>
-  </footer>
 
   <!-- LÓGICA JAVASCRIPT -->
   <script>
-    // ⚠️ REEMPLAZAR CON TUS CLAVES REALES DE SUPABASE
+    // --- CONFIGURACIÓN DE SUPABASE ---
     const SUPABASE_URL = 'https://ahyvmupqzgcrxrbvjzsb.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_zXDGyQ8Sphn0F1gIr7s9jQ_pOOKf08w';
-    
-    const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const SUPABASE_ANON_KEY = 'TU_SUPABASE_ANON_KEY_AQUI'; // Reemplazar con tu Anon Key de Supabase
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    let productos = [];
     let carrito = {};
-    let productosCache = {};
-    let configNegocio = {
-      abierto: true,
-      whatsapp: '',
-      whatsapp_2: '',
-      nombre: 'Mi Comercio',
-      mp_alias: '',
-      mp_titular: '',
-      tema_color: '#ef4444'
-    };
+    let ubicacionGPSUrl = '';
+    let configNegocio = { whatsapp_1: '', whatsapp_2: '', nombre: 'PERE Y EL FLACO' };
 
-    document.addEventListener('DOMContentLoaded', () => {
-      cargarConfiguracion();
-      cargarProductos();
+    // --- INICIALIZACIÓN ---
+    document.addEventListener('DOMContentLoaded', async () => {
+      await cargarConfiguracion();
+      await cargarProductos();
     });
 
     async function cargarConfiguracion() {
-      try {
-        const { data, error } = await db.from('configuracion').select('*').single();
-        if (data && !error) {
-          configNegocio = { ...configNegocio, ...data };
-          aplicarConfiguracion();
-        }
-      } catch (e) {
-        console.warn("Error cargando configuración:", e);
+      const { data } = await supabase.from('configuracion').select('*').single();
+      if (data) {
+        configNegocio = data;
+        if (data.nombre) document.getElementById('nombre-negocio').textContent = data.nombre;
       }
-    }
-
-    function aplicarConfiguracion() {
-      if (configNegocio.tema_color) {
-        document.documentElement.style.setProperty('--primary-color', configNegocio.tema_color);
-      }
-
-      if (configNegocio.nombre) {
-        document.getElementById('comercio-nombre').textContent = configNegocio.nombre;
-        document.title = "Menú Digital - " + configNegocio.nombre;
-        actualizarMetaTag('og:title', "Menú Digital - " + configNegocio.nombre);
-      }
-
-      if (configNegocio.logo_url) {
-        const img = document.getElementById('logo-img');
-        img.src = configNegocio.logo_url;
-        img.classList.remove('hidden');
-        document.getElementById('logo-fallback').classList.add('hidden');
-
-        // Actualizar etiqueta Open Graph dinámicamente para WhatsApp
-        actualizarMetaTag('og:image', configNegocio.logo_url);
-      }
-
-      const badge = document.getElementById('estado-badge');
-      if (configNegocio.abierto) {
-        badge.textContent = '🟢 Abierto';
-        badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 shadow-sm flex-shrink-0';
-      } else {
-        badge.textContent = '🔴 Cerrado';
-        badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800 shadow-sm flex-shrink-0';
-      }
-    }
-
-    function actualizarMetaTag(property, content) {
-      let element = document.querySelector(`meta[property="${property}"]`);
-      if (!element) {
-        element = document.createElement('meta');
-        element.setAttribute('property', property);
-        document.head.appendChild(element);
-      }
-      element.setAttribute('content', content);
     }
 
     async function cargarProductos() {
-      const loading = document.getElementById('loading-menu');
-      const contenedor = document.getElementById('menu-categorias');
-
-      try {
-        const { data: productos, error } = await db.from('productos').select('*').eq('disponible', true);
-
-        if (error || !productos || productos.length === 0) {
-          loading.innerHTML = '<p class="text-gray-500">No hay productos disponibles por el momento.</p>';
-          return;
-        }
-
-        const categorias = {};
-        productos.forEach(p => {
-          productosCache[p.id] = p;
-          const cat = p.categoria || 'General';
-          if (!categorias[cat]) categorias[cat] = [];
-          categorias[cat].push(p);
-        });
-
-        contenedor.innerHTML = '';
-
-        for (const [cat, prods] of Object.entries(categorias)) {
-          const section = document.createElement('div');
-          section.className = 'space-y-3';
-          section.innerHTML = `
-            <h3 class="font-bold text-gray-800 text-base border-b pb-1 border-gray-200">${cat}</h3>
-            <div class="grid gap-3">
-              ${prods.map(p => `
-                <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between gap-3 cursor-pointer hover:border-gray-200 transition-all min-h-[84px]" onclick="abrirModalDetalle(${p.id})">
-                  <div class="flex items-center gap-3 overflow-hidden min-w-0 flex-1">
-                    ${p.imagen_url 
-                      ? `<img src="${p.imagen_url}" class="w-16 h-16 object-cover rounded-lg bg-gray-100 flex-shrink-0">`
-                      : `<div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-xl flex-shrink-0">🍽️</div>`
-                    }
-                    <div class="overflow-hidden min-w-0 flex-1">
-                      <h4 class="font-bold text-gray-800 text-sm truncate">${p.nombre}</h4> <p class="text-custom-primary font-bold text-sm">$${p.precio}</p>${p.descripcion ? `<p class="text-xs text-gray-400 line-clamp-2 break-words mt-0.5 leading-snug">${p.descripcion}</p>` : ''}
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-2 flex-shrink-0 self-center" onclick="event.stopPropagation()">
-                    <button onclick="cambiarCantidad(${p.id}, -1, '${p.nombre.replace(/'/g, "\\'")}', ${p.precio})" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-lg flex items-center justify-center active:scale-90 transition-transform">-</button>
-                    <span id="cant-${p.id}" class="font-bold text-sm text-gray-700 w-4 text-center">${carrito[p.id] ? carrito[p.id].cantidad : 0}</span>
-                    <button onclick="cambiarCantidad(${p.id}, 1, '${p.nombre.replace(/'/g, "\\'")}', ${p.precio})" class="w-8 h-8 rounded-full bg-custom-primary text-white font-bold text-lg flex items-center justify-center active:scale-90 transition-transform">+</button>
-                  </div>
-                </div>
-              `).join('')}
-            </div>
-          `;
-          contenedor.appendChild(section);
-        }
-
-        loading.classList.add('hidden');
-        contenedor.classList.remove('hidden');
-
-      } catch (err) {
-        loading.innerHTML = '<p class="text-red-500">Error al cargar los productos.</p>';
-      }
-    }
-
-    function abrirModalDetalle(id) {
-      const p = productosCache[id];
-      if (!p) return;
-
-      document.getElementById('modal-titulo').textContent = p.nombre;
-      document.getElementById('modal-categoria').textContent = p.categoria || 'General';
-      document.getElementById('modal-precio').textContent = `$${p.precio}`;
-      document.getElementById('modal-descripcion').textContent = p.descripcion || 'Sin descripción detallada disponible.';
-
-      const img = document.getElementById('modal-img');
-      const fallback = document.getElementById('modal-fallback-icon');
-      if (p.imagen_url) {
-        img.src = p.imagen_url;
-        img.classList.remove('hidden');
-        fallback.classList.add('hidden');
-      } else {
-        img.classList.add('hidden');
-        fallback.classList.remove('hidden');
-      }
-
-      actualizarControlesModal(p);
-      document.getElementById('modal-detalle').classList.remove('hidden');
-    }
-
-    function actualizarControlesModal(p) {
-      const cant = carrito[p.id] ? carrito[p.id].cantidad : 0;
-      const controles = document.getElementById('modal-controles');
-      controles.innerHTML = `
-        <button onclick="cambiarCantidad(${p.id}, -1, '${p.nombre.replace(/'/g, "\\'")}', ${p.precio}); actualizarControlesModal(productosCache[${p.id}])" class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xl flex items-center justify-center active:scale-90 transition-transform">-</button>
-        <span class="font-bold text-base text-gray-800 w-6 text-center">${cant}</span>
-        <button onclick="cambiarCantidad(${p.id}, 1, '${p.nombre.replace(/'/g, "\\'")}', ${p.precio}); actualizarControlesModal(productosCache[${p.id}])" class="w-9 h-9 rounded-full bg-custom-primary text-white font-bold text-xl flex items-center justify-center active:scale-90 transition-transform">+</button>
-      `;
-    }
-
-    function cerrarModalDetalle() {
-      document.getElementById('modal-detalle').classList.add('hidden');
-    }
-
-    function cambiarCantidad(id, cambio, nombre, precio) {
-      if (!configNegocio.abierto) {
-        alert("El local se encuentra cerrado en este momento. No se pueden tomar pedidos.");
+      const { data, error } = await supabase.from('productos').select('*');
+      if (error) {
+        document.getElementById('productos-container').innerHTML = '<p class="text-center text-red-500 text-sm">Error al cargar el menú.</p>';
         return;
       }
+      productos = data || [];
+      renderizarProductos(productos);
+    }
+
+    function renderizarProductos(lista) {
+      const container = document.getElementById('productos-container');
+      container.innerHTML = '';
+
+      lista.forEach(p => {
+        const cant = carrito[p.id] ? carrito[p.id].cantidad : 0;
+        container.innerHTML += `
+          <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between gap-3">
+            <img src="${p.imagen_url}" alt="${p.nombre}" class="w-16 h-16 rounded-lg object-cover bg-gray-100">
+            <div class="flex-1">
+              <h3 class="font-bold text-sm text-gray-800">${p.nombre}</h3>
+              <p class="text-xs text-gray-400 line-clamp-1">${p.descripcion || ''}</p>
+              <p class="font-bold text-sm text-custom-primary mt-1">$${p.precio}</p>
+            </div>
+            <div class="flex items-center gap-2 bg-gray-50 p-1 rounded-lg border border-gray-200">
+              <button onclick="cambiarCantidad(${p.id}, -1)" class="w-6 h-6 rounded bg-white font-bold text-gray-600 shadow-sm flex items-center justify-center">-</button>
+              <span id="cant-${p.id}" class="text-xs font-bold w-4 text-center">${cant}</span>
+              <button onclick="cambiarCantidad(${p.id}, 1)" class="w-6 h-6 rounded bg-custom-primary font-bold text-white shadow-sm flex items-center justify-center">+</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function cambiarCantidad(id, cambio) {
+      const prod = productos.find(p => p.id === id);
+      if (!prod) return;
 
       if (!carrito[id]) {
-        carrito[id] = { nombre, precio, cantidad: 0 };
+        carrito[id] = { producto: prod, cantidad: 0 };
       }
 
       carrito[id].cantidad += cambio;
 
       if (carrito[id].cantidad <= 0) {
         delete carrito[id];
-        const elem = document.getElementById(`cant-${id}`);
-        if (elem) elem.textContent = '0';
-      } else {
-        const elem = document.getElementById(`cant-${id}`);
-        if (elem) elem.textContent = carrito[id].cantidad;
       }
 
-      actualizarCarrito();
+      document.getElementById(`cant-${id}`).textContent = carrito[id] ? carrito[id].cantidad : 0;
+      actualizarTotal();
     }
 
-    function actualizarCarrito() {
-      const cartBar = document.getElementById('cart-bar');
-      let totalItems = 0;
-      let totalPrecio = 0;
-
-      for (const id in carrito) {
-        totalItems += carrito[id].cantidad;
-        totalPrecio += carrito[id].cantidad * carrito[id].precio;
-      }
-
-      if (totalItems > 0) {
-        document.getElementById('cart-count').textContent = `${totalItems} producto${totalItems > 1 ? 's' : ''} seleccionado${totalItems > 1 ? 's' : ''}`;
-        document.getElementById('cart-total').textContent = `$${totalPrecio}`;
-        cartBar.classList.remove('hidden');
-      } else {
-        cartBar.classList.add('hidden');
-      }
+    function actualizarTotal() {
+      let total = 0;
+      Object.values(carrito).forEach(item => {
+        total += item.producto.precio * item.cantidad;
+      });
+      document.getElementById('total-pedido').textContent = `$${total}`;
     }
 
     function toggleDireccion() {
       const tipo = document.getElementById('tipo-entrega').value;
-      const inputDir = document.getElementById('cliente-direccion');
+      const campo = document.getElementById('campo-direccion');
       if (tipo === 'Retiro') {
-        inputDir.classList.add('hidden');
+        campo.classList.add('hidden');
       } else {
-        inputDir.classList.remove('hidden');
+        campo.classList.remove('hidden');
       }
     }
 
+    // --- OBTENER GEOLOCALIZACIÓN GPS ---
+    function obtenerUbicacionGPS() {
+      const statusElem = document.getElementById('gps-status');
+      
+      if (!navigator.geolocation) {
+        alert("Tu navegador no soporta geolocalización.");
+        return;
+      }
+
+      statusElem.textContent = "⌛ Obteniendo tu ubicación...";
+      statusElem.className = "text-[11px] text-gray-500 font-medium";
+      statusElem.classList.remove('hidden');
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          
+          ubicacionGPSUrl = `https://maps.google.com/?q=${lat},${lng}`;
+          
+          statusElem.textContent = "✓ ¡Ubicación GPS capturada correctamente!";
+          statusElem.className = "text-[11px] text-emerald-600 font-bold";
+        },
+        (error) => {
+          statusElem.textContent = "❌ No se pudo obtener la ubicación. Por favor, escríbela abajo.";
+          statusElem.className = "text-[11px] text-red-500 font-medium";
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+
+    // --- ENVIAR A WHATSAPP (MULTI-RECEPTOR) ---
     function enviarPedidoWhatsApp() {
       const nombre = document.getElementById('cliente-nombre').value.trim();
       const tipoEntrega = document.getElementById('tipo-entrega').value;
       const direccion = document.getElementById('cliente-direccion').value.trim();
+      const formaPago = document.getElementById('forma-pago').value;
+
+      if (Object.keys(carrito).length === 0) {
+        alert("Tu carrito está vacío. Agrega productos para realizar el pedido.");
+        return;
+      }
 
       if (!nombre) {
-        alert("Por favor ingresa tu nombre completo.");
+        alert("Por favor, ingresa tu nombre.");
         return;
       }
 
       if (tipoEntrega === 'Delivery' && !direccion) {
-        alert("Por favor ingresa tu dirección de entrega.");
+        alert("Por favor, ingresa la dirección de entrega.");
         return;
       }
 
@@ -403,48 +260,34 @@
       mensaje += `-----------------------------------\n`;
       mensaje += `👤 *Cliente:* ${nombre}\n`;
       mensaje += `🚚 *Entrega:* ${tipoEntrega}\n`;
+      
       if (tipoEntrega === 'Delivery') {
         mensaje += `📍 *Dirección:* ${direccion}\n`;
+        if (ubicacionGPSUrl) {
+          mensaje += `🗺️ *Ubicación GPS:* ${ubicacionGPSUrl}\n`;
+        }
       }
-      mensaje += `\n*Detalle del Pedido:*\n`;
+
+      mensaje += `💳 *Forma de Pago:* ${formaPago}\n`;
+      mensaje += `-----------------------------------\n`;
+      mensaje += `*DETALLE DEL PEDIDO:*\n`;
 
       let total = 0;
-      for (const id in carrito) {
-        const subtotal = carrito[id].cantidad * carrito[id].precio;
+      Object.values(carrito).forEach(item => {
+        const subtotal = item.producto.precio * item.cantidad;
         total += subtotal;
-        mensaje += `• ${carrito[id].cantidad}x ${carrito[id].nombre} ($${subtotal})\n`;
-      }
+        mensaje += `• ${item.cantidad}x ${item.producto.nombre} - $${subtotal}\n`;
+      });
 
-      mensaje += `\n💰 *TOTAL A PAGAR: $${total}*\n`;
+      mensaje += `-----------------------------------\n`;
+      mensaje += `💰 *TOTAL:* $${total}\n\n`;
+      mensaje += `¡Muchas gracias!`;
 
-      if (configNegocio.mp_alias) {
-        mensaje += `\n💳 *DATOS DE PAGO (Mercado Pago / Transferencia):*\n`;
-        mensaje += `• *Alias:* ${configNegocio.mp_alias}\n`;
-        if (configNegocio.mp_titular) {
-          mensaje += `• *Titular:* ${configNegocio.mp_titular}\n`;
-        }
-        mensaje += `_Envía el comprobante por aquí una vez realizado el pago._\n`;
-      }
+      // Determinar número de destino (soporte multi-WhatsApp)
+      const numWhatsApp = configNegocio.whatsapp_1 || '5493644000000'; // Tu número por defecto
+      const urlWs = `https://wa.me/${numWhatsApp}?text=${encodeURIComponent(mensaje)}`;
 
-      const num1 = (configNegocio.whatsapp || '').replace(/[^0-9]/g, '');
-      const num2 = (configNegocio.whatsapp_2 || '').replace(/[^0-9]/g, '');
-
-      if (!num1) {
-        alert("El comercio no ha configurado un número de WhatsApp de recepción.");
-        return;
-      }
-
-      // 1. Envío al WhatsApp Principal
-      const url1 = `https://wa.me/${num1}?text=${encodeURIComponent(mensaje)}`;
-      window.open(url1, '_blank');
-
-      // 2. Envío al WhatsApp Secundario (Cocina/Copia) si existe
-      if (num2) {
-        setTimeout(() => {
-          const url2 = `https://wa.me/${num2}?text=${encodeURIComponent(mensaje)}`;
-          window.open(url2, '_blank');
-        }, 800);
-      }
+      window.open(urlWs, '_blank');
     }
   </script>
 </body>
