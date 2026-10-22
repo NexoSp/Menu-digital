@@ -11,9 +11,9 @@
   <meta property="og:description" content="Haz tu pedido rápido y fácil por WhatsApp. ¡Conoce nuestro menú!">
   <meta property="og:url" content="https://nexosp.github.io/Menu-digital/">
 
-  <!-- LOGO DINÁMICO OPEN GRAPH -->
-  <meta id="og-image" property="og:image" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png">
-  <meta id="og-image-secure" property="og:image:secure_url" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png">
+  <!-- LOGO DIRECTO DE SUPABASE -->
+  <meta property="og:image" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png">
+  <meta property="og:image:secure_url" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="500">
   <meta property="og:image:height" content="500">
@@ -56,4 +56,437 @@
           <h1 id="nombre-negocio" class="font-bold text-lg text-gray-800 leading-tight">PERE Y EL FLACO</h1>
           <!-- Indicador dinámico de estado (Abierto / Cerrado) -->
           <p id="estado-negocio-text" class="text-xs text-emerald-600 font-medium flex items-center gap-1">
-            <span id
+            <span id="estado-punto" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span id="estado-label">Abierto ahora</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="max-w-md mx-auto p-4 space-y-6">
+
+    <!-- FILTRO DE CATEGORÍAS -->
+    <div id="categorias-container" class="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <button onclick="filtrarCategoria('todas')" class="cat-btn bg-custom-primary text-white text-xs px-4 py-2 rounded-full font-medium whitespace-nowrap shadow-sm">Todas</button>
+    </div>
+
+    <!-- LISTA DE PRODUCTOS -->
+    <div id="productos-container" class="space-y-3">
+      <p class="text-center text-sm text-gray-500 py-8">Cargando menú...</p>
+    </div>
+
+    <!-- SECCIÓN DE DATOS DE ENTREGA Y PAGO -->
+    <section class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 space-y-3">
+      <h2 class="font-bold text-gray-700 text-sm tracking-wide uppercase">1. Datos de Entrega</h2>
+      
+      <input type="text" id="cliente-nombre" placeholder="Tu Nombre completo" class="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-400">
+      
+      <select id="tipo-entrega" onchange="toggleDireccion()" class="w-full p-2.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red-400">
+        <option value="Delivery">🚀 Envío a Domicilio (Delivery)</option>
+        <option value="Retiro">🛍️ Retiro en el Local</option>
+      </select>
+
+      <div id="campo-direccion" class="space-y-2">
+        <input type="text" id="cliente-direccion" placeholder="Dirección completa y altura" class="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-400">
+        
+        <!-- Botón GPS para el Delivery -->
+        <button type="button" onclick="obtenerUbicacionGPS()" class="w-full py-2.5 px-3 bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium text-xs rounded-lg flex items-center justify-center gap-2 border border-blue-200 transition-colors">
+          <span>📍 Adjuntar mi ubicación GPS exacta</span>
+        </button>
+        <p id="gps-status" class="text-[11px] text-emerald-600 font-medium hidden">✓ Ubicación GPS capturada correctamente</p>
+      </div>
+
+      <!-- FORMA DE PAGO -->
+      <h2 class="font-bold text-gray-700 text-sm tracking-wide uppercase pt-2">2. Forma de Pago</h2>
+      <select id="forma-pago" onchange="toggleDatosTransferencia()" class="w-full p-2.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red-400">
+        <option value="Efectivo">💵 Efectivo</option>
+        <option value="Transferencia">📱 Transferencia bancaria / Mercado Pago</option>
+      </select>
+
+      <!-- DATOS DE MERCADO PAGO / ALIAS -->
+      <div id="datos-transferencia" class="hidden bg-blue-50 border border-blue-200 rounded-lg p-3 space-y-1 mt-2">
+        <p class="text-xs font-bold text-blue-800 flex items-center gap-1">
+          <span>💳 Datos para transferir:</span>
+        </p>
+        <p class="text-xs text-blue-700">
+          <span class="font-semibold">Alias:</span> <span id="mp-alias" class="font-bold select-all bg-white px-1.5 py-0.5 rounded border border-blue-200">No especificado</span>
+        </p>
+        <p class="text-xs text-blue-700">
+          <span class="font-semibold">Titular:</span> <span id="mp-titular">No especificado</span>
+        </p>
+        <p class="text-[11px] text-blue-600 italic pt-1">
+          * Realiza la transferencia y envía el comprobante por WhatsApp al realizar el pedido.
+        </p>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="text-center pt-2 pb-6">
+      <p class="text-xs text-gray-400 font-normal">
+        Desarrollado por <span class="font-semibold text-gray-600">NexoServ</span>
+      </p>
+    </footer>
+
+  </main>
+
+  <!-- VENTANA MODAL FLOTANTE -->
+  <div id="modal-producto" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl transform transition-all animate-in fade-in zoom-in-95 duration-200">
+      <div class="relative">
+        <img id="modal-img" src="" alt="Producto" class="w-full h-48 object-cover bg-gray-100">
+        <button onclick="cerrarModal()" class="absolute top-3 right-3 bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold transition-colors">✕</button>
+      </div>
+      <div class="p-5 space-y-3">
+        <div>
+          <h3 id="modal-nombre" class="font-bold text-lg text-gray-800"></h3>
+          <p id="modal-precio" class="font-bold text-base text-custom-primary mt-0.5"></p>
+        </div>
+        <p id="modal-descripcion" class="text-xs text-gray-600 leading-relaxed"></p>
+        
+        <div class="pt-2 flex items-center justify-between gap-3 border-t border-gray-100">
+          <div class="flex items-center gap-3 bg-gray-50 p-1.5 rounded-xl border border-gray-200">
+            <button onclick="cambiarCantidadModal(-1)" class="w-8 h-8 rounded-lg bg-white font-bold text-gray-700 shadow-sm flex items-center justify-center">-</button>
+            <span id="modal-cant" class="text-sm font-bold w-6 text-center">0</span>
+            <button onclick="cambiarCantidadModal(1)" class="w-8 h-8 rounded-lg bg-custom-primary font-bold text-white shadow-sm flex items-center justify-center">+</button>
+          </div>
+          <button onclick="cerrarModal()" class="flex-1 py-2.5 bg-custom-primary text-white font-bold text-xs rounded-xl shadow-md">
+            Listo / Agregar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BARRA INFERIOR DEL CARRITO -->
+  <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-3 shadow-lg z-50">
+    <div class="max-w-md mx-auto flex items-center justify-between gap-3">
+      <div>
+        <p class="text-xs text-gray-500">Total a Pagar</p>
+        <p id="total-pedido" class="font-bold text-xl text-gray-800">$0</p>
+      </div>
+      <button onclick="enviarPedidoWhatsApp()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl text-sm flex items-center gap-2 shadow-md transition-all">
+        <span>Enviar Pedido</span>
+        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12.031 0c-6.627 0-12 5.373-12 12 0 2.159.572 4.187 1.57 5.951l-1.601 5.849 6.012-1.576c1.716.936 3.682 1.455 5.769 1.455 6.627 0 12-5.373 12-12 0-6.627-5.373-12-12-12zm6.657 16.924c-.281.79-1.385 1.448-2.274 1.637-.607.129-1.399.232-4.062-.868-3.411-1.408-5.612-4.887-5.782-5.114-.17-.227-1.386-1.847-1.386-3.52 0-1.674.878-2.497 1.19-2.838.312-.341.681-.426.908-.426.227 0 .454.002.653.011.213.009.497-.081.778.595.284.682.966 2.358 1.05 2.529.085.17.142.369.028.596-.114.227-.17.369-.341.568-.17.199-.356.444-.509.596-.17.17-.347.355-.149.696.199.341.884 1.459 1.898 2.362 1.306 1.163 2.408 1.523 2.749 1.694.341.17.54.142.739-.085.199-.227.852-.994 1.079-1.335.227-.341.454-.284.767-.17.312.114 1.989.938 2.33 1.108.341.17.568.256.653.398.085.142.085.824-.196 1.614z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- LÓGICA JAVASCRIPT -->
+  <script>
+    const SUPABASE_URL = 'https://ahyvmupqzgcrxrbvjzsb.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFoeXZtdXBxemdjcnhyYnZqenNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1MTg5MzcsImV4cCI6MjEwODA5NDkzN30.oBfYP5Pf0hXDymQtMqE2pFbWCVllRKWcYGew0iuca4Q';
+
+    const _supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let productos = [];
+    let carrito = {};
+    let ubicacionGPSUrl = '';
+    let productoActualModalId = null;
+    let categoriaSeleccionada = 'todas';
+    let configNegocio = { 
+      whatsapp_1: '', 
+      whatsapp_2: '', 
+      nombre: 'PERE Y EL FLACO',
+      alias: '',
+      titular: '',
+      abierto: true
+    };
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await cargarConfiguracion();
+      await cargarProductos();
+    });
+
+    async function cargarConfiguracion() {
+      try {
+        const { data, error } = await _supabaseClient.from('configuracion').select('*').limit(1).maybeSingle();
+        if (data) {
+          configNegocio = data;
+
+          const colorGuardado = data.color_primario || data.color;
+          if (colorGuardado) {
+            document.documentElement.style.setProperty('--primary-color', colorGuardado);
+          }
+
+          if (data.nombre) {
+            document.getElementById('nombre-negocio').textContent = data.nombre;
+            document.title = `Menú Digital - ${data.nombre}`;
+          }
+
+          if (data.logo_url) {
+            document.getElementById('logo-header').src = data.logo_url;
+          }
+
+          // EVALUACIÓN DE ESTADO ABIERTO / CERRADO FLEXIBLE
+          const estaAbierto = !(data.abierto === false || data.abierto === 'false' || data.abierto === 0 || data.abierto === '0');
+          configNegocio.abierto = estaAbierto;
+
+          const labelEstado = document.getElementById('estado-label');
+          const puntoEstado = document.getElementById('estado-punto');
+          const textoEstadoContainer = document.getElementById('estado-negocio-text');
+
+          if (!estaAbierto) {
+            labelEstado.textContent = "Cerrado temporalmente";
+            puntoEstado.className = "w-2 h-2 rounded-full bg-red-500";
+            textoEstadoContainer.className = "text-xs text-red-600 font-medium flex items-center gap-1";
+          } else {
+            labelEstado.textContent = "Abierto ahora";
+            puntoEstado.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
+            textoEstadoContainer.className = "text-xs text-emerald-600 font-medium flex items-center gap-1";
+          }
+          
+          if (data.alias || data.mp_alias) {
+            document.getElementById('mp-alias').textContent = data.alias || data.mp_alias;
+          }
+
+          if (data.titular || data.mp_titular) {
+            document.getElementById('mp-titular').textContent = data.titular || data.mp_titular;
+          }
+        }
+      } catch (err) {
+        console.error("Error cargando configuración:", err);
+      }
+    }
+
+    async function cargarProductos() {
+      try {
+        const { data, error } = await _supabaseClient.from('productos').select('*');
+        if (error) throw error;
+        productos = data || [];
+        generarBotonesCategorias();
+        renderizarProductos();
+      } catch (err) {
+        console.error("Error cargando productos:", err);
+        document.getElementById('productos-container').innerHTML = '<p class="text-center text-red-500 text-sm py-4">Error al conectar con la base de datos.</p>';
+      }
+    }
+
+    function generarBotonesCategorias() {
+      const container = document.getElementById('categorias-container');
+      const categoriasUnicas = ['todas', ...new Set(productos.map(p => p.categoria).filter(Boolean))];
+
+      container.innerHTML = categoriasUnicas.map(cat => {
+        const esActiva = cat === categoriaSeleccionada;
+        const claseBtn = esActiva 
+          ? 'cat-btn bg-custom-primary text-white text-xs px-4 py-2 rounded-full font-medium whitespace-nowrap shadow-sm'
+          : 'cat-btn bg-white text-gray-600 border border-gray-200 text-xs px-4 py-2 rounded-full font-medium whitespace-nowrap';
+        const label = cat === 'todas' ? 'Todas' : cat;
+        return `<button onclick="filtrarCategoria('${cat}')" class="${claseBtn}">${label}</button>`;
+      }).join('');
+    }
+
+    function filtrarCategoria(cat) {
+      categoriaSeleccionada = cat;
+      generarBotonesCategorias();
+      renderizarProductos();
+    }
+
+    function renderizarProductos() {
+      const container = document.getElementById('productos-container');
+      container.innerHTML = '';
+
+      // Filtrar productos no pausados y por categoría
+      const listaFiltrada = productos.filter(p => {
+        const noEstaPausado = !(p.pausado === true || p.pausado === 'true' || p.pausado === 1);
+        const coincideCat = categoriaSeleccionada === 'todas' || p.categoria === categoriaSeleccionada;
+        return noEstaPausado && coincideCat;
+      });
+
+      if (listaFiltrada.length === 0) {
+        container.innerHTML = '<p class="text-center text-sm text-gray-400 py-6">No hay productos disponibles en esta categoría.</p>';
+        return;
+      }
+
+      listaFiltrada.forEach(p => {
+        const cant = carrito[p.id] ? carrito[p.id].cantidad : 0;
+        container.innerHTML += `
+          <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between gap-3">
+            <img src="${p.imagen_url || 'https://via.placeholder.com/80'}" alt="${p.nombre}" onclick="abrirModal(${p.id})" class="w-16 h-16 rounded-lg object-cover bg-gray-100 cursor-pointer hover:opacity-90 transition-opacity">
+            <div class="flex-1 cursor-pointer" onclick="abrirModal(${p.id})">
+              <h3 class="font-bold text-sm text-gray-800">${p.nombre}</h3>
+              <p class="text-xs text-gray-400 line-clamp-1">${p.descripcion || 'Sin descripción'}</p>
+              <p class="font-bold text-sm text-custom-primary mt-1">$${p.precio}</p>
+            </div>
+            <div class="flex items-center gap-2 bg-gray-50 p-1 rounded-lg border border-gray-200">
+              <button onclick="cambiarCantidad(${p.id}, -1)" class="w-6 h-6 rounded bg-white font-bold text-gray-600 shadow-sm flex items-center justify-center">-</button>
+              <span id="cant-${p.id}" class="text-xs font-bold w-4 text-center">${cant}</span>
+              <button onclick="cambiarCantidad(${p.id}, 1)" class="w-6 h-6 rounded bg-custom-primary font-bold text-white shadow-sm flex items-center justify-center">+</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function abrirModal(id) {
+      const prod = productos.find(p => p.id === id);
+      if (!prod) return;
+
+      productoActualModalId = id;
+      document.getElementById('modal-img').src = prod.imagen_url || 'https://via.placeholder.com/300';
+      document.getElementById('modal-nombre').textContent = prod.nombre;
+      document.getElementById('modal-precio').textContent = `$${prod.precio}`;
+      document.getElementById('modal-descripcion').textContent = prod.descripcion || 'No hay descripción detallada para este producto.';
+      
+      const cantActual = carrito[id] ? carrito[id].cantidad : 0;
+      document.getElementById('modal-cant').textContent = cantActual;
+
+      document.getElementById('modal-producto').classList.remove('hidden');
+    }
+
+    function cerrarModal() {
+      document.getElementById('modal-producto').classList.add('hidden');
+      productoActualModalId = null;
+    }
+
+    function cambiarCantidadModal(cambio) {
+      if (productoActualModalId === null) return;
+      cambiarCantidad(productoActualModalId, cambio);
+      const cantActual = carrito[productoActualModalId] ? carrito[productoActualModalId].cantidad : 0;
+      document.getElementById('modal-cant').textContent = cantActual;
+    }
+
+    function cambiarCantidad(id, cambio) {
+      const prod = productos.find(p => p.id === id);
+      if (!prod) return;
+
+      if (!carrito[id]) {
+        carrito[id] = { producto: prod, cantidad: 0 };
+      }
+
+      carrito[id].cantidad += cambio;
+
+      if (carrito[id].cantidad <= 0) {
+        delete carrito[id];
+      }
+
+      const elemCant = document.getElementById(`cant-${id}`);
+      if (elemCant) elemCant.textContent = carrito[id] ? carrito[id].cantidad : 0;
+      actualizarTotal();
+    }
+
+    function actualizarTotal() {
+      let total = 0;
+      Object.values(carrito).forEach(item => {
+        total += item.producto.precio * item.cantidad;
+      });
+      document.getElementById('total-pedido').textContent = `$${total}`;
+    }
+
+    function toggleDireccion() {
+      const tipo = document.getElementById('tipo-entrega').value;
+      const campo = document.getElementById('campo-direccion');
+      if (tipo === 'Retiro') {
+        campo.classList.add('hidden');
+      } else {
+        campo.classList.remove('hidden');
+      }
+    }
+
+    function toggleDatosTransferencia() {
+      const formaPago = document.getElementById('forma-pago').value;
+      const boxTransferencia = document.getElementById('datos-transferencia');
+      
+      if (formaPago === 'Transferencia') {
+        boxTransferencia.classList.remove('hidden');
+      } else {
+        boxTransferencia.classList.add('hidden');
+      }
+    }
+
+    function obtenerUbicacionGPS() {
+      const statusElem = document.getElementById('gps-status');
+      
+      if (!navigator.geolocation) {
+        alert("Tu navegador no soporta geolocalización.");
+        return;
+      }
+
+      statusElem.textContent = "⌛ Obteniendo tu ubicación...";
+      statusElem.className = "text-[11px] text-gray-500 font-medium";
+      statusElem.classList.remove('hidden');
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          
+          ubicacionGPSUrl = `https://maps.google.com/?q=${lat},${lng}`;
+          
+          statusElem.textContent = "✓ ¡Ubicación GPS capturada correctamente!";
+          statusElem.className = "text-[11px] text-emerald-600 font-bold";
+        },
+        (error) => {
+          statusElem.textContent = "❌ No se pudo obtener la ubicación. Por favor, escríbela abajo.";
+          statusElem.className = "text-[11px] text-red-500 font-medium";
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+
+    function enviarPedidoWhatsApp() {
+      if (configNegocio.abierto === false) {
+        alert("Lo sentimos, en este momento el local se encuentra cerrado y no acepta nuevos pedidos.");
+        return;
+      }
+
+      const nombre = document.getElementById('cliente-nombre').value.trim();
+      const tipoEntrega = document.getElementById('tipo-entrega').value;
+      const direccion = document.getElementById('cliente-direccion').value.trim();
+      const formaPago = document.getElementById('forma-pago').value;
+
+      if (Object.keys(carrito).length === 0) {
+        alert("Tu carrito está vacío. Agrega productos para realizar el pedido.");
+        return;
+      }
+
+      if (!nombre) {
+        alert("Por favor, ingresa tu nombre.");
+        return;
+      }
+
+      if (tipoEntrega === 'Delivery' && !direccion) {
+        alert("Por favor, ingresa la dirección de entrega.");
+        return;
+      }
+
+      let mensaje = `*📦 NUEVO PEDIDO - ${configNegocio.nombre}*\n`;
+      mensaje += `-----------------------------------\n`;
+      mensaje += `👤 *Cliente:* ${nombre}\n`;
+      mensaje += `🚚 *Entrega:* ${tipoEntrega}\n`;
+      
+      if (tipoEntrega === 'Delivery') {
+        mensaje += `📍 *Dirección:* ${direccion}\n`;
+        if (ubicacionGPSUrl) {
+          mensaje += `🗺️ *Ubicación GPS:* ${ubicacionGPSUrl}\n`;
+        }
+      }
+
+      mensaje += `💳 *Forma de Pago:* ${formaPago}\n`;
+      mensaje += `-----------------------------------\n`;
+      mensaje += `*DETALLE DEL PEDIDO:*\n`;
+
+      let total = 0;
+      Object.values(carrito).forEach(item => {
+        const subtotal = item.producto.precio * item.cantidad;
+        total += subtotal;
+        mensaje += `• ${item.cantidad}x ${item.producto.nombre} - $${subtotal}\n`;
+      });
+
+      mensaje += `-----------------------------------\n`;
+      mensaje += `💰 *TOTAL:* $${total}\n\n`;
+      mensaje += `¡Muchas gracias!`;
+
+      const numWhatsApp = configNegocio.whatsapp_1 || configNegocio.whatsapp || configNegocio.whatsapp_2;
+      
+      if (!numWhatsApp) {
+        alert("No hay un número de WhatsApp configurado en el sistema.");
+        return;
+      }
+
+      const urlWs = `https://wa.me/${numWhatsApp}?text=${encodeURIComponent(mensaje)}`;
+      window.open(urlWs, '_blank');
+    }
+  </script>
+</body>
+</html>
