@@ -129,6 +129,34 @@
 
   </main>
 
+  <!-- VENTANA MODAL FLOTANTE PARA DETALLE DE PRODUCTO -->
+  <div id="modal-producto" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl transform transition-all animate-in fade-in zoom-in-95 duration-200">
+      <div class="relative">
+        <img id="modal-img" src="" alt="Producto" class="w-full h-48 object-cover bg-gray-100">
+        <button onclick="cerrarModal()" class="absolute top-3 right-3 bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold transition-colors">✕</button>
+      </div>
+      <div class="p-5 space-y-3">
+        <div>
+          <h3 id="modal-nombre" class="font-bold text-lg text-gray-800"></h3>
+          <p id="modal-precio" class="font-bold text-base text-custom-primary mt-0.5"></p>
+        </div>
+        <p id="modal-descripcion" class="text-xs text-gray-600 leading-relaxed"></p>
+        
+        <div class="pt-2 flex items-center justify-between gap-3 border-t border-gray-100">
+          <div class="flex items-center gap-3 bg-gray-50 p-1.5 rounded-xl border border-gray-200">
+            <button onclick="cambiarCantidadModal(-1)" class="w-8 h-8 rounded-lg bg-white font-bold text-gray-700 shadow-sm flex items-center justify-center">-</button>
+            <span id="modal-cant" class="text-sm font-bold w-6 text-center">0</span>
+            <button onclick="cambiarCantidadModal(1)" class="w-8 h-8 rounded-lg bg-custom-primary font-bold text-white shadow-sm flex items-center justify-center">+</button>
+          </div>
+          <button onclick="cerrarModal()" class="flex-1 py-2.5 bg-custom-primary text-white font-bold text-xs rounded-xl shadow-md">
+            Listo / Agregar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- BARRA INFERIOR DEL CARRITO FIJA -->
   <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-3 shadow-lg z-50">
     <div class="max-w-md mx-auto flex items-center justify-between gap-3">
@@ -143,12 +171,10 @@
     </div>
   </div>
 
-  <!-- LÓGICA JAVASCRIPT CON LECTURA DE COLOR -->
+  <!-- LÓGICA JAVASCRIPT CON MODAL Y COLOR -->
   <script>
     // --- CONFIGURACIÓN DE SUPABASE ---
     const SUPABASE_URL = 'https://ahyvmupqzgcrxrbvjzsb.supabase.co';
-    
-    // API KEY limpia en una sola línea de texto continua
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFoeXZtdXBxemdjcnhyYnZqenNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1MTg5MzcsImV4cCI6MjEwODA5NDkzN30.oBfYP5Pf0hXDymQtMqE2pFbWCVllRKWcYGew0iuca4Q';
 
     const _supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -156,6 +182,7 @@
     let productos = [];
     let carrito = {};
     let ubicacionGPSUrl = '';
+    let productoActualModalId = null;
     let configNegocio = { 
       whatsapp_1: '', 
       whatsapp_2: '', 
@@ -176,7 +203,6 @@
         if (data) {
           configNegocio = data;
 
-          // Aplicar el color primario si está configurado en Supabase
           const colorGuardado = data.color_primario || data.color;
           if (colorGuardado) {
             document.documentElement.style.setProperty('--primary-color', colorGuardado);
@@ -185,6 +211,10 @@
           if (data.nombre) {
             document.getElementById('nombre-negocio').textContent = data.nombre;
             document.title = `Menú Digital - ${data.nombre}`;
+          }
+
+          if (data.logo_url) {
+            document.getElementById('logo-header').src = data.logo_url;
           }
           
           const aliasVal = data.alias || data.mp_alias;
@@ -231,10 +261,10 @@
         const cant = carrito[p.id] ? carrito[p.id].cantidad : 0;
         container.innerHTML += `
           <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between gap-3">
-            <img src="${p.imagen_url}" alt="${p.nombre}" class="w-16 h-16 rounded-lg object-cover bg-gray-100">
-            <div class="flex-1">
+            <img src="${p.imagen_url || 'https://via.placeholder.com/80'}" alt="${p.nombre}" onclick="abrirModal(${p.id})" class="w-16 h-16 rounded-lg object-cover bg-gray-100 cursor-pointer hover:opacity-90 transition-opacity">
+            <div class="flex-1 cursor-pointer" onclick="abrirModal(${p.id})">
               <h3 class="font-bold text-sm text-gray-800">${p.nombre}</h3>
-              <p class="text-xs text-gray-400 line-clamp-1">${p.descripcion || ''}</p>
+              <p class="text-xs text-gray-400 line-clamp-1">${p.descripcion || 'Sin descripción'}</p>
               <p class="font-bold text-sm text-custom-primary mt-1">$${p.precio}</p>
             </div>
             <div class="flex items-center gap-2 bg-gray-50 p-1 rounded-lg border border-gray-200">
@@ -245,6 +275,35 @@
           </div>
         `;
       });
+    }
+
+    // --- FUNCIONES DE LA VENTANA MODAL ---
+    function abrirModal(id) {
+      const prod = productos.find(p => p.id === id);
+      if (!prod) return;
+
+      productoActualModalId = id;
+      document.getElementById('modal-img').src = prod.imagen_url || 'https://via.placeholder.com/300';
+      document.getElementById('modal-nombre').textContent = prod.nombre;
+      document.getElementById('modal-precio').textContent = `$${prod.precio}`;
+      document.getElementById('modal-descripcion').textContent = prod.descripcion || 'No hay descripción detallada para este producto.';
+      
+      const cantActual = carrito[id] ? carrito[id].cantidad : 0;
+      document.getElementById('modal-cant').textContent = cantActual;
+
+      document.getElementById('modal-producto').classList.remove('hidden');
+    }
+
+    function cerrarModal() {
+      document.getElementById('modal-producto').classList.add('hidden');
+      productoActualModalId = null;
+    }
+
+    function cambiarCantidadModal(cambio) {
+      if (productoActualModalId === null) return;
+      cambiarCantidad(productoActualModalId, cambio);
+      const cantActual = carrito[productoActualModalId] ? carrito[productoActualModalId].cantidad : 0;
+      document.getElementById('modal-cant').textContent = cantActual;
     }
 
     function cambiarCantidad(id, cambio) {
