@@ -233,8 +233,8 @@
           document.getElementById('cfg-titular').value = data.titular || '';
           document.getElementById('cfg-logo').value = data.logo_url || '';
           
-          if (data.abierto !== undefined) {
-            document.getElementById('cfg-abierto').value = data.abierto ? "true" : "false";
+          if (data.abierto !== undefined && data.abierto !== null) {
+            document.getElementById('cfg-abierto').value = data.abierto.toString();
           }
           
           if (data.logo_url) {
@@ -289,20 +289,6 @@
         } else {
           const res = await _supabaseClient.from('configuracion').insert([datos]);
           error = res.error;
-        }
-
-        // Reintento inteligente si alguna columna nueva no existe en la base de datos
-        if (error && (error.message.includes('color_primario') || error.message.includes('logo_url') || error.message.includes('abierto') || error.message.includes('column'))) {
-          delete datos.color_primario;
-          delete datos.logo_url;
-          delete datos.abierto;
-          if (configActualId) {
-            const resRetry = await _supabaseClient.from('configuracion').update(datos).eq('id', configActualId);
-            error = resRetry.error;
-          } else {
-            const resRetry = await _supabaseClient.from('configuracion').insert([datos]);
-            error = resRetry.error;
-          }
         }
 
         if (error) throw error;
@@ -368,9 +354,8 @@
           .eq('id', id);
 
         if (error) {
-          // Si la columna pausado no existe todavía, avisamos al usuario amablemente
           if (error.message.includes('column') || error.message.includes('pausado')) {
-            alert("Atención: Para usar la función de pausar productos, asegúrate de agregar una columna booleana llamada 'pausado' en tu tabla 'productos' de Supabase.");
+            alert("Atención: Asegúrate de tener la columna 'pausado' en tu tabla 'productos' de Supabase.");
           } else {
             throw error;
           }
