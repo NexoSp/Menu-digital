@@ -22,8 +22,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Supabase JS Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 
   <style>
     :root {
@@ -64,7 +62,7 @@
       <p class="text-center text-sm text-gray-500 py-8">Cargando menú...</p>
     </div>
 
-    <!-- SECCIÓN DE DATOS DE ENTREGA -->
+    <!-- SECCIÓN DE DATOS DE ENTREGA Y PAGO -->
     <section class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 space-y-3">
       <h2 class="font-bold text-gray-700 text-sm tracking-wide uppercase">1. Datos de Entrega</h2>
       
@@ -87,10 +85,26 @@
 
       <!-- FORMA DE PAGO -->
       <h2 class="font-bold text-gray-700 text-sm tracking-wide uppercase pt-2">2. Forma de Pago</h2>
-      <select id="forma-pago" class="w-full p-2.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red-400">
+      <select id="forma-pago" onchange="toggleDatosTransferencia()" class="w-full p-2.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red-400">
         <option value="Efectivo">💵 Efectivo</option>
-        <option value="Transferencia">📱 Transferencia bancaria / Alias</option>
+        <option value="Transferencia">📱 Transferencia bancaria / Mercado Pago</option>
       </select>
+
+      <!-- DATOS DE MERCADO PAGO / ALIAS (Se muestra al elegir Transferencia) -->
+      <div id="datos-transferencia" class="hidden bg-blue-50 border border-blue-200 rounded-lg p-3 space-y-1 mt-2">
+        <p class="text-xs font-bold text-blue-800 flex items-center gap-1">
+          <span>💳 Datos para transferir:</span>
+        </p>
+        <p class="text-xs text-blue-700">
+          <span class="font-semibold">Alias:</span> <span id="mp-alias" class="font-bold select-all bg-white px-1.5 py-0.5 rounded border border-blue-200">No especificado</span>
+        </p>
+        <p class="text-xs text-blue-700">
+          <span class="font-semibold">Titular:</span> <span id="mp-titular">No especificado</span>
+        </p>
+        <p class="text-[11px] text-blue-600 italic pt-1">
+          * Realiza la transferencia y envía el comprobante por WhatsApp al realizar el pedido.
+        </p>
+      </div>
     </section>
 
     <!-- FOOTER / PUBLICIDAD SUTIL NEXOSERV -->
@@ -116,16 +130,14 @@
     </div>
   </div>
 
-    <!-- LÓGICA JAVASCRIPT CORREGIDA -->
+  <!-- LÓGICA JAVASCRIPT -->
   <script>
     // --- CONFIGURACIÓN DE SUPABASE ---
     const SUPABASE_URL = 'https://ahyvmupqzgcrxrbvjzsb.supabase.co';
     
-    // ⚠️ Coloca tu API Key 'anon' 'public' completa que obtienes en:
-    // Supabase Dashboard -> Project Settings -> API -> Project API keys -> anon public
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFoeXZtdXBxemdjcnhyYnZqenNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1MTg5MzcsImV4cCI6MjEwODA5NDkzN30.oBfYP5Pf0hXDymQtMqE2pFbWCVllRKWcYGew0iuca4Q'; 
+    // ⚠️ Pega tu SUPABASE_ANON_KEY (JWT largo que empieza por eyJhbG...)
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFoeXZtdXBxemdjcnhyYnZqenNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2MjU4OTQsImV4cCI6MjEwODIwMTzg0fQ.oBfYP5Pf0hXDymQtMqE2pFbWCV1RKWcYGew0iuca4Q0'; 
 
-    // Se cambia el nombre a _supabaseClient para evitar conflicto de variables
     const _supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let productos = [];
@@ -134,7 +146,9 @@
     let configNegocio = { 
       whatsapp_1: '', 
       whatsapp_2: '', 
-      nombre: 'PERE Y EL FLACO' 
+      nombre: 'PERE Y EL FLACO',
+      alias: '',
+      titular: ''
     };
 
     // --- INICIALIZACIÓN ---
@@ -152,6 +166,12 @@
             document.getElementById('nombre-negocio').textContent = data.nombre;
             document.title = `Menú Digital - ${data.nombre}`;
           }
+          if (data.alias) {
+            document.getElementById('mp-alias').textContent = data.alias;
+          }
+          if (data.titular) {
+            document.getElementById('mp-titular').textContent = data.titular;
+          }
         }
       } catch (err) {
         console.error("Error cargando configuración:", err);
@@ -163,7 +183,7 @@
         const { data, error } = await _supabaseClient.from('productos').select('*');
         if (error) {
           console.error("Error Supabase:", error);
-          document.getElementById('productos-container').innerHTML = `<p class="text-center text-red-500 text-sm py-4">Error de conexión: ${error.message}</p>`;
+          document.getElementById('productos-container').innerHTML = `<p class="text-center text-red-500 text-sm py-4">Error al cargar productos: ${error.message}</p>`;
           return;
         }
         productos = data || [];
@@ -237,6 +257,17 @@
         campo.classList.add('hidden');
       } else {
         campo.classList.remove('hidden');
+      }
+    }
+
+    function toggleDatosTransferencia() {
+      const formaPago = document.getElementById('forma-pago').value;
+      const boxTransferencia = document.getElementById('datos-transferencia');
+      
+      if (formaPago === 'Transferencia') {
+        boxTransferencia.classList.remove('hidden');
+      } else {
+        boxTransferencia.classList.add('hidden');
       }
     }
 
@@ -331,6 +362,5 @@
       window.open(urlWs, '_blank');
     }
   </script>
-
 </body>
 </html>
