@@ -21,10 +21,10 @@
 
   <main class="max-w-2xl mx-auto p-4 space-y-6">
 
-    <!-- SECCIÓN 1: CONFIGURACIÓN DEL NEGOCIO & MERCADO PAGO -->
+    <!-- SECCIÓN 1: CONFIGURACIÓN DEL NEGOCIO, PAGOS Y COLOR -->
     <section class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 space-y-4">
       <h2 class="font-bold text-base text-gray-800 flex items-center gap-2 border-b pb-2">
-        <span>🏪 Datos del Negocio y Pagos</span>
+        <span>🏪 Datos del Negocio, Pagos y Diseño</span>
       </h2>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -52,6 +52,26 @@
           <label class="block text-xs font-semibold text-gray-600 mb-1">Titular de la Cuenta</label>
           <input type="text" id="cfg-titular" placeholder="Ej: Juan Pérez / Pere y El Flaco SRL" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
         </div>
+
+        <!-- SELECTOR DE COLOR PRINCIPAL -->
+        <div class="sm:col-span-2 border-t pt-3 mt-1">
+          <label class="block text-xs font-semibold text-gray-700 mb-2">🎨 Color Principal del Menú (Botones y Encabezados)</label>
+          <div class="flex items-center gap-3">
+            <input type="color" id="cfg-color" value="#e11d48" class="w-12 h-10 p-1 border rounded-xl cursor-pointer bg-white">
+            <input type="text" id="cfg-color-hex" value="#e11d48" readonly class="w-24 p-2 border rounded-xl text-xs text-center font-mono font-bold bg-gray-50 text-gray-600">
+            
+            <!-- Paleta rápida de colores -->
+            <div class="flex items-center gap-1.5 ml-auto">
+              <button type="button" onclick="seleccionarColor('#e11d48')" class="w-6 h-6 rounded-full bg-rose-600 border border-black/10"></button>
+              <button type="button" onclick="seleccionarColor('#16a34a')" class="w-6 h-6 rounded-full bg-green-600 border border-black/10"></button>
+              <button type="button" onclick="seleccionarColor('#2563eb')" class="w-6 h-6 rounded-full bg-blue-600 border border-black/10"></button>
+              <button type="button" onclick="seleccionarColor('#ea580c')" class="w-6 h-6 rounded-full bg-orange-600 border border-black/10"></button>
+              <button type="button" onclick="seleccionarColor('#9333ea')" class="w-6 h-6 rounded-full bg-purple-600 border border-black/10"></button>
+              <button type="button" onclick="seleccionarColor('#18181b')" class="w-6 h-6 rounded-full bg-zinc-900 border border-black/10"></button>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <button onclick="guardarConfiguracion()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm transition-colors shadow-sm">
@@ -131,21 +151,36 @@
     let configActualId = null;
 
     document.addEventListener('DOMContentLoaded', async () => {
+      // Sincronizar input color con texto hex
+      const inputColor = document.getElementById('cfg-color');
+      const inputHex = document.getElementById('cfg-color-hex');
+      inputColor.addEventListener('input', (e) => {
+        inputHex.value = e.target.value;
+      });
+
       await cargarConfiguracionAdmin();
       await cargarProductosAdmin();
     });
 
-    // --- CARGAR Y GUARDAR CONFIGURACIÓN (DEL NEGOCIO & MP) ---
+    function seleccionarColor(hex) {
+      document.getElementById('cfg-color').value = hex;
+      document.getElementById('cfg-color-hex').value = hex;
+    }
+
+    // --- CARGAR Y GUARDAR CONFIGURACIÓN ---
     async function cargarConfiguracionAdmin() {
       try {
         const { data, error } = await _supabaseClient.from('configuracion').select('*').limit(1).maybeSingle();
         if (data) {
           configActualId = data.id;
           document.getElementById('cfg-nombre').value = data.nombre || '';
-          document.getElementById('cfg-ws1').value = data.whatsapp_1 || '';
+          document.getElementById('cfg-ws1').value = data.whatsapp_1 || data.whatsapp || '';
           document.getElementById('cfg-ws2').value = data.whatsapp_2 || '';
-          document.getElementById('cfg-alias').value = data.alias || '';
-          document.getElementById('cfg-titular').value = data.titular || '';
+          document.getElementById('cfg-alias').value = data.alias || data.mp_alias || '';
+          document.getElementById('cfg-titular').value = data.titular || data.mp_titular || '';
+          
+          const colorGuardado = data.color_primario || data.color || '#e11d48';
+          seleccionarColor(colorGuardado);
         }
       } catch (err) {
         console.error("Error al cargar la configuración:", err);
@@ -154,12 +189,19 @@
 
     async function guardarConfiguracion() {
       const msgElem = document.getElementById('cfg-msg');
+      const colorSeleccionado = document.getElementById('cfg-color').value;
+
       const datos = {
         nombre: document.getElementById('cfg-nombre').value.trim(),
         whatsapp_1: document.getElementById('cfg-ws1').value.trim(),
+        whatsapp: document.getElementById('cfg-ws1').value.trim(),
         whatsapp_2: document.getElementById('cfg-ws2').value.trim(),
         alias: document.getElementById('cfg-alias').value.trim(),
-        titular: document.getElementById('cfg-titular').value.trim()
+        mp_alias: document.getElementById('cfg-alias').value.trim(),
+        titular: document.getElementById('cfg-titular').value.trim(),
+        mp_titular: document.getElementById('cfg-titular').value.trim(),
+        color_primario: colorSeleccionado,
+        color: colorSeleccionado
       };
 
       try {
@@ -174,7 +216,7 @@
 
         if (error) throw error;
 
-        msgElem.textContent = "✓ Configuración guardada exitosamente.";
+        msgElem.textContent = "✓ Configuración y color guardados exitosamente.";
         msgElem.className = "text-xs text-center font-semibold text-emerald-600 pt-1";
         msgElem.classList.remove('hidden');
         setTimeout(() => msgElem.classList.add('hidden'), 3000);
