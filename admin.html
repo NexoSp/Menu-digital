@@ -53,10 +53,14 @@
           <input type="text" id="cfg-titular" placeholder="Ej: Juan Pérez / Pere y El Flaco SRL" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
         </div>
 
-        <!-- URL DEL LOGO -->
+        <!-- LOGO DEL LOCAL (Subir archivo o URL) -->
         <div class="sm:col-span-2">
-          <label class="block text-xs font-semibold text-gray-700 mb-1">🖼️ URL del Logo del Local</label>
-          <input type="text" id="cfg-logo" placeholder="https://... (URL de la imagen del logo)" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
+          <label class="block text-xs font-semibold text-gray-700 mb-1">🖼️ Logo del Local (Sube una imagen o usa URL)</label>
+          <input type="hidden" id="cfg-logo">
+          <div class="flex items-center gap-2">
+            <input type="file" id="file-logo" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer border rounded-xl p-1">
+          </div>
+          <p id="logo-status" class="text-[11px] text-gray-400 mt-1">Logo actual cargado en el sistema.</p>
         </div>
 
         <!-- SELECTOR DE COLOR PRINCIPAL -->
@@ -94,6 +98,7 @@
       </h2>
 
       <input type="hidden" id="prod-id">
+      <input type="hidden" id="prod-imagen">
 
       <div class="space-y-3">
         <div>
@@ -118,8 +123,9 @@
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">URL de la Imagen</label>
-          <input type="text" id="prod-imagen" placeholder="https://..." class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Imagen del Producto (Desde el dispositivo)</label>
+          <input type="file" id="file-producto" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer border rounded-xl p-1">
+          <p id="prod-img-status" class="text-[11px] text-gray-400 mt-1">Selecciona una foto para subirla al servidor.</p>
         </div>
       </div>
 
@@ -147,17 +153,15 @@
   <script>
     // --- CONFIGURACIÓN DE SUPABASE ---
     const SUPABASE_URL = 'https://ahyvmupqzgcrxrbvjzsb.supabase.co';
-    
-    // API Key de Supabase limpia y continua
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFoeXZtdXBxemdjcnhyYnZqenNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1MTg5MzcsImV4cCI6MjEwODA5NDkzN30.oBfYP5Pf0hXDymQtMqE2pFbWCVllRKWcYGew0iuca4Q';
 
     const _supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const BUCKET_NAME = 'imagenes-productos';
 
     let listaProductos = [];
     let configActualId = null;
 
     document.addEventListener('DOMContentLoaded', async () => {
-      // Sincronizar input color con texto hex
       const inputColor = document.getElementById('cfg-color');
       const inputHex = document.getElementById('cfg-color-hex');
       inputColor.addEventListener('input', (e) => {
@@ -173,6 +177,31 @@
       document.getElementById('cfg-color-hex').value = hex;
     }
 
+    // --- FUNCIÓN PARA SUBIR ARCHIVOS A SUPABASE STORAGE ---
+    async function subirImagenASupabase(file, carpeta = 'general') {
+      try {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}_${Math.random().toString(36.substring(2, 7))}.${fileExt}`;
+        const filePath = `${carpeta}/${fileName}`;
+
+        const { data, error } = await _supabaseClient.storage
+          .from(BUCKET_NAME)
+          .upload(filePath, file);
+
+        if (error) throw error;
+
+        const { data: publicData } = _supabaseClient.storage
+          .from(BUCKET_NAME)
+          .getPublicUrl(filePath);
+
+        return publicData.publicUrl;
+      } catch (err) {
+        console.error("Error al subir imagen:", err);
+        alert("Error al subir la imagen: " + err.message);
+        return null;
+      }
+    }
+
     // --- CARGAR Y GUARDAR CONFIGURACIÓN ---
     async function cargarConfiguracionAdmin() {
       try {
@@ -186,6 +215,11 @@
           document.getElementById('cfg-titular').value = data.titular || '';
           document.getElementById('cfg-logo').value = data.logo_url || '';
           
+          if (data.logo_url) {
+            document.getElementById('logo-status').textContent = "✓ Logo actual cargado correctamente.";
+            document.getElementById('logo-status').className = "text-[11px] text-emerald-600 font-semibold mt-1";
+          }
+          
           const colorGuardado = data.color_primario || data.color || '#e11d48';
           seleccionarColor(colorGuardado);
         }
@@ -197,15 +231,30 @@
     async function guardarConfiguracion() {
       const msgElem = document.getElementById('cfg-msg');
       const colorSeleccionado = document.getElementById('cfg-color').value;
+      const fileInput = document.getElementById('file-logo');
 
-      // Objeto completo incluyendo color_primario y logo_url
+      let logoUrl = document.getElementById('cfg-logo').value.trim();
+
+      // Si seleccionó un nuevo archivo de logo, subirlo primero
+      if (fileInput.files.length > 0) {
+        msgElem.textContent = "⌛ Subiendo logo...";
+        msgElem.className = "text-xs text-center font-semibold text-blue-600 pt-1";
+        msgElem.classList.remove('hidden');
+        
+        const uploadedUrl = await subirImagenASupabase(fileInput.files[0], 'logos');
+        if (uploadedUrl) {
+          logoUrl = uploadedUrl;
+          document.getElementById('cfg-logo').value = logoUrl;
+        }
+      }
+
       const datos = {
         nombre: document.getElementById('cfg-nombre').value.trim(),
         whatsapp_1: document.getElementById('cfg-ws1').value.trim(),
         whatsapp_2: document.getElementById('cfg-ws2').value.trim(),
         alias: document.getElementById('cfg-alias').value.trim(),
         titular: document.getElementById('cfg-titular').value.trim(),
-        logo_url: document.getElementById('cfg-logo').value.trim(),
+        logo_url: logoUrl,
         color_primario: colorSeleccionado
       };
 
@@ -219,7 +268,6 @@
           error = res.error;
         }
 
-        // Sistema de reintento inteligente por si las columnas nuevas aún no existen en Supabase
         if (error && (error.message.includes('color_primario') || error.message.includes('logo_url') || error.message.includes('column'))) {
           delete datos.color_primario;
           delete datos.logo_url;
@@ -286,14 +334,27 @@
       const precio = parseFloat(document.getElementById('prod-precio').value);
       const categoria = document.getElementById('prod-categoria').value.trim();
       const descripcion = document.getElementById('prod-descripcion').value.trim();
-      const imagen_url = document.getElementById('prod-imagen').value.trim();
+      const fileInput = document.getElementById('file-producto');
 
       if (!nombre || isNaN(precio)) {
         alert("Por favor, completa al menos el nombre y el precio del producto.");
         return;
       }
 
-      const datosProd = { nombre, precio, categoria, descripcion, imagen_url };
+      let imagenUrl = document.getElementById('prod-imagen').value.trim();
+
+      // Si seleccionó una nueva imagen de producto desde el dispositivo, subirla
+      if (fileInput.files.length > 0) {
+        document.getElementById('prod-img-status').textContent = "⌛ Subiendo imagen de producto...";
+        document.getElementById('prod-img-status').className = "text-[11px] text-blue-600 font-semibold mt-1";
+        
+        const uploadedUrl = await subirImagenASupabase(fileInput.files[0], 'productos');
+        if (uploadedUrl) {
+          imagenUrl = uploadedUrl;
+        }
+      }
+
+      const datosProd = { nombre, precio, categoria, descripcion, imagen_url: imagenUrl };
 
       try {
         if (id) {
@@ -321,6 +382,8 @@
       document.getElementById('prod-imagen').value = p.imagen_url || '';
 
       document.getElementById('form-title').textContent = "✏️ Editar Producto";
+      document.getElementById('file-producto').value = '';
+      document.getElementById('prod-img-status').textContent = p.imagen_url ? "✓ Producto con imagen cargada." : "Selecciona una foto nueva si deseas cambiarla.";
       document.getElementById('btn-cancelar').classList.remove('hidden');
       window.scrollTo({ top: 300, behavior: 'smooth' });
     }
@@ -332,6 +395,8 @@
       document.getElementById('prod-categoria').value = '';
       document.getElementById('prod-descripcion').value = '';
       document.getElementById('prod-imagen').value = '';
+      document.getElementById('file-producto').value = '';
+      document.getElementById('prod-img-status').textContent = "Selecciona una foto para subirla al servidor.";
 
       document.getElementById('form-title').textContent = "🍔 Agregar Nuevo Producto";
       document.getElementById('btn-cancelar').classList.add('hidden');
