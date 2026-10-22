@@ -21,7 +21,7 @@
 
   <main class="max-w-2xl mx-auto p-4 space-y-6">
 
-    <!-- SECCIÓN 1: CONFIGURACIÓN DEL NEGOCIO, PAGOS Y COLOR -->
+    <!-- SECCIÓN 1: CONFIGURACIÓN DEL NEGOCIO, PAGOS Y DISEÑO -->
     <section class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 space-y-4">
       <h2 class="font-bold text-base text-gray-800 flex items-center gap-2 border-b pb-2">
         <span>🏪 Datos del Negocio, Pagos y Diseño</span>
@@ -51,6 +51,12 @@
         <div class="sm:col-span-2">
           <label class="block text-xs font-semibold text-gray-600 mb-1">Titular de la Cuenta</label>
           <input type="text" id="cfg-titular" placeholder="Ej: Juan Pérez / Pere y El Flaco SRL" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
+        </div>
+
+        <!-- URL DEL LOGO -->
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-semibold text-gray-700 mb-1">🖼️ URL del Logo del Local</label>
+          <input type="text" id="cfg-logo" placeholder="https://... (URL de la imagen del logo)" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
         </div>
 
         <!-- SELECTOR DE COLOR PRINCIPAL -->
@@ -178,6 +184,10 @@
           document.getElementById('cfg-ws2').value = data.whatsapp_2 || '';
           document.getElementById('cfg-alias').value = data.alias || '';
           document.getElementById('cfg-titular').value = data.titular || '';
+          document.getElementById('cfg-logo').value = data.logo_url || '';
+          
+          const colorGuardado = data.color_primario || data.color || '#e11d48';
+          seleccionarColor(colorGuardado);
         }
       } catch (err) {
         console.error("Error al cargar la configuración:", err);
@@ -186,14 +196,17 @@
 
     async function guardarConfiguracion() {
       const msgElem = document.getElementById('cfg-msg');
+      const colorSeleccionado = document.getElementById('cfg-color').value;
 
-      // Objeto completo con whatsapp_1 y whatsapp_2 incluidos
+      // Objeto completo incluyendo color_primario y logo_url
       const datos = {
         nombre: document.getElementById('cfg-nombre').value.trim(),
         whatsapp_1: document.getElementById('cfg-ws1').value.trim(),
         whatsapp_2: document.getElementById('cfg-ws2').value.trim(),
         alias: document.getElementById('cfg-alias').value.trim(),
-        titular: document.getElementById('cfg-titular').value.trim()
+        titular: document.getElementById('cfg-titular').value.trim(),
+        logo_url: document.getElementById('cfg-logo').value.trim(),
+        color_primario: colorSeleccionado
       };
 
       try {
@@ -204,6 +217,19 @@
         } else {
           const res = await _supabaseClient.from('configuracion').insert([datos]);
           error = res.error;
+        }
+
+        // Sistema de reintento inteligente por si las columnas nuevas aún no existen en Supabase
+        if (error && (error.message.includes('color_primario') || error.message.includes('logo_url') || error.message.includes('column'))) {
+          delete datos.color_primario;
+          delete datos.logo_url;
+          if (configActualId) {
+            const resRetry = await _supabaseClient.from('configuracion').update(datos).eq('id', configActualId);
+            error = resRetry.error;
+          } else {
+            const resRetry = await _supabaseClient.from('configuracion').insert([datos]);
+            error = resRetry.error;
+          }
         }
 
         if (error) throw error;
