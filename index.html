@@ -104,7 +104,7 @@
         <option value="Transferencia">📱 Transferencia bancaria / Mercado Pago</option>
       </select>
 
-      <!-- DATOS DE MERCADO PAGO / ALIAS (Se muestra al elegir Transferencia) -->
+      <!-- DATOS DE MERCADO PAGO / ALIAS -->
       <div id="datos-transferencia" class="hidden bg-blue-50 border border-blue-200 rounded-lg p-3 space-y-1 mt-2">
         <p class="text-xs font-bold text-blue-800 flex items-center gap-1">
           <span>💳 Datos para transferir:</span>
@@ -121,7 +121,7 @@
       </div>
     </section>
 
-    <!-- FOOTER / PUBLICIDAD SUTIL NEXOSERV -->
+    <!-- FOOTER -->
     <footer class="text-center pt-2 pb-6">
       <p class="text-xs text-gray-400 font-normal">
         Desarrollado por <span class="font-semibold text-gray-600">NexoServ</span>
@@ -130,7 +130,7 @@
 
   </main>
 
-  <!-- VENTANA MODAL FLOTANTE PARA DETALLE DE PRODUCTO -->
+  <!-- VENTANA MODAL FLOTANTE -->
   <div id="modal-producto" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
     <div class="bg-white w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl transform transition-all animate-in fade-in zoom-in-95 duration-200">
       <div class="relative">
@@ -158,7 +158,7 @@
     </div>
   </div>
 
-  <!-- BARRA INFERIOR DEL CARRITO FIJA -->
+  <!-- BARRA INFERIOR DEL CARRITO -->
   <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-3 shadow-lg z-50">
     <div class="max-w-md mx-auto flex items-center justify-between gap-3">
       <div>
@@ -172,9 +172,8 @@
     </div>
   </div>
 
-  <!-- LÓGICA JAVASCRIPT CON MODAL Y COLOR -->
+  <!-- LÓGICA JAVASCRIPT -->
   <script>
-    // --- CONFIGURACIÓN DE SUPABASE ---
     const SUPABASE_URL = 'https://ahyvmupqzgcrxrbvjzsb.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFoeXZtdXBxemdjcnhyYnZqenNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1MTg5MzcsImV4cCI6MjEwODA5NDkzN30.oBfYP5Pf0hXDymQtMqE2pFbWCVllRKWcYGew0iuca4Q';
 
@@ -184,6 +183,7 @@
     let carrito = {};
     let ubicacionGPSUrl = '';
     let productoActualModalId = null;
+    let categoriaSeleccionada = 'todas';
     let configNegocio = { 
       whatsapp_1: '', 
       whatsapp_2: '', 
@@ -193,7 +193,6 @@
       abierto: true
     };
 
-    // --- INICIALIZACIÓN ---
     document.addEventListener('DOMContentLoaded', async () => {
       await cargarConfiguracion();
       await cargarProductos();
@@ -219,12 +218,15 @@
             document.getElementById('logo-header').src = data.logo_url;
           }
 
-          // GESTIÓN DEL ESTADO ABIERTO / CERRADO EN EL HEADER
+          // EVALUACIÓN DE ESTADO ABIERTO / CERRADO FLEXIBLE
+          const estaAbierto = !(data.abierto === false || data.abierto === 'false' || data.abierto === 0 || data.abierto === '0');
+          configNegocio.abierto = estaAbierto;
+
           const labelEstado = document.getElementById('estado-label');
           const puntoEstado = document.getElementById('estado-punto');
           const textoEstadoContainer = document.getElementById('estado-negocio-text');
 
-          if (data.abierto === false) {
+          if (!estaAbierto) {
             labelEstado.textContent = "Cerrado temporalmente";
             puntoEstado.className = "w-2 h-2 rounded-full bg-red-500";
             textoEstadoContainer.className = "text-xs text-red-600 font-medium flex items-center gap-1";
@@ -234,14 +236,12 @@
             textoEstadoContainer.className = "text-xs text-emerald-600 font-medium flex items-center gap-1";
           }
           
-          const aliasVal = data.alias || data.mp_alias;
-          if (aliasVal) {
-            document.getElementById('mp-alias').textContent = aliasVal;
+          if (data.alias || data.mp_alias) {
+            document.getElementById('mp-alias').textContent = data.alias || data.mp_alias;
           }
 
-          const titularVal = data.titular || data.mp_titular;
-          if (titularVal) {
-            document.getElementById('mp-titular').textContent = titularVal;
+          if (data.titular || data.mp_titular) {
+            document.getElementById('mp-titular').textContent = data.titular || data.mp_titular;
           }
         }
       } catch (err) {
@@ -252,32 +252,53 @@
     async function cargarProductos() {
       try {
         const { data, error } = await _supabaseClient.from('productos').select('*');
-        if (error) {
-          console.error("Error Supabase:", error);
-          document.getElementById('productos-container').innerHTML = `<p class="text-center text-red-500 text-sm py-4">Error al cargar productos: ${error.message}</p>`;
-          return;
-        }
+        if (error) throw error;
         productos = data || [];
-        renderizarProductos(productos);
+        generarBotonesCategorias();
+        renderizarProductos();
       } catch (err) {
         console.error("Error cargando productos:", err);
         document.getElementById('productos-container').innerHTML = '<p class="text-center text-red-500 text-sm py-4">Error al conectar con la base de datos.</p>';
       }
     }
 
-    function renderizarProductos(lista) {
+    function generarBotonesCategorias() {
+      const container = document.getElementById('categorias-container');
+      const categoriasUnicas = ['todas', ...new Set(productos.map(p => p.categoria).filter(Boolean))];
+
+      container.innerHTML = categoriasUnicas.map(cat => {
+        const esActiva = cat === categoriaSeleccionada;
+        const claseBtn = esActiva 
+          ? 'cat-btn bg-custom-primary text-white text-xs px-4 py-2 rounded-full font-medium whitespace-nowrap shadow-sm'
+          : 'cat-btn bg-white text-gray-600 border border-gray-200 text-xs px-4 py-2 rounded-full font-medium whitespace-nowrap';
+        const label = cat === 'todas' ? 'Todas' : cat;
+        return `<button onclick="filtrarCategoria('${cat}')" class="${claseBtn}">${label}</button>`;
+      }).join('');
+    }
+
+    function filtrarCategoria(cat) {
+      categoriaSeleccionada = cat;
+      generarBotonesCategorias();
+      renderizarProductos();
+    }
+
+    function renderizarProductos() {
       const container = document.getElementById('productos-container');
       container.innerHTML = '';
 
-      // Filtrar y omitir los productos que estén pausados
-      const listaActiva = lista.filter(p => p.pausado !== true);
+      // Filtrar productos no pausados y por categoría
+      const listaFiltrada = productos.filter(p => {
+        const noEstaPausado = !(p.pausado === true || p.pausado === 'true' || p.pausado === 1);
+        const coincideCat = categoriaSeleccionada === 'todas' || p.categoria === categoriaSeleccionada;
+        return noEstaPausado && coincideCat;
+      });
 
-      if (listaActiva.length === 0) {
-        container.innerHTML = '<p class="text-center text-sm text-gray-400 py-6">No hay productos disponibles en este momento.</p>';
+      if (listaFiltrada.length === 0) {
+        container.innerHTML = '<p class="text-center text-sm text-gray-400 py-6">No hay productos disponibles en esta categoría.</p>';
         return;
       }
 
-      listaActiva.forEach(p => {
+      listaFiltrada.forEach(p => {
         const cant = carrito[p.id] ? carrito[p.id].cantidad : 0;
         container.innerHTML += `
           <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between gap-3">
@@ -297,7 +318,6 @@
       });
     }
 
-    // --- FUNCIONES DE LA VENTANA MODAL ---
     function abrirModal(id) {
       const prod = productos.find(p => p.id === id);
       if (!prod) return;
@@ -374,7 +394,6 @@
       }
     }
 
-    // --- OBTENER GEOLOCALIZACIÓN GPS ---
     function obtenerUbicacionGPS() {
       const statusElem = document.getElementById('gps-status');
       
@@ -405,9 +424,7 @@
       );
     }
 
-    // --- ENVIAR A WHATSAPP ---
     function enviarPedidoWhatsApp() {
-      // Verificar si el local se encuentra cerrado
       if (configNegocio.abierto === false) {
         alert("Lo sentimos, en este momento el local se encuentra cerrado y no acepta nuevos pedidos.");
         return;
