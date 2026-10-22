@@ -130,13 +130,11 @@
     </div>
   </div>
 
-  <!-- LÓGICA JAVASCRIPT -->
+    <!-- LÓGICA JAVASCRIPT -->
   <script>
     // --- CONFIGURACIÓN DE SUPABASE ---
     const SUPABASE_URL = 'https://ahyvmupqzgcrxrbvjzsb.supabase.co';
-    
-    // ⚠️ Pega tu SUPABASE_ANON_KEY (JWT largo que empieza por eyJhbG...)
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFoeXZtdXBxemdjcnhyYnZqenNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2MjU4OTQsImV4cCI6MjEwODIwMTzg0fQ.oBfYP5Pf0hXDymQtMqE2pFbWCV1RKWcYGew0iuca4Q0'; 
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFoeXZtdXBxemdjcnhyYnZqenNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2MjU4OTQsImV4cCI6MjEwODIwMTzg0fQ.oBfYP5Pf0hXDymQtMqE2pFbWCV1RKWcYGew0iuca4Q0';
 
     const _supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -362,5 +360,5 @@
       window.open(urlWs, '_blank');
     }
   </script>
-</body>
+
 </html>
