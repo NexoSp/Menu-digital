@@ -191,15 +191,16 @@
       const msgElem = document.getElementById('cfg-msg');
       const colorSeleccionado = document.getElementById('cfg-color').value;
 
+      // Datos base compatibles con tu esquema actual
       const datos = {
         nombre: document.getElementById('cfg-nombre').value.trim(),
-        whatsapp_1: document.getElementById('cfg-ws1').value.trim(),
         whatsapp: document.getElementById('cfg-ws1').value.trim(),
+        whatsapp_1: document.getElementById('cfg-ws1').value.trim(),
         whatsapp_2: document.getElementById('cfg-ws2').value.trim(),
-        alias: document.getElementById('cfg-alias').value.trim(),
         mp_alias: document.getElementById('cfg-alias').value.trim(),
-        titular: document.getElementById('cfg-titular').value.trim(),
+        alias: document.getElementById('cfg-alias').value.trim(),
         mp_titular: document.getElementById('cfg-titular').value.trim(),
+        titular: document.getElementById('cfg-titular').value.trim(),
         color_primario: colorSeleccionado,
         color: colorSeleccionado
       };
@@ -214,9 +215,22 @@
           error = res.error;
         }
 
+        // Si la columna color o color_primario no existen, se reintenta sin ellas automáticamente
+        if (error && (error.message.includes('color') || error.message.includes('column'))) {
+          delete datos.color_primario;
+          delete datos.color;
+          if (configActualId) {
+            const resRetry = await _supabaseClient.from('configuracion').update(datos).eq('id', configActualId);
+            error = resRetry.error;
+          } else {
+            const resRetry = await _supabaseClient.from('configuracion').insert([datos]);
+            error = resRetry.error;
+          }
+        }
+
         if (error) throw error;
 
-        msgElem.textContent = "✓ Configuración y color guardados exitosamente.";
+        msgElem.textContent = "✓ Configuración guardada exitosamente.";
         msgElem.className = "text-xs text-center font-semibold text-emerald-600 pt-1";
         msgElem.classList.remove('hidden');
         setTimeout(() => msgElem.classList.add('hidden'), 3000);
