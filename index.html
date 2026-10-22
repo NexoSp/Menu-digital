@@ -11,9 +11,9 @@
   <meta property="og:description" content="Haz tu pedido rápido y fácil por WhatsApp. ¡Conoce nuestro menú!">
   <meta property="og:url" content="https://nexosp.github.io/Menu-digital/">
 
-  <!-- LOGO DIRECTO DE SUPABASE -->
-  <meta property="og:image" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png">
-  <meta property="og:image:secure_url" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png">
+  <!-- LOGO DINÁMICO OPEN GRAPH -->
+  <meta id="og-image" property="og:image" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png">
+  <meta id="og-image-secure" property="og:image:secure_url" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="500">
   <meta property="og:image:height" content="500">
@@ -214,8 +214,14 @@
             document.title = `Menú Digital - ${data.nombre}`;
           }
 
+          // ACTUALIZACIÓN DINÁMICA DE LOGO EN HEADER Y METADATOS PARA WHATSAPP
           if (data.logo_url) {
             document.getElementById('logo-header').src = data.logo_url;
+
+            const metaOgImg = document.getElementById('og-image');
+            const metaOgImgSecure = document.getElementById('og-image-secure');
+            if (metaOgImg) metaOgImg.setAttribute('content', data.logo_url);
+            if (metaOgImgSecure) metaOgImgSecure.setAttribute('content', data.logo_url);
           }
 
           // EVALUACIÓN DE ESTADO ABIERTO / CERRADO FLEXIBLE
@@ -397,96 +403,4 @@
     function obtenerUbicacionGPS() {
       const statusElem = document.getElementById('gps-status');
       
-      if (!navigator.geolocation) {
-        alert("Tu navegador no soporta geolocalización.");
-        return;
-      }
-
-      statusElem.textContent = "⌛ Obteniendo tu ubicación...";
-      statusElem.className = "text-[11px] text-gray-500 font-medium";
-      statusElem.classList.remove('hidden');
-
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
-          
-          ubicacionGPSUrl = `https://maps.google.com/?q=${lat},${lng}`;
-          
-          statusElem.textContent = "✓ ¡Ubicación GPS capturada correctamente!";
-          statusElem.className = "text-[11px] text-emerald-600 font-bold";
-        },
-        (error) => {
-          statusElem.textContent = "❌ No se pudo obtener la ubicación. Por favor, escríbela abajo.";
-          statusElem.className = "text-[11px] text-red-500 font-medium";
-        },
-        { enableHighAccuracy: true, timeout: 10000 }
-      );
-    }
-
-    function enviarPedidoWhatsApp() {
-      if (configNegocio.abierto === false) {
-        alert("Lo sentimos, en este momento el local se encuentra cerrado y no acepta nuevos pedidos.");
-        return;
-      }
-
-      const nombre = document.getElementById('cliente-nombre').value.trim();
-      const tipoEntrega = document.getElementById('tipo-entrega').value;
-      const direccion = document.getElementById('cliente-direccion').value.trim();
-      const formaPago = document.getElementById('forma-pago').value;
-
-      if (Object.keys(carrito).length === 0) {
-        alert("Tu carrito está vacío. Agrega productos para realizar el pedido.");
-        return;
-      }
-
-      if (!nombre) {
-        alert("Por favor, ingresa tu nombre.");
-        return;
-      }
-
-      if (tipoEntrega === 'Delivery' && !direccion) {
-        alert("Por favor, ingresa la dirección de entrega.");
-        return;
-      }
-
-      let mensaje = `*📦 NUEVO PEDIDO - ${configNegocio.nombre}*\n`;
-      mensaje += `-----------------------------------\n`;
-      mensaje += `👤 *Cliente:* ${nombre}\n`;
-      mensaje += `🚚 *Entrega:* ${tipoEntrega}\n`;
-      
-      if (tipoEntrega === 'Delivery') {
-        mensaje += `📍 *Dirección:* ${direccion}\n`;
-        if (ubicacionGPSUrl) {
-          mensaje += `🗺️ *Ubicación GPS:* ${ubicacionGPSUrl}\n`;
-        }
-      }
-
-      mensaje += `💳 *Forma de Pago:* ${formaPago}\n`;
-      mensaje += `-----------------------------------\n`;
-      mensaje += `*DETALLE DEL PEDIDO:*\n`;
-
-      let total = 0;
-      Object.values(carrito).forEach(item => {
-        const subtotal = item.producto.precio * item.cantidad;
-        total += subtotal;
-        mensaje += `• ${item.cantidad}x ${item.producto.nombre} - $${subtotal}\n`;
-      });
-
-      mensaje += `-----------------------------------\n`;
-      mensaje += `💰 *TOTAL:* $${total}\n\n`;
-      mensaje += `¡Muchas gracias!`;
-
-      const numWhatsApp = configNegocio.whatsapp_1 || configNegocio.whatsapp || configNegocio.whatsapp_2;
-      
-      if (!numWhatsApp) {
-        alert("No hay un número de WhatsApp configurado en el sistema.");
-        return;
-      }
-
-      const urlWs = `https://wa.me/${numWhatsApp}?text=${encodeURIComponent(mensaje)}`;
-      window.open(urlWs, '_blank');
-    }
-  </script>
-</body>
-</html>
+      if (!navigator
