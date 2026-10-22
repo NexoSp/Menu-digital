@@ -11,7 +11,7 @@
   <meta property="og:description" content="Haz tu pedido rápido y fácil por WhatsApp. ¡Conoce nuestro menú!">
   <meta property="og:url" content="https://nexosp.github.io/Menu-digital/">
 
-  <!-- LOGO DIRECTO DE SUPABASE (JPG optimizado) -->
+  <!-- LOGO DIRECTO DE SUPABASE -->
   <meta property="og:image" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png">
   <meta property="og:image:secure_url" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png">
   <meta property="og:image:type" content="image/png">
@@ -32,7 +32,7 @@
     .border-custom-primary { border-color: var(--primary-color); }
   </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans pb-24">
+<body class="bg-gray-50 text-gray-800 font-sans pb-28">
 
   <!-- HEADER / CABECERA -->
   <header class="bg-white shadow-sm sticky top-0 z-40">
@@ -91,6 +91,13 @@
       </select>
     </section>
 
+    <!-- FOOTER / PUBLICIDAD SUTIL NEXOSERV -->
+    <footer class="text-center pt-2 pb-6">
+      <p class="text-xs text-gray-400 font-normal">
+        Desarrollado por <span class="font-semibold text-gray-600">NexoServ</span>
+      </p>
+    </footer>
+
   </main>
 
   <!-- BARRA INFERIOR DEL CARRITO FIJA -->
@@ -117,7 +124,11 @@
     let productos = [];
     let carrito = {};
     let ubicacionGPSUrl = '';
-    let configNegocio = { whatsapp_1: '', whatsapp_2: '', nombre: 'PERE Y EL FLACO' };
+    let configNegocio = { 
+      whatsapp_1: '', 
+      whatsapp_2: '', 
+      nombre: 'PERE Y EL FLACO' 
+    };
 
     // --- INICIALIZACIÓN ---
     document.addEventListener('DOMContentLoaded', async () => {
@@ -126,10 +137,13 @@
     });
 
     async function cargarConfiguracion() {
-      const { data } = await supabase.from('configuracion').select('*').single();
+      const { data, error } = await supabase.from('configuracion').select('*').single();
       if (data) {
         configNegocio = data;
-        if (data.nombre) document.getElementById('nombre-negocio').textContent = data.nombre;
+        if (data.nombre) {
+          document.getElementById('nombre-negocio').textContent = data.nombre;
+          document.title = `Menú Digital - ${data.nombre}`;
+        }
       }
     }
 
@@ -146,6 +160,11 @@
     function renderizarProductos(lista) {
       const container = document.getElementById('productos-container');
       container.innerHTML = '';
+
+      if (lista.length === 0) {
+        container.innerHTML = '<p class="text-center text-sm text-gray-400 py-6">No hay productos disponibles.</p>';
+        return;
+      }
 
       lista.forEach(p => {
         const cant = carrito[p.id] ? carrito[p.id].cantidad : 0;
@@ -181,7 +200,8 @@
         delete carrito[id];
       }
 
-      document.getElementById(`cant-${id}`).textContent = carrito[id] ? carrito[id].cantidad : 0;
+      const elemCant = document.getElementById(`cant-${id}`);
+      if (elemCant) elemCant.textContent = carrito[id] ? carrito[id].cantidad : 0;
       actualizarTotal();
     }
 
@@ -234,7 +254,7 @@
       );
     }
 
-    // --- ENVIAR A WHATSAPP (MULTI-RECEPTOR) ---
+    // --- ENVIAR A WHATSAPP ---
     function enviarPedidoWhatsApp() {
       const nombre = document.getElementById('cliente-nombre').value.trim();
       const tipoEntrega = document.getElementById('tipo-entrega').value;
@@ -283,10 +303,14 @@
       mensaje += `💰 *TOTAL:* $${total}\n\n`;
       mensaje += `¡Muchas gracias!`;
 
-      // Determinar número de destino (soporte multi-WhatsApp)
-      const numWhatsApp = configNegocio.whatsapp_1 || '5493644000000'; // Tu número por defecto
-      const urlWs = `https://wa.me/${numWhatsApp}?text=${encodeURIComponent(mensaje)}`;
+      const numWhatsApp = configNegocio.whatsapp_1 || configNegocio.whatsapp_2;
+      
+      if (!numWhatsApp) {
+        alert("No hay un número de WhatsApp configurado en el sistema.");
+        return;
+      }
 
+      const urlWs = `https://wa.me/${numWhatsApp}?text=${encodeURIComponent(mensaje)}`;
       window.open(urlWs, '_blank');
     }
   </script>
