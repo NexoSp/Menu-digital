@@ -291,6 +291,20 @@
           error = res.error;
         }
 
+        // Si alguna columna nueva (abierto, color_primario o logo_url) no existe en la BD, reintentamos limpiándolas para no bloquear
+        if (error && (error.message.includes('abierto') || error.message.includes('color_primario') || error.message.includes('logo_url') || error.message.includes('column'))) {
+          delete datos.abierto;
+          delete datos.color_primario;
+          delete datos.logo_url;
+          if (configActualId) {
+            const resRetry = await _supabaseClient.from('configuracion').update(datos).eq('id', configActualId);
+            error = resRetry.error;
+          } else {
+            const resRetry = await _supabaseClient.from('configuracion').insert([datos]);
+            error = resRetry.error;
+          }
+        }
+
         if (error) throw error;
 
         msgElem.textContent = "✓ Configuración guardada exitosamente.";
