@@ -8,71 +8,42 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Supabase JS Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            'custom-primary': 'var(--primary-color, #eab308)',
-            'dark-bg': '#121212',
-            'dark-card': '#1a1a1a',
-            'dark-border': '#2a2a2a',
-            'dark-pill': '#1e1c18'
-          }
-        }
-      }
-    }
-  </script>
-
-  <style>
-    :root {
-      --primary-color: #eab308;
-    }
-    body {
-      background-color: #121212;
-      color: #e5e7eb;
-    }
-    .text-gold { color: var(--primary-color); }
-    .border-gold { border-color: var(--primary-color); }
-    .bg-gold { background-color: var(--primary-color); }
-  </style>
 </head>
-<body class="bg-dark-bg text-gray-200 font-sans pb-12">
+<body class="bg-gray-100 text-gray-800 font-sans pb-12">
 
   <!-- MODAL DE LOGIN -->
-  <div id="modal-login" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-    <div class="bg-dark-card border border-dark-border w-full max-w-sm rounded-2xl p-6 shadow-2xl space-y-4">
+  <div id="modal-login" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl space-y-4">
       <div class="text-center space-y-1">
-        <h2 class="font-bold text-xl text-white">🔐 Acceso al Panel</h2>
-        <p class="text-xs text-gray-400">Ingresa tus credenciales para administrar el menú</p>
+        <h2 class="font-bold text-xl text-gray-800">🔐 Acceso al Panel</h2>
+        <p class="text-xs text-gray-500">Ingresa tus credenciales para administrar el menú</p>
       </div>
       
       <div class="space-y-3 pt-2">
         <div>
-          <label class="block text-xs font-semibold text-gray-400 mb-1">Usuario</label>
-          <input type="text" id="login-user" placeholder="admin" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:border-gold focus:outline-none">
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Usuario</label>
+          <input type="text" id="login-user" placeholder="admin" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
         </div>
         <div>
-          <label class="block text-xs font-semibold text-gray-400 mb-1">Contraseña</label>
-          <input type="password" id="login-pass" placeholder="••••" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:border-gold focus:outline-none">
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Contraseña</label>
+          <input type="password" id="login-pass" placeholder="••••" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
         </div>
-        <p id="login-error" class="text-xs text-red-400 font-semibold text-center hidden">Usuario o contraseña incorrectos.</p>
+        <p id="login-error" class="text-xs text-red-500 font-semibold text-center hidden">Usuario o contraseña incorrectos.</p>
       </div>
 
-      <button onclick="verificarLogin()" class="w-full py-3 bg-gold hover:opacity-90 text-black font-extrabold rounded-xl text-sm transition-colors shadow-sm">
+      <button onclick="verificarLogin()" class="w-full py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl text-sm transition-colors shadow-sm">
         Ingresar al Panel
       </button>
     </div>
   </div>
 
   <!-- HEADER / CABECERA -->
-  <header class="bg-dark-card border-b border-dark-border sticky top-0 z-40">
+  <header class="bg-white shadow-sm sticky top-0 z-40">
     <div class="max-w-2xl mx-auto p-4 flex items-center justify-between">
-      <h1 class="font-bold text-sm sm:text-lg text-white flex items-center gap-2">⚙️ <span class="text-gold">Panel de Control Admin</span></h1>
+      <h1 class="font-bold text-lg text-gray-800">⚙️ Panel de Control Admin</h1>
       <div class="flex items-center gap-2">
-        <button onclick="cerrarSesion()" class="text-xs bg-dark-bg hover:bg-dark-pill text-red-400 px-3 py-2 rounded-xl border border-dark-border font-medium transition-colors">Cerrar Sesión</button>
-        <a href="index.html" class="text-xs bg-dark-bg hover:bg-dark-pill text-gray-300 px-3 py-2 rounded-xl border border-dark-border font-medium transition-colors">Ver Menú ↗</a>
+        <button onclick="cerrarSesion()" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg border border-red-200 font-medium">Cerrar Sesión</button>
+        <a href="index.html" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg border font-medium">Ver Menú ↗</a>
       </div>
     </div>
   </header>
@@ -80,74 +51,74 @@
   <main class="max-w-2xl mx-auto p-4 space-y-6">
 
     <!-- SECCIÓN 1: CONFIGURACIÓN DEL NEGOCIO, PAGOS Y DISEÑO -->
-    <section class="bg-dark-card p-5 rounded-2xl shadow-sm border border-dark-border space-y-4">
-      <h2 class="font-bold text-base text-white flex items-center gap-2 border-b border-dark-border pb-2">
+    <section class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 space-y-4">
+      <h2 class="font-bold text-base text-gray-800 flex items-center gap-2 border-b pb-2">
         <span>🏪 Datos del Negocio, Pagos y Envío</span>
       </h2>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs font-semibold text-gray-400 mb-1">Nombre del Local</label>
-          <input type="text" id="cfg-nombre" placeholder="Ej: PERE Y EL FLACO" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:border-gold focus:outline-none">
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Nombre del Local</label>
+          <input type="text" id="cfg-nombre" placeholder="Ej: PERE Y EL FLACO" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-gray-400 mb-1">Estado del Local</label>
-          <select id="cfg-abierto" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:border-gold focus:outline-none font-medium">
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Estado del Local</label>
+          <select id="cfg-abierto" class="w-full p-2.5 border rounded-xl text-sm bg-white focus:ring-2 focus:ring-red-400 focus:outline-none font-medium">
             <option value="true">🟢 Abierto (Aceptando pedidos)</option>
             <option value="false">🔴 Cerrado (Local no disponible)</option>
           </select>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-gray-400 mb-1">Costo Envío / Delivery ($)</label>
-          <input type="number" id="cfg-delivery" placeholder="Ej: 500" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:border-gold focus:outline-none">
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Costo Envío / Delivery ($)</label>
+          <input type="number" id="cfg-delivery" placeholder="Ej: 500" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-gray-400 mb-1">WhatsApp 1 (Sin + ni espacios)</label>
-          <input type="text" id="cfg-ws1" placeholder="Ej: 5491122334455" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:border-gold focus:outline-none">
+          <label class="block text-xs font-semibold text-gray-600 mb-1">WhatsApp 1 (Sin + ni espacios)</label>
+          <input type="text" id="cfg-ws1" placeholder="Ej: 5491122334455" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-gray-400 mb-1">WhatsApp 2 (Opcional)</label>
-          <input type="text" id="cfg-ws2" placeholder="Ej: 5491199887766" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:border-gold focus:outline-none">
+          <label class="block text-xs font-semibold text-gray-600 mb-1">WhatsApp 2 (Opcional)</label>
+          <input type="text" id="cfg-ws2" placeholder="Ej: 5491199887766" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-gray-400 mb-1">Alias Mercado Pago / CBU</label>
-          <input type="text" id="cfg-alias" placeholder="Ej: pere.el.flaco.mp" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:border-gold focus:outline-none">
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Alias Mercado Pago / CBU</label>
+          <input type="text" id="cfg-alias" placeholder="Ej: pere.el.flaco.mp" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
         </div>
 
         <div class="sm:col-span-2">
-          <label class="block text-xs font-semibold text-gray-400 mb-1">Titular de la Cuenta</label>
-          <input type="text" id="cfg-titular" placeholder="Ej: Juan Pérez / SRL" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:border-gold focus:outline-none">
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Titular de la Cuenta</label>
+          <input type="text" id="cfg-titular" placeholder="Ej: Juan Pérez / Pere y El Flaco SRL" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
         </div>
 
         <!-- LOGO DEL LOCAL -->
         <div class="sm:col-span-2">
-          <label class="block text-xs font-semibold text-gray-300 mb-1">🖼️ Logo del Local (Sube una imagen desde tu dispositivo)</label>
+          <label class="block text-xs font-semibold text-gray-700 mb-1">🖼️ Logo del Local (Sube una imagen desde tu dispositivo)</label>
           <input type="hidden" id="cfg-logo">
           <div class="flex items-center gap-2">
-            <input type="file" id="file-logo" accept="image/*" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-dark-pill file:text-gold hover:file:opacity-80 cursor-pointer border border-dark-border rounded-xl p-1 bg-dark-bg">
+            <input type="file" id="file-logo" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer border rounded-xl p-1">
           </div>
-          <p id="logo-status" class="text-[11px] text-gray-500 mt-1">Selecciona una imagen si deseas cambiar el logo actual.</p>
+          <p id="logo-status" class="text-[11px] text-gray-400 mt-1">Selecciona una imagen si deseas cambiar el logo actual.</p>
         </div>
 
         <!-- SELECTOR DE COLOR PRINCIPAL -->
-        <div class="sm:col-span-2 border-t border-dark-border pt-3 mt-1">
-          <label class="block text-xs font-semibold text-gray-300 mb-2">🎨 Color Principal del Menú (Botones y Encabezados)</label>
+        <div class="sm:col-span-2 border-t pt-3 mt-1">
+          <label class="block text-xs font-semibold text-gray-700 mb-2">🎨 Color Principal del Menú (Botones y Encabezados)</label>
           <div class="flex items-center gap-3">
-            <input type="color" id="cfg-color" value="#eab308" class="w-12 h-10 p-1 border border-dark-border rounded-xl cursor-pointer bg-dark-bg">
-            <input type="text" id="cfg-color-hex" value="#eab308" readonly class="w-24 p-2 border border-dark-border rounded-xl text-xs text-center font-mono font-bold bg-dark-bg text-gold">
+            <input type="color" id="cfg-color" value="#e11d48" class="w-12 h-10 p-1 border rounded-xl cursor-pointer bg-white">
+            <input type="text" id="cfg-color-hex" value="#e11d48" readonly class="w-24 p-2 border rounded-xl text-xs text-center font-mono font-bold bg-gray-50 text-gray-600">
             
             <div class="flex items-center gap-1.5 ml-auto">
-              <button type="button" onclick="seleccionarColor('#eab308')" class="w-6 h-6 rounded-full bg-yellow-500 border border-black/30"></button>
-              <button type="button" onclick="seleccionarColor('#ef4444')" class="w-6 h-6 rounded-full bg-red-500 border border-black/30"></button>
-              <button type="button" onclick="seleccionarColor('#16a34a')" class="w-6 h-6 rounded-full bg-green-600 border border-black/30"></button>
-              <button type="button" onclick="seleccionarColor('#2563eb')" class="w-6 h-6 rounded-full bg-blue-600 border border-black/30"></button>
-              <button type="button" onclick="seleccionarColor('#ea580c')" class="w-6 h-6 rounded-full bg-orange-600 border border-black/30"></button>
-              <button type="button" onclick="seleccionarColor('#9333ea')" class="w-6 h-6 rounded-full bg-purple-600 border border-black/30"></button>
+              <button type="button" onclick="seleccionarColor('#e11d48')" class="w-6 h-6 rounded-full bg-rose-600 border border-black/10"></button>
+              <button type="button" onclick="seleccionarColor('#16a34a')" class="w-6 h-6 rounded-full bg-green-600 border border-black/10"></button>
+              <button type="button" onclick="seleccionarColor('#2563eb')" class="w-6 h-6 rounded-full bg-blue-600 border border-black/10"></button>
+              <button type="button" onclick="seleccionarColor('#ea580c')" class="w-6 h-6 rounded-full bg-orange-600 border border-black/10"></button>
+              <button type="button" onclick="seleccionarColor('#9333ea')" class="w-6 h-6 rounded-full bg-purple-600 border border-black/10"></button>
+              <button type="button" onclick="seleccionarColor('#18181b')" class="w-6 h-6 rounded-full bg-zinc-900 border border-black/10"></button>
             </div>
           </div>
         </div>
@@ -162,9 +133,9 @@
 
 
     <!-- SECCIÓN 2: AGREGAR / EDITAR PRODUCTO -->
-    <section class="bg-dark-card p-5 rounded-2xl shadow-sm border border-dark-border space-y-4">
-      <h2 class="font-bold text-base text-white flex items-center gap-2 border-b border-dark-border pb-2">
-        <span id="form-title" class="text-gold">🍔 Agregar Nuevo Producto</span>
+    <section class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 space-y-4">
+      <h2 class="font-bold text-base text-gray-800 flex items-center gap-2 border-b pb-2">
+        <span id="form-title">🍔 Agregar Nuevo Producto</span>
       </h2>
 
       <input type="hidden" id="prod-id">
@@ -172,48 +143,48 @@
 
       <div class="space-y-3">
         <div>
-          <label class="block text-xs font-semibold text-gray-400 mb-1">Nombre del Producto</label>
-          <input type="text" id="prod-nombre" placeholder="Ej: Hamburguesa Doble" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:border-gold focus:outline-none">
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Nombre del Producto</label>
+          <input type="text" id="prod-nombre" placeholder="Ej: Hamburguesa Doble Con Queso" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-gray-400 mb-1">Precio ($)</label>
-            <input type="number" id="prod-precio" placeholder="4500" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:border-gold focus:outline-none">
+            <label class="block text-xs font-semibold text-gray-600 mb-1">Precio ($)</label>
+            <input type="number" id="prod-precio" placeholder="4500" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-gray-400 mb-1">Categoría</label>
-            <input type="text" id="prod-categoria" placeholder="Ej: Hamburguesas" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:border-gold focus:outline-none">
+            <label class="block text-xs font-semibold text-gray-600 mb-1">Categoría</label>
+            <input type="text" id="prod-categoria" placeholder="Ej: Hamburguesas" class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none">
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-gray-400 mb-1">Descripción</label>
-          <textarea id="prod-descripcion" rows="2" placeholder="Detalle del producto..." class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:border-gold focus:outline-none"></textarea>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Descripción</label>
+          <textarea id="prod-descripcion" rows="2" placeholder="Medallón doble de carne, cheddar, bacon y salsa especial..." class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:outline-none"></textarea>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-gray-300 mb-1">Imagen del Producto (Desde el dispositivo)</label>
-          <input type="file" id="file-producto" accept="image/*" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-dark-pill file:text-gold hover:file:opacity-80 cursor-pointer border border-dark-border rounded-xl p-1 bg-dark-bg">
-          <p id="prod-img-status" class="text-[11px] text-gray-500 mt-1">Selecciona una foto para subirla al servidor.</p>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Imagen del Producto (Desde el dispositivo)</label>
+          <input type="file" id="file-producto" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer border rounded-xl p-1">
+          <p id="prod-img-status" class="text-[11px] text-gray-400 mt-1">Selecciona una foto para subirla al servidor.</p>
         </div>
       </div>
 
       <div class="flex gap-2 pt-2">
-        <button onclick="guardarProducto()" class="flex-1 py-3 bg-gold hover:opacity-90 text-black font-extrabold rounded-xl text-sm transition-colors shadow-sm">
+        <button onclick="guardarProducto()" class="flex-1 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl text-sm transition-colors shadow-sm">
           Guardar Producto
         </button>
-        <button id="btn-cancelar" onclick="limpiarFormularioProducto()" class="hidden py-3 px-4 bg-dark-bg hover:bg-dark-pill border border-dark-border text-gray-300 font-bold rounded-xl text-sm transition-colors">
+        <button id="btn-cancelar" onclick="limpiarFormularioProducto()" class="hidden py-3 px-4 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl text-sm transition-colors">
           Cancelar
         </button>
       </div>
     </section>
 
     <!-- SECCIÓN 3: LISTADO DE PRODUCTOS -->
-    <section class="bg-dark-card p-5 rounded-2xl shadow-sm border border-dark-border space-y-4">
-      <h2 class="font-bold text-base text-white border-b border-dark-border pb-2">📋 Productos Cargados</h2>
+    <section class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 space-y-4">
+      <h2 class="font-bold text-base text-gray-800 border-b pb-2">📋 Productos Cargados</h2>
       <div id="lista-admin-productos" class="space-y-3">
-        <p class="text-center text-sm text-gray-500 py-4">Cargando productos...</p>
+        <p class="text-center text-sm text-gray-400 py-4">Cargando productos...</p>
       </div>
     </section>
 
@@ -312,7 +283,7 @@
             document.getElementById('cfg-abierto').value = data.abierto.toString();
           }
           
-          const colorGuardado = data.color_primario || data.color || '#eab308';
+          const colorGuardado = data.color_primario || data.color || '#e11d48';
           seleccionarColor(colorGuardado);
         }
       } catch (err) {
@@ -331,7 +302,7 @@
 
       if (fileInput.files.length > 0) {
         msgElem.textContent = "⌛ Subiendo logo...";
-        msgElem.className = "text-xs text-center font-semibold text-gold pt-1";
+        msgElem.className = "text-xs text-center font-semibold text-blue-600 pt-1";
         msgElem.classList.remove('hidden');
         
         const uploadedUrl = await subirImagenASupabase(fileInput.files[0], 'logos');
@@ -377,7 +348,7 @@
         }
 
         msgElem.textContent = "✓ Configuración guardada exitosamente.";
-        msgElem.className = "text-xs text-center font-semibold text-emerald-400 pt-1";
+        msgElem.className = "text-xs text-center font-semibold text-emerald-600 pt-1";
         msgElem.classList.remove('hidden');
         setTimeout(() => msgElem.classList.add('hidden'), 3000);
 
@@ -396,33 +367,33 @@
         container.innerHTML = '';
 
         if (listaProductos.length === 0) {
-          container.innerHTML = '<p class="text-center text-xs text-gray-500 py-4">No hay productos registrados.</p>';
+          container.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">No hay productos registrados.</p>';
           return;
         }
 
         listaProductos.forEach(p => {
           const estaPausado = p.pausado === true || p.pausado === 'true' || p.pausado === 1;
-          const estadoClase = estaPausado ? 'bg-amber-950/30 border-amber-800/50 opacity-75' : 'bg-dark-bg';
+          const estadoClase = estaPausado ? 'bg-amber-50 border-amber-200 opacity-75' : 'bg-gray-50';
           const botonPausarTexto = estaPausado ? '🟢 Activar' : '⏸️ Pausar';
-          const botonPausarClase = estaPausado ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800';
+          const botonPausarClase = estaPausado ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-amber-100 text-amber-700 hover:bg-amber-200';
 
           container.innerHTML += `
-            <div class="flex items-center justify-between p-3 border border-dark-border rounded-xl ${estadoClase} gap-3">
-              <img src="${p.imagen_url || 'https://via.placeholder.com/80'}" class="w-12 h-12 rounded-lg object-cover bg-dark-card">
+            <div class="flex items-center justify-between p-3 border rounded-xl ${estadoClase} gap-3">
+              <img src="${p.imagen_url || 'https://via.placeholder.com/80'}" class="w-12 h-12 rounded-lg object-cover bg-gray-200">
               <div class="flex-1">
-                <h3 class="font-bold text-sm text-white">${p.nombre} ${estaPausado ? '<span class="text-[10px] bg-amber-900 text-amber-200 px-1.5 py-0.5 rounded font-bold">Pausado</span>' : ''}</h3>
-                <p class="text-xs text-gray-400">${p.categoria || 'Sin categoría'} - <span class="font-bold text-gold">$${p.precio}</span></p>
+                <h3 class="font-bold text-sm text-gray-800">${p.nombre} ${estaPausado ? '<span class="text-[10px] bg-amber-200 text-amber-800 px-1.5 py-0.5 rounded font-bold">Pausado</span>' : ''}</h3>
+                <p class="text-xs text-gray-500">${p.categoria || 'Sin categoría'} - <span class="font-bold text-emerald-600">$${p.precio}</span></p>
               </div>
               <div class="flex items-center gap-1.5">
                 <button onclick="togglePausarProducto(${p.id}, ${!estaPausado})" class="p-2 text-xs ${botonPausarClase} font-bold rounded-lg transition-colors" title="Pausar o Activar">${botonPausarTexto}</button>
-                <button onclick="prepararEdicion(${p.id})" class="p-2 text-xs bg-dark-card hover:bg-dark-pill border border-dark-border text-blue-400 font-bold rounded-lg" title="Editar">✏️</button>
-                <button onclick="eliminarProducto(${p.id})" class="p-2 text-xs bg-dark-card hover:bg-dark-pill border border-dark-border text-red-400 font-bold rounded-lg" title="Eliminar">🗑️</button>
+                <button onclick="prepararEdicion(${p.id})" class="p-2 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold rounded-lg" title="Editar">✏️</button>
+                <button onclick="eliminarProducto(${p.id})" class="p-2 text-xs bg-red-100 hover:bg-red-200 text-red-700 font-bold rounded-lg" title="Eliminar">🗑️</button>
               </div>
             </div>
           `;
         });
       } catch (err) {
-        document.getElementById('lista-admin-productos').innerHTML = '<p class="text-center text-red-400 text-xs py-4">Error al conectar con la tabla de productos.</p>';
+        document.getElementById('lista-admin-productos').innerHTML = '<p class="text-center text-red-500 text-xs py-4">Error al conectar con la tabla de productos.</p>';
       }
     }
 
