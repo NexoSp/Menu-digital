@@ -225,7 +225,6 @@
           console.log("Compartir cancelado o error:", err);
         }
       } else {
-        // Respaldo por si se abre desde una computadora
         try {
           await navigator.clipboard.writeText(window.location.href);
           alert("¡Enlace del menú copiado al portapapeles! Compártelo con tus amigos.");
@@ -251,6 +250,7 @@
             document.title = `Menú Digital - ${data.nombre}`;
           }
 
+          // 👉 AQUÍ ESTÁ LA SINCRONIZACIÓN AUTOMÁTICA DEL LOGO PARA WHATSAPP
           if (data.logo_url) {
             document.getElementById('logo-header').src = data.logo_url;
 
