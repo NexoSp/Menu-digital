@@ -11,7 +11,7 @@
   <meta property="og:description" content="Haz tu pedido rápido y fácil por WhatsApp. ¡Conoce nuestro menú!">
   <meta property="og:url" content="https://nexosp.github.io/Menu-digital/">
 
-  <!-- LOGO DINÁMICO OPEN GRAPH -->
+  <!-- LOGO OPEN GRAPH (URL DIRECTA DE SUPABASE INTEGRADA) -->
   <meta id="og-image" property="og:image" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png">
   <meta id="og-image-secure" property="og:image:secure_url" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png">
   <meta property="og:image:type" content="image/png">
@@ -250,14 +250,8 @@
             document.title = `Menú Digital - ${data.nombre}`;
           }
 
-          // 👉 AQUÍ ESTÁ LA SINCRONIZACIÓN AUTOMÁTICA DEL LOGO PARA WHATSAPP
           if (data.logo_url) {
             document.getElementById('logo-header').src = data.logo_url;
-
-            const metaOgImg = document.getElementById('og-image');
-            const metaOgImgSecure = document.getElementById('og-image-secure');
-            if (metaOgImg) metaOgImg.setAttribute('content', data.logo_url);
-            if (metaOgImgSecure) metaOgImgSecure.setAttribute('content', data.logo_url);
           }
 
           const estaAbierto = !(data.abierto === false || data.abierto === 'false' || data.abierto === 0 || data.abierto === '0');
