@@ -129,8 +129,8 @@
 
     <!-- FOOTER -->
     <footer class="text-center pt-2 pb-6 space-y-2">
-      <!-- BOTÓN COMPARTIR SECUNDARIO EN EL FOOTER -->
-      <button onclick="compartirMenu()" class="inline-flex items-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold px-4 py-2 rounded-xl text-xs border border-emerald-200 transition-colors shadow-sm">
+      <!-- BOTÓN CONSULTAR NUEVOS CLIENTES (NEXOSERV) -->
+      <button onclick="consultarNexoServ()" class="inline-flex items-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold px-4 py-2 rounded-xl text-xs border border-emerald-200 transition-colors shadow-sm">
         <span>📢 ¡NexoServ!</span>
       </button>
       <p class="text-xs text-gray-400 font-normal">
@@ -232,6 +232,14 @@
           alert("No se pudo compartir automáticamente. Puedes copiar el enlace de la barra de direcciones.");
         }
       }
+    }
+
+    // --- FUNCIÓN PARA CONSULTAR A NEXOSERV (NUEVOS CLIENTES) ---
+    function consultarNexoServ() {
+      const numeroDesarrollador = "543644509472";
+      const mensaje = "¡Hola NexoServ! Me interesa consultar por un menú digital / nuevos servicios.";
+      const urlWs = `https://wa.me/${numeroDesarrollador}?text=${encodeURIComponent(mensaje)}`;
+      window.open(urlWs, '_blank');
     }
 
     async function cargarConfiguracion() {
