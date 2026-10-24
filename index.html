@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Menú Digital - PERE Y EL FLACO</title>
+  <title>Menú Digital - Catálogo Online</title>
 
-  <!-- Etiquetas Open Graph -->
+  <!-- Etiquetas Open Graph Genericas -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Menú Digital - PERE Y EL FLACO">
+  <meta property="og:title" content="Menú Digital - Catálogo Online">
   <meta property="og:description" content="Haz tu pedido rápido y fácil por WhatsApp. ¡Conoce nuestro menú!">
-  <meta property="og:url" content="https://nexosp.github.io/Menu-digital/?v=13">
+  <meta property="og:url" content="">
 
-  <meta id="og-image" property="og:image" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792764795898_li1i8.jpg">
-  <meta id="og-image-secure" property="og:image:secure_url" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792764795898_li1i8.jpg">
+  <meta id="og-image" property="og:image" content="">
+  <meta id="og-image-secure" property="og:image:secure_url" content="">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="500">
   <meta property="og:image:height" content="500">
@@ -26,8 +26,8 @@
       theme: {
         extend: {
           colors: {
-            'custom-primary': 'var(--primary-color, #ef4444)',
-            'dark-bg': '#09090b',
+            'custom-primary': 'var(--primary-color, #eab308)',
+            'dark-bg': 'var(--bg-color, #09090b)',
             'dark-card': '#141417',
             'dark-border': '#27272a',
             'dark-pill': '#1c1c21'
@@ -39,17 +39,18 @@
 
   <style>
     :root {
-      --primary-color: #ef4444;
+      --primary-color: #eab308;
+      --bg-color: #09090b;
     }
     body {
-      background-color: #09090b;
+      background-color: var(--bg-color);
       color: #f4f4f5;
     }
     .bg-custom-primary { background-color: var(--primary-color) !important; }
     .text-custom-primary { color: var(--primary-color) !important; }
     .border-custom-primary { border-color: var(--primary-color) !important; }
     
-    /* Animación Anillo de Estado estilo Instagram/WhatsApp */
+    /* Animación Anillo de Estado de Historias */
     .story-ring {
       background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
       padding: 3px;
@@ -60,6 +61,8 @@
       70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(220, 39, 67, 0); }
       100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 39, 67, 0); }
     }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="bg-dark-bg text-gray-100 font-sans pb-32">
@@ -74,15 +77,14 @@
     </div>
   </header>
 
-  <!-- CABECERA PRINCIPAL CON LOGO Y PROMO ESTADO -->
+  <!-- CABECERA PRINCIPAL CON LOGO Y ESTADO -->
   <section class="max-w-md mx-auto px-4 pt-6 pb-4 text-center flex flex-col items-center">
     
     <!-- LOGO CON ESTADO PROMO -->
     <div class="relative mb-3 cursor-pointer group" onclick="abrirStory()">
-      <div id="story-ring-container" class="w-36 h-36 rounded-full flex items-center justify-center transition-transform group-hover:scale-105 duration-300 border-4 border-dark-border">
-        <img id="logo-header" src="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png" alt="Logo" class="w-full h-full rounded-full object-cover p-0.5 bg-black">
+      <div id="story-ring-container" class="w-36 h-36 rounded-full flex items-center justify-center transition-transform group-hover:scale-105 duration-300 border-4 border-dark-border bg-black">
+        <img id="logo-header" src="https://via.placeholder.com/150" alt="Logo" class="w-full h-full rounded-full object-cover p-0.5">
       </div>
-      <!-- Insignia de Estado Promocional -->
       <span id="story-badge" class="hidden absolute bottom-1 right-2 bg-gradient-to-r from-amber-500 to-rose-500 text-white font-extrabold text-[10px] px-2 py-0.5 rounded-full shadow-lg border border-black animate-bounce">
         🔥 PROMO
       </span>
@@ -92,32 +94,55 @@
 
     <!-- NOMBRE DEL NEGOCIO -->
     <h1 id="nombre-negocio" class="font-black text-3xl sm:text-4xl tracking-widest uppercase text-white leading-tight drop-shadow-md">
-      PERE Y EL FLACO
+      MI NEGOCIO
     </h1>
 
     <!-- Indicador Estado -->
-    <div id="estado-negocio-text" class="mt-2 mb-2 flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-950/40 border border-emerald-800/50 px-3 py-1 rounded-full">
+    <div id="estado-negocio-text" class="mt-2 mb-4 flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-950/40 border border-emerald-800/50 px-3 py-1 rounded-full">
       <span id="estado-punto" class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> 
       <span id="estado-label">Abierto ahora</span>
+    </div>
+
+    <!-- PÍLDORAS INFORMATIVAS DINÁMICAS -->
+    <div class="grid grid-cols-2 gap-2.5 w-full text-xs font-medium text-gray-300">
+      <div class="bg-dark-card border border-dark-border rounded-full py-2.5 px-3 flex items-center justify-center gap-2 truncate shadow-sm">
+        <span class="text-custom-primary">📍</span>
+        <span id="info-direccion" class="truncate">Dirección del local</span>
+      </div>
+      <div class="bg-dark-card border border-dark-border rounded-full py-2.5 px-3 flex items-center justify-center gap-2 truncate shadow-sm">
+        <span class="text-custom-primary">💬</span>
+        <span id="info-ws" class="truncate">WhatsApp</span>
+      </div>
+      <div class="bg-dark-card border border-dark-border rounded-full py-2.5 px-3 flex items-center justify-center gap-2 truncate shadow-sm">
+        <span class="text-custom-primary">📷</span>
+        <span id="info-instagram" class="truncate">@instagram</span>
+      </div>
+      <div class="bg-dark-card border border-dark-border rounded-full py-2.5 px-3 flex items-center justify-center gap-2 truncate shadow-sm">
+        <span class="text-custom-primary">⏰</span>
+        <span id="info-horarios" class="truncate">Horarios</span>
+      </div>
     </div>
 
   </section>
 
   <!-- CONTENIDO PRINCIPAL -->
-  <main class="max-w-md mx-auto p-4 space-y-6">
+  <main class="max-w-md mx-auto p-4 space-y-4">
 
-    <!-- FILTRO DE CATEGORÍAS -->
-    <div id="categorias-container" class="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
-      <button onclick="filtrarCategoria('todas')" class="cat-btn bg-custom-primary text-white text-xs px-4 py-2 rounded-full font-medium whitespace-nowrap shadow-sm">Todas</button>
+    <!-- BUSCADOR -->
+    <div class="relative">
+      <input type="text" id="input-busqueda" oninput="filtrarProductosPorBusqueda()" placeholder="Buscar en la tienda..." class="w-full bg-dark-card border border-dark-border rounded-2xl py-3.5 px-4 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-custom-primary transition-colors">
     </div>
 
-    <!-- LISTA DE PRODUCTOS -->
-    <div id="productos-container" class="space-y-3">
+    <!-- BARRA DE CATEGORÍAS RÁPIDAS -->
+    <div id="bar-categorias" class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1"></div>
+
+    <!-- LISTA DE PRODUCTOS (ACORDEÓN) -->
+    <div id="categorias-acordeon" class="space-y-3">
       <p class="text-center text-sm text-gray-500 py-8">Cargando menú...</p>
     </div>
 
     <!-- DATOS DE ENTREGA Y PAGO -->
-    <section class="bg-dark-card rounded-2xl p-4 shadow-sm border border-dark-border space-y-3">
+    <section class="bg-dark-card rounded-2xl p-4 shadow-sm border border-dark-border space-y-3 mt-6">
       <h2 class="font-bold text-custom-primary text-xs tracking-widest uppercase">1. Datos de Entrega</h2>
       
       <input type="text" id="cliente-nombre" placeholder="Tu Nombre completo" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-custom-primary">
@@ -127,7 +152,7 @@
         <option value="Retiro" class="bg-dark-card">🛍️ Retiro en el Local</option>
       </select>
 
-             <div id="campo-direccion" class="space-y-3">
+      <div id="campo-direccion" class="space-y-3">
         <input type="text" id="cliente-direccion" placeholder="Dirección completa y altura (Calle, número, depto)" class="w-full p-3.5 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:outline-none focus:border-custom-primary">
         
         <!-- BOTÓN GPS MEJORADO Y LLAMATIVO -->
@@ -155,7 +180,6 @@
         </div>
       </div>
 
-
       <h2 class="font-bold text-custom-primary text-xs tracking-widest uppercase pt-2">2. Forma de Pago</h2>
       <select id="forma-pago" onchange="toggleDatosTransferencia()" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-custom-primary">
         <option value="Efectivo" class="bg-dark-card">💵 Efectivo</option>
@@ -181,11 +205,8 @@
     <!-- FOOTER -->
     <footer class="text-center pt-2 pb-6 space-y-2">
       <button onclick="consultarNexoServ()" class="inline-flex items-center gap-2 bg-dark-card hover:bg-dark-pill text-gray-300 font-semibold px-4 py-2 rounded-xl text-xs border border-dark-border transition-colors shadow-sm">
-        <span>📢 ¡NexoServ!</span>
+        <span>📢 Soporte Técnico</span>
       </button>
-      <p class="text-xs text-gray-500 font-normal">
-        Desarrollado por <span class="font-semibold text-gray-400">NexoServ</span>
-      </p>
     </footer>
 
   </main>
@@ -218,14 +239,11 @@
     </div>
   </div>
 
-  <!-- VISUALIZADOR DE HISTORIAS / PROMOS (ESTILO INSTAGRAM/WHATSAPP) -->
+  <!-- VISUALIZADOR DE HISTORIAS / PROMOS (12 HORAS) -->
   <div id="modal-story" class="fixed inset-0 bg-black/95 z-50 hidden flex flex-col items-center justify-between p-4 backdrop-blur-md">
-    <!-- Barra de Progreso Superior -->
     <div class="w-full max-w-sm bg-gray-800 h-1.5 rounded-full overflow-hidden mt-2">
       <div id="story-progress" class="bg-rose-500 h-full w-0 transition-all duration-100 ease-linear"></div>
     </div>
-
-    <!-- Header de la Historia -->
     <div class="w-full max-w-sm flex items-center justify-between py-2 text-white">
       <div class="flex items-center gap-2">
         <img id="story-logo-mini" src="" class="w-8 h-8 rounded-full border border-rose-500 object-cover">
@@ -233,14 +251,10 @@
       </div>
       <button onclick="cerrarStory()" class="text-gray-400 hover:text-white text-xl font-bold p-1">✕</button>
     </div>
-
-    <!-- Imagen de la Historia -->
     <div class="w-full max-w-sm flex-1 flex flex-col items-center justify-center relative my-2">
       <img id="story-image" src="" class="w-full max-h-[70vh] object-contain rounded-2xl shadow-2xl border border-dark-border">
       <p id="story-text" class="mt-3 text-center text-sm font-bold text-white bg-black/60 px-4 py-2 rounded-xl backdrop-blur-sm border border-white/10 max-w-xs"></p>
     </div>
-
-    <!-- Botón de Acción -->
     <div class="w-full max-w-sm pb-4">
       <button onclick="cerrarStory()" class="w-full py-3 bg-gradient-to-r from-amber-500 to-rose-600 text-white font-black rounded-xl text-sm shadow-xl uppercase tracking-wider">
         ¡Hacer Pedido Ahora! 🛍️
@@ -274,18 +288,21 @@
     let carrito = {};
     let ubicacionGPSUrl = '';
     let productoActualModalId = null;
-    let categoriaSeleccionada = 'todas';
+    let categoriaSeleccionadaFiltro = 'todas';
     let promoActiva = null;
     let storyTimer = null;
 
     let configNegocio = { 
       whatsapp_1: '', 
       whatsapp_2: '', 
-      nombre: 'PERE Y EL FLACO',
+      nombre: 'MI NEGOCIO',
       alias: '',
       titular: '',
       abierto: true,
-      costo_delivery: 0
+      costo_delivery: 0,
+      direccion: 'Dirección',
+      instagram: '@instagram',
+      horarios: 'Horarios'
     };
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -307,13 +324,10 @@
           const hace12Horas = new Date(Date.now() - 12 * 60 * 60 * 1000);
           const fechaPromo = new Date(data.creado_en);
 
-          // Si fue subida hace menos de 12 horas, la activa
           if (fechaPromo > hace12Horas) {
             promoActiva = data;
-            
             const ring = document.getElementById('story-ring-container');
             ring.className = "w-36 h-36 rounded-full flex items-center justify-center story-ring";
-            
             document.getElementById('story-badge').classList.remove('hidden');
             document.getElementById('story-hint').classList.remove('hidden');
           }
@@ -325,14 +339,11 @@
 
     function abrirStory() {
       if (!promoActiva) return;
-
       document.getElementById('story-image').src = promoActiva.imagen_url;
       document.getElementById('story-text').textContent = promoActiva.texto_promo || '¡Aprovechá la promo de hoy!';
       document.getElementById('story-logo-mini').src = document.getElementById('logo-header').src;
 
-      const modal = document.getElementById('modal-story');
-      modal.classList.remove('hidden');
-
+      document.getElementById('modal-story').classList.remove('hidden');
       const bar = document.getElementById('story-progress');
       bar.style.width = '0%';
 
@@ -341,10 +352,8 @@
       storyTimer = setInterval(() => {
         step += 2;
         bar.style.width = `${step}%`;
-        if (step >= 100) {
-          cerrarStory();
-        }
-      }, 100); // Duración total ~5 segundos
+        if (step >= 100) cerrarStory();
+      }, 100);
     }
 
     function cerrarStory() {
@@ -355,7 +364,7 @@
     async function compartirMenu() {
       const shareData = {
         title: `Menú Digital - ${configNegocio.nombre}`,
-        text: `¡Hola! Mira el menú digital de ${configNegocio.nombre} y haz tu pedido rápido por WhatsApp:`,
+        text: `¡Hola! Mira el menú digital de ${configNegocio.nombre} y haz tu pedido:`,
         url: window.location.href
       };
       if (navigator.share) {
@@ -367,7 +376,7 @@
     }
 
     function consultarNexoServ() {
-      window.open("https://wa.me/543644509472?text=¡Hola! Me interesa un menú digital.", '_blank');
+      window.open("https://wa.me/543644509472?text=¡Hola! Me interesa soporte técnico.", '_blank');
     }
 
     async function cargarConfiguracion() {
@@ -375,9 +384,19 @@
         const { data } = await _supabaseClient.from('configuracion').select('*').limit(1).maybeSingle();
         if (data) {
           configNegocio = data;
-          if (data.color_primario || data.color) {
-            document.documentElement.style.setProperty('--primary-color', data.color_primario || data.color);
+          
+          // Aplicación dinámica del color de la marca
+          const colorPersonalizado = data.color_primario || data.color;
+          if (colorPersonalizado) {
+            document.documentElement.style.setProperty('--primary-color', colorPersonalizado);
           }
+
+          // Aplicación dinámica del color de fondo
+          const colorFondoPersonalizado = data.color_fondo;
+          if (colorFondoPersonalizado) {
+            document.documentElement.style.setProperty('--bg-color', colorFondoPersonalizado);
+          }
+
           if (data.nombre) {
             document.getElementById('nombre-negocio').textContent = data.nombre;
             document.title = `Menú Digital - ${data.nombre}`;
@@ -385,6 +404,11 @@
           if (data.logo_url) {
             document.getElementById('logo-header').src = data.logo_url;
           }
+          if (data.direccion) document.getElementById('info-direccion').textContent = data.direccion;
+          if (data.instagram) document.getElementById('info-instagram').textContent = data.instagram;
+          if (data.horarios) document.getElementById('info-horarios').textContent = data.horarios;
+          if (data.whatsapp_1) document.getElementById('info-ws').textContent = `+${data.whatsapp_1}`;
+
           const estaAbierto = !(data.abierto === false || data.abierto === 'false' || data.abierto === 0);
           configNegocio.abierto = estaAbierto;
 
@@ -395,7 +419,7 @@
           if (!estaAbierto) {
             labelEstado.textContent = "Cerrado temporalmente";
             puntoEstado.className = "w-2.5 h-2.5 rounded-full bg-red-500";
-            textoEstadoContainer.className = "mt-2 mb-2 flex items-center gap-1.5 text-xs font-semibold text-red-400 bg-red-950/40 border border-red-800/50 px-3 py-1 rounded-full";
+            textoEstadoContainer.className = "mt-2 mb-4 flex items-center gap-1.5 text-xs font-semibold text-red-400 bg-red-950/40 border border-red-800/50 px-3 py-1 rounded-full";
           }
           if (data.alias || data.mp_alias) document.getElementById('mp-alias').textContent = data.alias || data.mp_alias;
           if (data.titular || data.mp_titular) document.getElementById('mp-titular').textContent = data.titular || data.mp_titular;
@@ -410,62 +434,117 @@
         const { data, error } = await _supabaseClient.from('productos').select('*');
         if (error) throw error;
         productos = data || [];
-        generarBotonesCategorias();
-        renderizarProductos();
+        renderizarBarraCategorias();
+        renderizarAcordeonCategorias();
       } catch (err) {
-        document.getElementById('productos-container').innerHTML = '<p class="text-center text-red-500 text-sm py-4">Error cargando productos.</p>';
+        document.getElementById('categorias-acordeon').innerHTML = '<p class="text-center text-red-500 text-xs py-4">Error al conectar con la base de datos.</p>';
       }
     }
 
-    function generarBotonesCategorias() {
-      const container = document.getElementById('categorias-container');
-      const categoriasUnicas = ['todas', ...new Set(productos.map(p => p.categoria).filter(Boolean))];
-      container.innerHTML = categoriasUnicas.map(cat => {
-        const esActiva = cat === categoriaSeleccionada;
-        const claseBtn = esActiva 
-          ? 'cat-btn bg-custom-primary text-white text-xs px-4 py-2 rounded-full font-medium whitespace-nowrap shadow-sm'
-          : 'cat-btn bg-dark-card text-gray-300 border border-dark-border text-xs px-4 py-2 rounded-full font-medium whitespace-nowrap';
-        return `<button onclick="filtrarCategoria('${cat}')" class="${claseBtn}">${cat === 'todas' ? 'Todas' : cat}</button>`;
+    function renderizarBarraCategorias() {
+      const container = document.getElementById('bar-categorias');
+      const productosVisibles = productos.filter(p => !(p.pausado === true || p.pausado === 'true' || p.pausado === 1));
+      const categorias = ['todas', ...new Set(productosVisibles.map(p => p.categoria || 'Variados'))];
+
+      container.innerHTML = categorias.map(cat => {
+        const esActiva = cat === categoriaSeleccionadaFiltro;
+        const claseBtn = esActiva
+          ? 'bg-custom-primary text-black font-extrabold text-xs px-4 py-2 rounded-full whitespace-nowrap shadow-md border border-custom-primary transition-all'
+          : 'bg-dark-card text-gray-300 font-semibold text-xs px-4 py-2 rounded-full whitespace-nowrap border border-dark-border hover:border-custom-primary/50 transition-all';
+        const label = cat === 'todas' ? '🔥 Todas' : cat;
+        return `<button onclick="filtrarPorCategoriaRapida('${cat}')" class="${claseBtn}">${label}</button>`;
       }).join('');
     }
 
-    function filtrarCategoria(cat) {
-      categoriaSeleccionada = cat;
-      generarBotonesCategorias();
-      renderizarProductos();
+    function filtrarPorCategoriaRapida(cat) {
+      categoriaSeleccionadaFiltro = cat;
+      renderizarBarraCategorias();
+      const textoBusqueda = document.getElementById('input-busqueda').value;
+      renderizarAcordeonCategorias(textoBusqueda);
     }
 
-    function renderizarProductos() {
-      const container = document.getElementById('productos-container');
+    function renderizarAcordeonCategorias(filtroTexto = '') {
+      const container = document.getElementById('categorias-acordeon');
       container.innerHTML = '';
-      const listaFiltrada = productos.filter(p => {
-        const noEstaPausado = !(p.pausado === true || p.pausado === 'true' || p.pausado === 1);
-        return noEstaPausado && (categoriaSeleccionada === 'todas' || p.categoria === categoriaSeleccionada);
-      });
+      const productosVisibles = productos.filter(p => !(p.pausado === true || p.pausado === 'true' || p.pausado === 1));
+      let categorias = [...new Set(productosVisibles.map(p => p.categoria || 'Variados'))];
 
-      if (listaFiltrada.length === 0) {
-        container.innerHTML = '<p class="text-center text-sm text-gray-500 py-6">No hay productos en esta categoría.</p>';
+      if (categoriaSeleccionadaFiltro !== 'todas') {
+        categorias = categorias.filter(c => c === categoriaSeleccionadaFiltro);
+      }
+
+      if (categorias.length === 0) {
+        container.innerHTML = '<p class="text-center text-xs text-gray-500 py-6">No hay productos disponibles.</p>';
         return;
       }
 
-      listaFiltrada.forEach(p => {
-        const cant = carrito[p.id] ? carrito[p.id].cantidad : 0;
-        container.innerHTML += `
-          <div class="bg-dark-card p-3 rounded-xl border border-dark-border shadow-sm flex items-center justify-between gap-3">
-            <img src="${p.imagen_url || 'https://via.placeholder.com/80'}" onclick="abrirModal(${p.id})" class="w-16 h-16 rounded-lg object-cover bg-dark-bg cursor-pointer">
-            <div class="flex-1 cursor-pointer" onclick="abrirModal(${p.id})">
-              <h3 class="font-bold text-sm text-white">${p.nombre}</h3>
-              <p class="text-xs text-gray-400 line-clamp-1">${p.descripcion || 'Sin descripción'}</p>
-              <p class="font-bold text-sm text-custom-primary mt-1">$${p.precio}</p>
+      categorias.forEach((cat) => {
+        const prodsDeCat = productosVisibles.filter(p => {
+          const coincideCat = (p.categoria || 'Variados') === cat;
+          const coincideBusqueda = !filtroTexto || p.nombre.toLowerCase().includes(filtroTexto.toLowerCase());
+          return coincideCat && coincideBusqueda;
+        });
+
+        if (prodsDeCat.length === 0) return;
+
+        let htmlProductos = '';
+        prodsDeCat.forEach(p => {
+          const cant = carrito[p.id] ? carrito[p.id].cantidad : 0;
+          
+          // Lógica de Descuento integrada
+          const tieneDescuento = p.precio_original && p.precio_original > p.precio;
+          let porcentajeDescuento = 0;
+          if (tieneDescuento) {
+            porcentajeDescuento = Math.round(((p.precio_original - p.precio) / p.precio_original) * 100);
+          }
+
+          htmlProductos += `
+            <div class="bg-dark-card p-3 rounded-xl border border-dark-border flex items-center justify-between gap-3 relative overflow-hidden group">
+              
+              <!-- BADGE DE DESCUENTO LLAMATIVO -->
+              ${tieneDescuento ? `
+                <div class="absolute top-2 left-2 bg-gradient-to-r from-rose-600 to-amber-500 text-white font-black text-[9px] px-2 py-0.5 rounded-full shadow-lg z-10 animate-pulse border border-black/50">
+                  🔥 -${porcentajeDescuento}% OFF
+                </div>
+              ` : ''}
+
+              <img src="${p.imagen_url || 'https://via.placeholder.com/80'}" alt="${p.nombre}" onclick="abrirModal(${p.id})" class="w-16 h-16 rounded-lg object-cover bg-dark-bg cursor-pointer">
+              
+              <div class="flex-1 cursor-pointer" onclick="abrirModal(${p.id})">
+                <h4 class="font-bold text-sm text-white">${p.nombre}</h4>
+                <p class="text-xs text-gray-400 line-clamp-1">${p.descripcion || ''}</p>
+                
+                <div class="flex items-center gap-2 mt-1">
+                  <p class="font-bold text-sm text-custom-primary">$${p.precio}</p>
+                  ${tieneDescuento ? `<p class="text-xs text-gray-500 line-through">$${p.precio_original}</p>` : ''}
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2 bg-dark-bg p-1 rounded-lg border border-dark-border">
+                <button onclick="cambiarCantidad(${p.id}, -1)" class="w-6 h-6 rounded bg-dark-card text-white font-bold flex items-center justify-center">-</button>
+                <span id="cant-${p.id}" class="text-xs font-bold w-4 text-center text-white">${cant}</span>
+                <button onclick="cambiarCantidad(${p.id}, 1)" class="w-6 h-6 rounded bg-custom-primary font-bold text-white flex items-center justify-center">+</button>
+              </div>
             </div>
-            <div class="flex items-center gap-2 bg-dark-bg p-1 rounded-lg border border-dark-border">
-              <button onclick="cambiarCantidad(${p.id}, -1)" class="w-6 h-6 rounded bg-dark-card text-white font-bold flex items-center justify-center">-</button>
-              <span id="cant-${p.id}" class="text-xs font-bold w-4 text-center text-white">${cant}</span>
-              <button onclick="cambiarCantidad(${p.id}, 1)" class="w-6 h-6 rounded bg-custom-primary font-bold text-white flex items-center justify-center">+</button>
+          `;
+        });
+
+        container.innerHTML += `
+          <div class="bg-dark-card border border-dark-border rounded-2xl overflow-hidden shadow-sm">
+            <div class="w-full p-4 font-black text-sm uppercase tracking-wider text-white flex items-center justify-between bg-dark-card">
+              <span>${cat}</span>
+            </div>
+            <div class="p-3 pt-0 space-y-2 border-t border-dark-border">
+              ${htmlProductos}
             </div>
           </div>
         `;
       });
+    }
+
+    function filtrarProductosPorBusqueda() {
+      const texto = document.getElementById('input-busqueda').value;
+      renderizarAcordeonCategorias(texto);
     }
 
     function abrirModal(id) {
@@ -475,7 +554,7 @@
       document.getElementById('modal-img').src = prod.imagen_url || 'https://via.placeholder.com/300';
       document.getElementById('modal-nombre').textContent = prod.nombre;
       document.getElementById('modal-precio').textContent = `$${prod.precio}`;
-      document.getElementById('modal-descripcion').textContent = prod.descripcion || 'Sin descripción.';
+      document.getElementById('modal-descripcion').textContent = prod.descripcion || 'Sin descripción disponible.';
       document.getElementById('modal-cant').textContent = carrito[id] ? carrito[id].cantidad : 0;
       document.getElementById('modal-producto').classList.remove('hidden');
     }
@@ -541,10 +620,13 @@
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           ubicacionGPSUrl = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
-          statusElem.textContent = "✓ Ubicación GPS capturada";
-          statusElem.className = "text-[11px] text-emerald-400 font-bold";
+          statusElem.textContent = "✓ ¡Ubicación GPS capturada con éxito! El repartidor ya tiene el mapa.";
+          statusElem.className = "p-3 rounded-xl bg-emerald-950/40 border border-emerald-800/50 text-xs text-emerald-400 font-bold flex items-center gap-2";
         },
-        () => { statusElem.textContent = "❌ No se obtuvo ubicación."; statusElem.className = "text-[11px] text-red-400 font-medium"; },
+        () => { 
+          statusElem.textContent = "❌ No se obtuvo ubicación. Verificá los permisos."; 
+          statusElem.className = "p-3 rounded-xl bg-red-950/40 border border-red-800/50 text-xs text-red-400 font-medium"; 
+        },
         { enableHighAccuracy: true, timeout: 10000 }
       );
     }
