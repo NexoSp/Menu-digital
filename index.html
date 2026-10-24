@@ -30,6 +30,10 @@
         extend: {
           colors: {
             'custom-primary': 'var(--primary-color, #ef4444)',
+            'dark-bg': '#09090b',
+            'dark-card': '#141417',
+            'dark-border': '#27272a',
+            'dark-pill': '#1c1c21'
           }
         }
       }
@@ -40,34 +44,49 @@
     :root {
       --primary-color: #ef4444;
     }
+    body {
+      background-color: #09090b;
+      color: #f4f4f5;
+    }
     .bg-custom-primary { background-color: var(--primary-color) !important; }
     .text-custom-primary { color: var(--primary-color) !important; }
     .border-custom-primary { border-color: var(--primary-color) !important; }
   </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans pb-28">
+<body class="bg-dark-bg text-gray-100 font-sans pb-32">
 
-  <!-- HEADER / CABECERA -->
-  <header class="bg-white shadow-sm sticky top-0 z-40">
-    <div class="max-w-md mx-auto p-4 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <img id="logo-header" src="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png" alt="Logo" class="w-12 h-12 rounded-full object-cover border border-gray-100 shadow-sm">
-        <div>
-          <h1 id="nombre-negocio" class="font-bold text-lg text-gray-800 leading-tight">PERE Y EL FLACO</h1>
-          <!-- Indicador dinámico de estado (Abierto / Cerrado) -->
-          <p id="estado-negocio-text" class="text-xs text-emerald-600 font-medium flex items-center gap-1">
-            <span id="estado-punto" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span id="estado-label">Abierto ahora</span>
-          </p>
-        </div>
-      </div>
-
-      <!-- BOTÓN COMPARTIR / VIRALIZAR -->
-      <button onclick="compartirMenu()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors border border-gray-200 shadow-sm" title="¡Comparte nuestro menú con amigos!">
+  <!-- BARRA SUPERIOR (BOTÓN COMPARTIR DISCRETO A LA DERECHA) -->
+  <header class="bg-dark-bg/90 backdrop-blur-md border-b border-dark-border sticky top-0 z-40 px-4 py-3">
+    <div class="max-w-md mx-auto flex items-center justify-end">
+      <button onclick="compartirMenu()" class="bg-dark-card hover:bg-dark-pill text-gray-300 px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors border border-dark-border shadow-sm" title="¡Comparte nuestro menú con amigos!">
         <svg class="w-4 h-4 text-custom-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
         <span>Compartir</span>
       </button>
     </div>
   </header>
+
+  <!-- CABECERA PRINCIPAL: LOGO GIGANTE Y NOMBRE CENTRADO -->
+  <section class="max-w-md mx-auto px-4 pt-8 pb-4 text-center flex flex-col items-center">
+    
+    <!-- LOGO GRANDE Y CENTRADO -->
+    <div class="relative mb-4">
+      <div class="w-36 h-36 rounded-full p-1.5 border-4 border-custom-primary ring-8 ring-custom-primary/20 flex items-center justify-center bg-black shadow-2xl transition-transform hover:scale-105 duration-300">
+        <img id="logo-header" src="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png" alt="Logo" class="w-full h-full rounded-full object-cover">
+      </div>
+    </div>
+
+    <!-- NOMBRE DEL NEGOCIO GRANDE Y LLAMATIVO -->
+    <h1 id="nombre-negocio" class="font-black text-3xl sm:text-4xl tracking-widest uppercase text-white leading-tight drop-shadow-md">
+      PERE Y EL FLACO
+    </h1>
+
+    <!-- Indicador dinámico de estado (Abierto / Cerrado) -->
+    <div id="estado-negocio-text" class="mt-2 mb-2 flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-950/40 border border-emerald-800/50 px-3 py-1 rounded-full">
+      <span id="estado-punto" class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> 
+      <span id="estado-label">Abierto ahora</span>
+    </div>
+
+  </section>
 
   <!-- CONTENIDO PRINCIPAL -->
   <main class="max-w-md mx-auto p-4 space-y-6">
@@ -83,45 +102,45 @@
     </div>
 
     <!-- SECCIÓN DE DATOS DE ENTREGA Y PAGO -->
-    <section class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 space-y-3">
-      <h2 class="font-bold text-gray-700 text-sm tracking-wide uppercase">1. Datos de Entrega</h2>
+    <section class="bg-dark-card rounded-2xl p-4 shadow-sm border border-dark-border space-y-3">
+      <h2 class="font-bold text-custom-primary text-xs tracking-widest uppercase">1. Datos de Entrega</h2>
       
-      <input type="text" id="cliente-nombre" placeholder="Tu Nombre completo" class="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-400">
+      <input type="text" id="cliente-nombre" placeholder="Tu Nombre completo" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-custom-primary">
       
-      <select id="tipo-entrega" onchange="toggleDireccion()" class="w-full p-2.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red-400">
-        <option value="Delivery">🚀 Envío a Domicilio (Delivery)</option>
-        <option value="Retiro">🛍️ Retiro en el Local</option>
+      <select id="tipo-entrega" onchange="toggleDireccion()" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-custom-primary">
+        <option value="Delivery" class="bg-dark-card">🚀 Envío a Domicilio (Delivery)</option>
+        <option value="Retiro" class="bg-dark-card">🛍️ Retiro en el Local</option>
       </select>
 
       <div id="campo-direccion" class="space-y-2">
-        <input type="text" id="cliente-direccion" placeholder="Dirección completa y altura" class="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-400">
+        <input type="text" id="cliente-direccion" placeholder="Dirección completa y altura" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-custom-primary">
         
         <!-- Botón GPS para el Delivery -->
-        <button type="button" onclick="obtenerUbicacionGPS()" class="w-full py-2.5 px-3 bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium text-xs rounded-lg flex items-center justify-center gap-2 border border-blue-200 transition-colors">
+        <button type="button" onclick="obtenerUbicacionGPS()" class="w-full py-2.5 px-3 bg-dark-pill hover:bg-dark-card text-custom-primary font-medium text-xs rounded-xl flex items-center justify-center gap-2 border border-dark-border transition-colors">
           <span>📍 Adjuntar mi ubicación GPS exacta</span>
         </button>
-        <p id="gps-status" class="text-[11px] text-emerald-600 font-medium hidden">✓ Ubicación GPS capturada correctamente</p>
+        <p id="gps-status" class="text-[11px] text-emerald-400 font-medium hidden">✓ Ubicación GPS capturada correctamente</p>
       </div>
 
       <!-- FORMA DE PAGO -->
-      <h2 class="font-bold text-gray-700 text-sm tracking-wide uppercase pt-2">2. Forma de Pago</h2>
-      <select id="forma-pago" onchange="toggleDatosTransferencia()" class="w-full p-2.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red-400">
-        <option value="Efectivo">💵 Efectivo</option>
-        <option value="Transferencia">📱 Transferencia bancaria / Mercado Pago</option>
+      <h2 class="font-bold text-custom-primary text-xs tracking-widest uppercase pt-2">2. Forma de Pago</h2>
+      <select id="forma-pago" onchange="toggleDatosTransferencia()" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-custom-primary">
+        <option value="Efectivo" class="bg-dark-card">💵 Efectivo</option>
+        <option value="Transferencia" class="bg-dark-card">📱 Transferencia bancaria / Mercado Pago</option>
       </select>
 
       <!-- DATOS DE MERCADO PAGO / ALIAS -->
-      <div id="datos-transferencia" class="hidden bg-blue-50 border border-blue-200 rounded-lg p-3 space-y-1 mt-2">
-        <p class="text-xs font-bold text-blue-800 flex items-center gap-1">
+      <div id="datos-transferencia" class="hidden bg-dark-pill border border-dark-border rounded-xl p-3 space-y-1 mt-2">
+        <p class="text-xs font-bold text-custom-primary flex items-center gap-1">
           <span>💳 Datos para transferir:</span>
         </p>
-        <p class="text-xs text-blue-700">
-          <span class="font-semibold">Alias:</span> <span id="mp-alias" class="font-bold select-all bg-white px-1.5 py-0.5 rounded border border-blue-200">No especificado</span>
+        <p class="text-xs text-gray-300">
+          <span class="font-semibold">Alias:</span> <span id="mp-alias" class="font-bold select-all bg-dark-bg px-2 py-0.5 rounded border border-dark-border text-white">No especificado</span>
         </p>
-        <p class="text-xs text-blue-700">
+        <p class="text-xs text-gray-300">
           <span class="font-semibold">Titular:</span> <span id="mp-titular">No especificado</span>
         </p>
-        <p class="text-[11px] text-blue-600 italic pt-1">
+        <p class="text-[11px] text-gray-400 italic pt-1">
           * Realiza la transferencia y envía el comprobante por WhatsApp al realizar el pedido.
         </p>
       </div>
@@ -130,34 +149,34 @@
     <!-- FOOTER -->
     <footer class="text-center pt-2 pb-6 space-y-2">
       <!-- BOTÓN CONSULTAR NUEVOS CLIENTES (NEXOSERV) -->
-      <button onclick="consultarNexoServ()" class="inline-flex items-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold px-4 py-2 rounded-xl text-xs border border-emerald-200 transition-colors shadow-sm">
+      <button onclick="consultarNexoServ()" class="inline-flex items-center gap-2 bg-dark-card hover:bg-dark-pill text-gray-300 font-semibold px-4 py-2 rounded-xl text-xs border border-dark-border transition-colors shadow-sm">
         <span>📢 ¡NexoServ!</span>
       </button>
-      <p class="text-xs text-gray-400 font-normal">
-        Desarrollado por <span class="font-semibold text-gray-600">NexoServ</span>
+      <p class="text-xs text-gray-500 font-normal">
+        Desarrollado por <span class="font-semibold text-gray-400">NexoServ</span>
       </p>
     </footer>
 
   </main>
 
   <!-- VENTANA MODAL FLOTANTE -->
-  <div id="modal-producto" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
-    <div class="bg-white w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl transform transition-all animate-in fade-in zoom-in-95 duration-200">
+  <div id="modal-producto" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-dark-card border border-dark-border w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl transform transition-all animate-in fade-in zoom-in-95 duration-200">
       <div class="relative">
-        <img id="modal-img" src="" alt="Producto" class="w-full h-48 object-cover bg-gray-100">
+        <img id="modal-img" src="" alt="Producto" class="w-full h-48 object-cover bg-dark-bg">
         <button onclick="cerrarModal()" class="absolute top-3 right-3 bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold transition-colors">✕</button>
       </div>
       <div class="p-5 space-y-3">
         <div>
-          <h3 id="modal-nombre" class="font-bold text-lg text-gray-800"></h3>
+          <h3 id="modal-nombre" class="font-bold text-lg text-white"></h3>
           <p id="modal-precio" class="font-bold text-base text-custom-primary mt-0.5"></p>
         </div>
-        <p id="modal-descripcion" class="text-xs text-gray-600 leading-relaxed"></p>
+        <p id="modal-descripcion" class="text-xs text-gray-400 leading-relaxed"></p>
         
-        <div class="pt-2 flex items-center justify-between gap-3 border-t border-gray-100">
-          <div class="flex items-center gap-3 bg-gray-50 p-1.5 rounded-xl border border-gray-200">
-            <button onclick="cambiarCantidadModal(-1)" class="w-8 h-8 rounded-lg bg-white font-bold text-gray-700 shadow-sm flex items-center justify-center">-</button>
-            <span id="modal-cant" class="text-sm font-bold w-6 text-center">0</span>
+        <div class="pt-2 flex items-center justify-between gap-3 border-t border-dark-border">
+          <div class="flex items-center gap-3 bg-dark-bg p-1.5 rounded-xl border border-dark-border">
+            <button onclick="cambiarCantidadModal(-1)" class="w-8 h-8 rounded-lg bg-dark-card text-white font-bold shadow-sm flex items-center justify-center">-</button>
+            <span id="modal-cant" class="text-sm font-bold w-6 text-center text-white">0</span>
             <button onclick="cambiarCantidadModal(1)" class="w-8 h-8 rounded-lg bg-custom-primary font-bold text-white shadow-sm flex items-center justify-center">+</button>
           </div>
           <button onclick="cerrarModal()" class="flex-1 py-2.5 bg-custom-primary text-white font-bold text-xs rounded-xl shadow-md">
@@ -169,12 +188,12 @@
   </div>
 
   <!-- BARRA INFERIOR DEL CARRITO -->
-  <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-3 shadow-lg z-50">
+  <div class="fixed bottom-0 left-0 right-0 bg-dark-card border-t border-dark-border p-3 shadow-2xl z-50">
     <div class="max-w-md mx-auto flex items-center justify-between gap-3">
       <div>
         <p id="label-delivery-info" class="text-[10px] text-gray-400 hidden">Incluye delivery: $<span id="val-delivery">0</span></p>
-        <p class="text-xs text-gray-500">Total a Pagar</p>
-        <p id="total-pedido" class="font-bold text-xl text-gray-800">$0</p>
+        <p class="text-xs text-gray-400">Total a Pagar</p>
+        <p id="total-pedido" class="font-bold text-xl text-white">$0</p>
       </div>
       <button onclick="enviarPedidoWhatsApp()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl text-sm flex items-center gap-2 shadow-md transition-all">
         <span>Enviar Pedido</span>
@@ -271,12 +290,12 @@
 
           if (!estaAbierto) {
             labelEstado.textContent = "Cerrado temporalmente";
-            puntoEstado.className = "w-2 h-2 rounded-full bg-red-500";
-            textoEstadoContainer.className = "text-xs text-red-600 font-medium flex items-center gap-1";
+            puntoEstado.className = "w-2.5 h-2.5 rounded-full bg-red-500";
+            textoEstadoContainer.className = "mt-2 mb-2 flex items-center gap-1.5 text-xs font-semibold text-red-400 bg-red-950/40 border border-red-800/50 px-3 py-1 rounded-full";
           } else {
             labelEstado.textContent = "Abierto ahora";
-            puntoEstado.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
-            textoEstadoContainer.className = "text-xs text-emerald-600 font-medium flex items-center gap-1";
+            puntoEstado.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
+            textoEstadoContainer.className = "mt-2 mb-2 flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-950/40 border border-emerald-800/50 px-3 py-1 rounded-full";
           }
           
           if (data.alias || data.mp_alias) {
@@ -316,7 +335,7 @@
         const esActiva = cat === categoriaSeleccionada;
         const claseBtn = esActiva 
           ? 'cat-btn bg-custom-primary text-white text-xs px-4 py-2 rounded-full font-medium whitespace-nowrap shadow-sm'
-          : 'cat-btn bg-white text-gray-600 border border-gray-200 text-xs px-4 py-2 rounded-full font-medium whitespace-nowrap';
+          : 'cat-btn bg-dark-card text-gray-300 border border-dark-border text-xs px-4 py-2 rounded-full font-medium whitespace-nowrap';
         const label = cat === 'todas' ? 'Todas' : cat;
         return `<button onclick="filtrarCategoria('${cat}')" class="${claseBtn}">${label}</button>`;
       }).join('');
@@ -339,23 +358,23 @@
       });
 
       if (listaFiltrada.length === 0) {
-        container.innerHTML = '<p class="text-center text-sm text-gray-400 py-6">No hay productos disponibles en esta categoría.</p>';
+        container.innerHTML = '<p class="text-center text-sm text-gray-500 py-6">No hay productos disponibles en esta categoría.</p>';
         return;
       }
 
       listaFiltrada.forEach(p => {
         const cant = carrito[p.id] ? carrito[p.id].cantidad : 0;
         container.innerHTML += `
-          <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between gap-3">
-            <img src="${p.imagen_url || 'https://via.placeholder.com/80'}" alt="${p.nombre}" onclick="abrirModal(${p.id})" class="w-16 h-16 rounded-lg object-cover bg-gray-100 cursor-pointer hover:opacity-90 transition-opacity">
+          <div class="bg-dark-card p-3 rounded-xl border border-dark-border shadow-sm flex items-center justify-between gap-3">
+            <img src="${p.imagen_url || 'https://via.placeholder.com/80'}" alt="${p.nombre}" onclick="abrirModal(${p.id})" class="w-16 h-16 rounded-lg object-cover bg-dark-bg cursor-pointer hover:opacity-90 transition-opacity">
             <div class="flex-1 cursor-pointer" onclick="abrirModal(${p.id})">
-              <h3 class="font-bold text-sm text-gray-800">${p.nombre}</h3>
+              <h3 class="font-bold text-sm text-white">${p.nombre}</h3>
               <p class="text-xs text-gray-400 line-clamp-1">${p.descripcion || 'Sin descripción'}</p>
               <p class="font-bold text-sm text-custom-primary mt-1">$${p.precio}</p>
             </div>
-            <div class="flex items-center gap-2 bg-gray-50 p-1 rounded-lg border border-gray-200">
-              <button onclick="cambiarCantidad(${p.id}, -1)" class="w-6 h-6 rounded bg-white font-bold text-gray-600 shadow-sm flex items-center justify-center">-</button>
-              <span id="cant-${p.id}" class="text-xs font-bold w-4 text-center">${cant}</span>
+            <div class="flex items-center gap-2 bg-dark-bg p-1 rounded-lg border border-dark-border">
+              <button onclick="cambiarCantidad(${p.id}, -1)" class="w-6 h-6 rounded bg-dark-card text-white font-bold shadow-sm flex items-center justify-center">-</button>
+              <span id="cant-${p.id}" class="text-xs font-bold w-4 text-center text-white">${cant}</span>
               <button onclick="cambiarCantidad(${p.id}, 1)" class="w-6 h-6 rounded bg-custom-primary font-bold text-white shadow-sm flex items-center justify-center">+</button>
             </div>
           </div>
@@ -464,7 +483,7 @@
       }
 
       statusElem.textContent = "⌛ Obteniendo tu ubicación...";
-      statusElem.className = "text-[11px] text-gray-500 font-medium";
+      statusElem.className = "text-[11px] text-gray-400 font-medium";
       statusElem.classList.remove('hidden');
 
       navigator.geolocation.getCurrentPosition(
@@ -475,11 +494,11 @@
           ubicacionGPSUrl = `https://maps.google.com/?q=${lat},${lng}`;
           
           statusElem.textContent = "✓ ¡Ubicación GPS capturada correctamente!";
-          statusElem.className = "text-[11px] text-emerald-600 font-bold";
+          statusElem.className = "text-[11px] text-emerald-400 font-bold";
         },
         (error) => {
           statusElem.textContent = "❌ No se pudo obtener la ubicación. Por favor, escríbela abajo.";
-          statusElem.className = "text-[11px] text-red-500 font-medium";
+          statusElem.className = "text-[11px] text-red-400 font-medium";
         },
         { enableHighAccuracy: true, timeout: 10000 }
       );
