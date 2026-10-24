@@ -284,11 +284,11 @@
           .maybeSingle();
 
         if (data && data.imagen_url) {
-          const hace24Horas = new Date(Date.now() - 24 * 60 * 60 * 1000);
+          const hace24Horas = new Date(Date.now() - 12 * 60 * 60 * 1000);
           const fechaPromo = new Date(data.creado_en);
 
           // Si fue subida hace menos de 24 horas, la activa
-          if (fechaPromo > hace24Horas) {
+          if (fechaPromo > hace12Horas) {
             promoActiva = data;
             
             const ring = document.getElementById('story-ring-container');
