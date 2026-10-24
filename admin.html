@@ -236,11 +236,11 @@
       try {
         const { data } = await _supabaseClient.from('promociones').select('*').order('creado_en', { ascending: false }).limit(1).maybeSingle();
         if (data) {
-          const hace24Horas = new Date(Date.now() - 24 * 60 * 60 * 1000);
+          const hace12Horas = new Date(Date.now() - 12 * 60 * 60 * 1000);
           const fecha = new Date(data.creado_en);
 
-          if (fecha > hace24Horas) {
-            const horasRestantes = Math.round((fecha - hace24Horas) / (1000 * 60 * 60));
+          if (fecha > hace12Horas) {
+            const horasRestantes = Math.round((fecha - hace12Horas) / (1000 * 60 * 60));
             document.getElementById('promo-status-box').classList.remove('hidden');
             document.getElementById('promo-status-text').textContent = data.texto_promo || 'Imagen de oferta activa';
             document.getElementById('promo-status-timer').textContent = `⏰ Le quedan aprox. ${horasRestantes}hs de visibilidad.`;
