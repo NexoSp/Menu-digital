@@ -5,25 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Menú Digital - PERE Y EL FLACO</title>
 
-  <!-- Etiquetas Open Graph para WhatsApp y Redes Sociales -->
+  <!-- Etiquetas Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="Menú Digital - PERE Y EL FLACO">
   <meta property="og:description" content="Haz tu pedido rápido y fácil por WhatsApp. ¡Conoce nuestro menú!">
   <meta property="og:url" content="https://nexosp.github.io/Menu-digital/?v=13">
 
-  <!-- LOGO OPEN GRAPH (URL DIRECTA DE SUPABASE INTEGRADA) -->
   <meta id="og-image" property="og:image" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792764795898_li1i8.jpg">
   <meta id="og-image-secure" property="og:image:secure_url" content="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792764795898_li1i8.jpg">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="500">
   <meta property="og:image:height" content="500">
 
-  <!-- Tailwind CSS -->
+  <!-- Tailwind CSS & Supabase JS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Supabase JS Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- CONFIGURACIÓN DE TAILWIND Y VARIABLE DE COLOR DINÁMICO -->
   <script>
     tailwind.config = {
       theme: {
@@ -51,36 +48,54 @@
     .bg-custom-primary { background-color: var(--primary-color) !important; }
     .text-custom-primary { color: var(--primary-color) !important; }
     .border-custom-primary { border-color: var(--primary-color) !important; }
+    
+    /* Animación Anillo de Estado estilo Instagram/WhatsApp */
+    .story-ring {
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      padding: 3px;
+      animation: pulse-ring 2s infinite;
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 39, 67, 0.4); }
+      70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(220, 39, 67, 0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 39, 67, 0); }
+    }
   </style>
 </head>
 <body class="bg-dark-bg text-gray-100 font-sans pb-32">
 
-  <!-- BARRA SUPERIOR (BOTÓN COMPARTIR DISCRETO A LA DERECHA) -->
+  <!-- BARRA SUPERIOR -->
   <header class="bg-dark-bg/90 backdrop-blur-md border-b border-dark-border sticky top-0 z-40 px-4 py-3">
     <div class="max-w-md mx-auto flex items-center justify-end">
-      <button onclick="compartirMenu()" class="bg-dark-card hover:bg-dark-pill text-gray-300 px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors border border-dark-border shadow-sm" title="¡Comparte nuestro menú con amigos!">
+      <button onclick="compartirMenu()" class="bg-dark-card hover:bg-dark-pill text-gray-300 px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors border border-dark-border shadow-sm">
         <svg class="w-4 h-4 text-custom-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
         <span>Compartir</span>
       </button>
     </div>
   </header>
 
-  <!-- CABECERA PRINCIPAL: LOGO GIGANTE Y NOMBRE CENTRADO -->
-  <section class="max-w-md mx-auto px-4 pt-8 pb-4 text-center flex flex-col items-center">
+  <!-- CABECERA PRINCIPAL CON LOGO Y PROMO ESTADO -->
+  <section class="max-w-md mx-auto px-4 pt-6 pb-4 text-center flex flex-col items-center">
     
-    <!-- LOGO GRANDE Y CENTRADO -->
-    <div class="relative mb-4">
-      <div class="w-36 h-36 rounded-full p-1.5 border-4 border-custom-primary ring-8 ring-custom-primary/20 flex items-center justify-center bg-black shadow-2xl transition-transform hover:scale-105 duration-300">
-        <img id="logo-header" src="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png" alt="Logo" class="w-full h-full rounded-full object-cover">
+    <!-- LOGO CON ESTADO PROMO -->
+    <div class="relative mb-3 cursor-pointer group" onclick="abrirStory()">
+      <div id="story-ring-container" class="w-36 h-36 rounded-full flex items-center justify-center transition-transform group-hover:scale-105 duration-300 border-4 border-dark-border">
+        <img id="logo-header" src="https://ahyvmupqzgcrxrbvjzsb.supabase.co/storage/v1/object/public/imagenes-productos/logos/1792625894900.png" alt="Logo" class="w-full h-full rounded-full object-cover p-0.5 bg-black">
       </div>
+      <!-- Insignia de Estado Promocional -->
+      <span id="story-badge" class="hidden absolute bottom-1 right-2 bg-gradient-to-r from-amber-500 to-rose-500 text-white font-extrabold text-[10px] px-2 py-0.5 rounded-full shadow-lg border border-black animate-bounce">
+        🔥 PROMO
+      </span>
     </div>
 
-    <!-- NOMBRE DEL NEGOCIO GRANDE Y LLAMATIVO -->
+    <p id="story-hint" class="text-[11px] text-gray-400 font-semibold mb-2 hidden">✨ Tocá el logo para ver la oferta del día ✨</p>
+
+    <!-- NOMBRE DEL NEGOCIO -->
     <h1 id="nombre-negocio" class="font-black text-3xl sm:text-4xl tracking-widest uppercase text-white leading-tight drop-shadow-md">
       PERE Y EL FLACO
     </h1>
 
-    <!-- Indicador dinámico de estado (Abierto / Cerrado) -->
+    <!-- Indicador Estado -->
     <div id="estado-negocio-text" class="mt-2 mb-2 flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-950/40 border border-emerald-800/50 px-3 py-1 rounded-full">
       <span id="estado-punto" class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> 
       <span id="estado-label">Abierto ahora</span>
@@ -101,7 +116,7 @@
       <p class="text-center text-sm text-gray-500 py-8">Cargando menú...</p>
     </div>
 
-    <!-- SECCIÓN DE DATOS DE ENTREGA Y PAGO -->
+    <!-- DATOS DE ENTREGA Y PAGO -->
     <section class="bg-dark-card rounded-2xl p-4 shadow-sm border border-dark-border space-y-3">
       <h2 class="font-bold text-custom-primary text-xs tracking-widest uppercase">1. Datos de Entrega</h2>
       
@@ -115,21 +130,18 @@
       <div id="campo-direccion" class="space-y-2">
         <input type="text" id="cliente-direccion" placeholder="Dirección completa y altura" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-custom-primary">
         
-        <!-- Botón GPS para el Delivery -->
         <button type="button" onclick="obtenerUbicacionGPS()" class="w-full py-2.5 px-3 bg-dark-pill hover:bg-dark-card text-custom-primary font-medium text-xs rounded-xl flex items-center justify-center gap-2 border border-dark-border transition-colors">
           <span>📍 Adjuntar mi ubicación GPS exacta</span>
         </button>
         <p id="gps-status" class="text-[11px] text-emerald-400 font-medium hidden">✓ Ubicación GPS capturada correctamente</p>
       </div>
 
-      <!-- FORMA DE PAGO -->
       <h2 class="font-bold text-custom-primary text-xs tracking-widest uppercase pt-2">2. Forma de Pago</h2>
       <select id="forma-pago" onchange="toggleDatosTransferencia()" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-custom-primary">
         <option value="Efectivo" class="bg-dark-card">💵 Efectivo</option>
         <option value="Transferencia" class="bg-dark-card">📱 Transferencia bancaria / Mercado Pago</option>
       </select>
 
-      <!-- DATOS DE MERCADO PAGO / ALIAS -->
       <div id="datos-transferencia" class="hidden bg-dark-pill border border-dark-border rounded-xl p-3 space-y-1 mt-2">
         <p class="text-xs font-bold text-custom-primary flex items-center gap-1">
           <span>💳 Datos para transferir:</span>
@@ -148,7 +160,6 @@
 
     <!-- FOOTER -->
     <footer class="text-center pt-2 pb-6 space-y-2">
-      <!-- BOTÓN CONSULTAR NUEVOS CLIENTES (NEXOSERV) -->
       <button onclick="consultarNexoServ()" class="inline-flex items-center gap-2 bg-dark-card hover:bg-dark-pill text-gray-300 font-semibold px-4 py-2 rounded-xl text-xs border border-dark-border transition-colors shadow-sm">
         <span>📢 ¡NexoServ!</span>
       </button>
@@ -159,12 +170,12 @@
 
   </main>
 
-  <!-- VENTANA MODAL FLOTANTE -->
+  <!-- MODAL DE PRODUCTO -->
   <div id="modal-producto" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
-    <div class="bg-dark-card border border-dark-border w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl transform transition-all animate-in fade-in zoom-in-95 duration-200">
+    <div class="bg-dark-card border border-dark-border w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl transform transition-all">
       <div class="relative">
         <img id="modal-img" src="" alt="Producto" class="w-full h-48 object-cover bg-dark-bg">
-        <button onclick="cerrarModal()" class="absolute top-3 right-3 bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold transition-colors">✕</button>
+        <button onclick="cerrarModal()" class="absolute top-3 right-3 bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">✕</button>
       </div>
       <div class="p-5 space-y-3">
         <div>
@@ -184,6 +195,36 @@
           </button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- VISUALIZADOR DE HISTORIAS / PROMOS (ESTILO INSTAGRAM/WHATSAPP) -->
+  <div id="modal-story" class="fixed inset-0 bg-black/95 z-50 hidden flex flex-col items-center justify-between p-4 backdrop-blur-md">
+    <!-- Barra de Progreso Superior -->
+    <div class="w-full max-w-sm bg-gray-800 h-1.5 rounded-full overflow-hidden mt-2">
+      <div id="story-progress" class="bg-rose-500 h-full w-0 transition-all duration-100 ease-linear"></div>
+    </div>
+
+    <!-- Header de la Historia -->
+    <div class="w-full max-w-sm flex items-center justify-between py-2 text-white">
+      <div class="flex items-center gap-2">
+        <img id="story-logo-mini" src="" class="w-8 h-8 rounded-full border border-rose-500 object-cover">
+        <span class="font-bold text-xs">Oferta del Día 🔥</span>
+      </div>
+      <button onclick="cerrarStory()" class="text-gray-400 hover:text-white text-xl font-bold p-1">✕</button>
+    </div>
+
+    <!-- Imagen de la Historia -->
+    <div class="w-full max-w-sm flex-1 flex flex-col items-center justify-center relative my-2">
+      <img id="story-image" src="" class="w-full max-h-[70vh] object-contain rounded-2xl shadow-2xl border border-dark-border">
+      <p id="story-text" class="mt-3 text-center text-sm font-bold text-white bg-black/60 px-4 py-2 rounded-xl backdrop-blur-sm border border-white/10 max-w-xs"></p>
+    </div>
+
+    <!-- Botón de Acción -->
+    <div class="w-full max-w-sm pb-4">
+      <button onclick="cerrarStory()" class="w-full py-3 bg-gradient-to-r from-amber-500 to-rose-600 text-white font-black rounded-xl text-sm shadow-xl uppercase tracking-wider">
+        ¡Hacer Pedido Ahora! 🛍️
+      </button>
     </div>
   </div>
 
@@ -214,6 +255,9 @@
     let ubicacionGPSUrl = '';
     let productoActualModalId = null;
     let categoriaSeleccionada = 'todas';
+    let promoActiva = null;
+    let storyTimer = null;
+
     let configNegocio = { 
       whatsapp_1: '', 
       whatsapp_2: '', 
@@ -226,62 +270,102 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
       await cargarConfiguracion();
+      await cargarPromocionActiva();
       await cargarProductos();
     });
 
-    // --- FUNCIÓN PARA COMPARTIR LA PÁGINA ---
+    async function cargarPromocionActiva() {
+      try {
+        const { data } = await _supabaseClient
+          .from('promociones')
+          .select('*')
+          .order('creado_en', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (data && data.imagen_url) {
+          const hace24Horas = new Date(Date.now() - 24 * 60 * 60 * 1000);
+          const fechaPromo = new Date(data.creado_en);
+
+          // Si fue subida hace menos de 24 horas, la activa
+          if (fechaPromo > hace24Horas) {
+            promoActiva = data;
+            
+            const ring = document.getElementById('story-ring-container');
+            ring.className = "w-36 h-36 rounded-full flex items-center justify-center story-ring";
+            
+            document.getElementById('story-badge').classList.remove('hidden');
+            document.getElementById('story-hint').classList.remove('hidden');
+          }
+        }
+      } catch (err) {
+        console.log("Sin promoción activa:", err);
+      }
+    }
+
+    function abrirStory() {
+      if (!promoActiva) return;
+
+      document.getElementById('story-image').src = promoActiva.imagen_url;
+      document.getElementById('story-text').textContent = promoActiva.texto_promo || '¡Aprovechá la promo de hoy!';
+      document.getElementById('story-logo-mini').src = document.getElementById('logo-header').src;
+
+      const modal = document.getElementById('modal-story');
+      modal.classList.remove('hidden');
+
+      const bar = document.getElementById('story-progress');
+      bar.style.width = '0%';
+
+      let step = 0;
+      clearInterval(storyTimer);
+      storyTimer = setInterval(() => {
+        step += 2;
+        bar.style.width = `${step}%`;
+        if (step >= 100) {
+          cerrarStory();
+        }
+      }, 100); // Duración total ~5 segundos
+    }
+
+    function cerrarStory() {
+      clearInterval(storyTimer);
+      document.getElementById('modal-story').classList.add('hidden');
+    }
+
     async function compartirMenu() {
       const shareData = {
         title: `Menú Digital - ${configNegocio.nombre}`,
         text: `¡Hola! Mira el menú digital de ${configNegocio.nombre} y haz tu pedido rápido por WhatsApp:`,
         url: window.location.href
       };
-
       if (navigator.share) {
-        try {
-          await navigator.share(shareData);
-        } catch (err) {
-          console.log("Compartir cancelado o error:", err);
-        }
+        try { await navigator.share(shareData); } catch (e) {}
       } else {
-        try {
-          await navigator.clipboard.writeText(window.location.href);
-          alert("¡Enlace del menú copiado al portapapeles! Compártelo con tus amigos.");
-        } catch (err) {
-          alert("No se pudo compartir automáticamente. Puedes copiar el enlace de la barra de direcciones.");
-        }
+        await navigator.clipboard.writeText(window.location.href);
+        alert("Enlace copiado al portapapeles.");
       }
     }
 
-    // --- FUNCIÓN PARA CONSULTAR A NEXOSERV (NUEVOS CLIENTES) ---
     function consultarNexoServ() {
-      const numeroDesarrollador = "543644509472";
-      const mensaje = "¡Hola NexoServ! Me interesa consultar por un menú digital / nuevos servicios.";
-      const urlWs = `https://wa.me/${numeroDesarrollador}?text=${encodeURIComponent(mensaje)}`;
-      window.open(urlWs, '_blank');
+      window.open("https://wa.me/543644509472?text=¡Hola! Me interesa un menú digital.", '_blank');
     }
 
     async function cargarConfiguracion() {
       try {
-        const { data, error } = await _supabaseClient.from('configuracion').select('*').limit(1).maybeSingle();
+        const { data } = await _supabaseClient.from('configuracion').select('*').limit(1).maybeSingle();
         if (data) {
           configNegocio = data;
-
-          const colorGuardado = data.color_primario || data.color;
-          if (colorGuardado) {
-            document.documentElement.style.setProperty('--primary-color', colorGuardado);
+          if (data.color_primario || data.color) {
+            document.documentElement.style.setProperty('--primary-color', data.color_primario || data.color);
           }
-
           if (data.nombre) {
             document.getElementById('nombre-negocio').textContent = data.nombre;
             document.title = `Menú Digital - ${data.nombre}`;
           }
-
           if (data.logo_url) {
             document.getElementById('logo-header').src = data.logo_url;
           }
-
-          const estaAbierto = !(data.abierto === false || data.abierto === 'false' || data.abierto === 0 || data.abierto === '0');
+          const estaAbierto = !(data.abierto === false || data.abierto === 'false' || data.abierto === 0);
           configNegocio.abierto = estaAbierto;
 
           const labelEstado = document.getElementById('estado-label');
@@ -292,26 +376,13 @@
             labelEstado.textContent = "Cerrado temporalmente";
             puntoEstado.className = "w-2.5 h-2.5 rounded-full bg-red-500";
             textoEstadoContainer.className = "mt-2 mb-2 flex items-center gap-1.5 text-xs font-semibold text-red-400 bg-red-950/40 border border-red-800/50 px-3 py-1 rounded-full";
-          } else {
-            labelEstado.textContent = "Abierto ahora";
-            puntoEstado.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
-            textoEstadoContainer.className = "mt-2 mb-2 flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-950/40 border border-emerald-800/50 px-3 py-1 rounded-full";
           }
-          
-          if (data.alias || data.mp_alias) {
-            document.getElementById('mp-alias').textContent = data.alias || data.mp_alias;
-          }
-
-          if (data.titular || data.mp_titular) {
-            document.getElementById('mp-titular').textContent = data.titular || data.mp_titular;
-          }
-
+          if (data.alias || data.mp_alias) document.getElementById('mp-alias').textContent = data.alias || data.mp_alias;
+          if (data.titular || data.mp_titular) document.getElementById('mp-titular').textContent = data.titular || data.mp_titular;
           document.getElementById('val-delivery').textContent = data.costo_delivery || 0;
           toggleDireccion();
         }
-      } catch (err) {
-        console.error("Error cargando configuración:", err);
-      }
+      } catch (err) { console.error(err); }
     }
 
     async function cargarProductos() {
@@ -322,22 +393,19 @@
         generarBotonesCategorias();
         renderizarProductos();
       } catch (err) {
-        console.error("Error cargando productos:", err);
-        document.getElementById('productos-container').innerHTML = '<p class="text-center text-red-500 text-sm py-4">Error al conectar con la base de datos.</p>';
+        document.getElementById('productos-container').innerHTML = '<p class="text-center text-red-500 text-sm py-4">Error cargando productos.</p>';
       }
     }
 
     function generarBotonesCategorias() {
       const container = document.getElementById('categorias-container');
       const categoriasUnicas = ['todas', ...new Set(productos.map(p => p.categoria).filter(Boolean))];
-
       container.innerHTML = categoriasUnicas.map(cat => {
         const esActiva = cat === categoriaSeleccionada;
         const claseBtn = esActiva 
           ? 'cat-btn bg-custom-primary text-white text-xs px-4 py-2 rounded-full font-medium whitespace-nowrap shadow-sm'
           : 'cat-btn bg-dark-card text-gray-300 border border-dark-border text-xs px-4 py-2 rounded-full font-medium whitespace-nowrap';
-        const label = cat === 'todas' ? 'Todas' : cat;
-        return `<button onclick="filtrarCategoria('${cat}')" class="${claseBtn}">${label}</button>`;
+        return `<button onclick="filtrarCategoria('${cat}')" class="${claseBtn}">${cat === 'todas' ? 'Todas' : cat}</button>`;
       }).join('');
     }
 
@@ -350,15 +418,13 @@
     function renderizarProductos() {
       const container = document.getElementById('productos-container');
       container.innerHTML = '';
-
       const listaFiltrada = productos.filter(p => {
         const noEstaPausado = !(p.pausado === true || p.pausado === 'true' || p.pausado === 1);
-        const coincideCat = categoriaSeleccionada === 'todas' || p.categoria === categoriaSeleccionada;
-        return noEstaPausado && coincideCat;
+        return noEstaPausado && (categoriaSeleccionada === 'todas' || p.categoria === categoriaSeleccionada);
       });
 
       if (listaFiltrada.length === 0) {
-        container.innerHTML = '<p class="text-center text-sm text-gray-500 py-6">No hay productos disponibles en esta categoría.</p>';
+        container.innerHTML = '<p class="text-center text-sm text-gray-500 py-6">No hay productos en esta categoría.</p>';
         return;
       }
 
@@ -366,16 +432,16 @@
         const cant = carrito[p.id] ? carrito[p.id].cantidad : 0;
         container.innerHTML += `
           <div class="bg-dark-card p-3 rounded-xl border border-dark-border shadow-sm flex items-center justify-between gap-3">
-            <img src="${p.imagen_url || 'https://via.placeholder.com/80'}" alt="${p.nombre}" onclick="abrirModal(${p.id})" class="w-16 h-16 rounded-lg object-cover bg-dark-bg cursor-pointer hover:opacity-90 transition-opacity">
+            <img src="${p.imagen_url || 'https://via.placeholder.com/80'}" onclick="abrirModal(${p.id})" class="w-16 h-16 rounded-lg object-cover bg-dark-bg cursor-pointer">
             <div class="flex-1 cursor-pointer" onclick="abrirModal(${p.id})">
               <h3 class="font-bold text-sm text-white">${p.nombre}</h3>
               <p class="text-xs text-gray-400 line-clamp-1">${p.descripcion || 'Sin descripción'}</p>
               <p class="font-bold text-sm text-custom-primary mt-1">$${p.precio}</p>
             </div>
             <div class="flex items-center gap-2 bg-dark-bg p-1 rounded-lg border border-dark-border">
-              <button onclick="cambiarCantidad(${p.id}, -1)" class="w-6 h-6 rounded bg-dark-card text-white font-bold shadow-sm flex items-center justify-center">-</button>
+              <button onclick="cambiarCantidad(${p.id}, -1)" class="w-6 h-6 rounded bg-dark-card text-white font-bold flex items-center justify-center">-</button>
               <span id="cant-${p.id}" class="text-xs font-bold w-4 text-center text-white">${cant}</span>
-              <button onclick="cambiarCantidad(${p.id}, 1)" class="w-6 h-6 rounded bg-custom-primary font-bold text-white shadow-sm flex items-center justify-center">+</button>
+              <button onclick="cambiarCantidad(${p.id}, 1)" class="w-6 h-6 rounded bg-custom-primary font-bold text-white flex items-center justify-center">+</button>
             </div>
           </div>
         `;
@@ -385,16 +451,12 @@
     function abrirModal(id) {
       const prod = productos.find(p => p.id === id);
       if (!prod) return;
-
       productoActualModalId = id;
       document.getElementById('modal-img').src = prod.imagen_url || 'https://via.placeholder.com/300';
       document.getElementById('modal-nombre').textContent = prod.nombre;
       document.getElementById('modal-precio').textContent = `$${prod.precio}`;
-      document.getElementById('modal-descripcion').textContent = prod.descripcion || 'No hay descripción detallada para este producto.';
-      
-      const cantActual = carrito[id] ? carrito[id].cantidad : 0;
-      document.getElementById('modal-cant').textContent = cantActual;
-
+      document.getElementById('modal-descripcion').textContent = prod.descripcion || 'Sin descripción.';
+      document.getElementById('modal-cant').textContent = carrito[id] ? carrito[id].cantidad : 0;
       document.getElementById('modal-producto').classList.remove('hidden');
     }
 
@@ -406,43 +468,27 @@
     function cambiarCantidadModal(cambio) {
       if (productoActualModalId === null) return;
       cambiarCantidad(productoActualModalId, cambio);
-      const cantActual = carrito[productoActualModalId] ? carrito[productoActualModalId].cantidad : 0;
-      document.getElementById('modal-cant').textContent = cantActual;
+      document.getElementById('modal-cant').textContent = carrito[productoActualModalId] ? carrito[productoActualModalId].cantidad : 0;
     }
 
     function cambiarCantidad(id, cambio) {
       const prod = productos.find(p => p.id === id);
       if (!prod) return;
-
-      if (!carrito[id]) {
-        carrito[id] = { producto: prod, cantidad: 0 };
-      }
-
+      if (!carrito[id]) carrito[id] = { producto: prod, cantidad: 0 };
       carrito[id].cantidad += cambio;
-
-      if (carrito[id].cantidad <= 0) {
-        delete carrito[id];
-      }
-
-      const elemCant = document.getElementById(`cant-${id}`);
-      if (elemCant) elemCant.textContent = carrito[id] ? carrito[id].cantidad : 0;
+      if (carrito[id].cantidad <= 0) delete carrito[id];
+      const elem = document.getElementById(`cant-${id}`);
+      if (elem) elem.textContent = carrito[id] ? carrito[id].cantidad : 0;
       actualizarTotal();
     }
 
     function actualizarTotal() {
       let subtotal = 0;
-      Object.values(carrito).forEach(item => {
-        subtotal += item.producto.precio * item.cantidad;
-      });
-
+      Object.values(carrito).forEach(item => { subtotal += item.producto.precio * item.cantidad; });
       const tipoEntrega = document.getElementById('tipo-entrega').value;
       const costoDelivery = parseFloat(configNegocio.costo_delivery) || 0;
-      
       let totalFinal = subtotal;
-      if (tipoEntrega === 'Delivery' && subtotal > 0) {
-        totalFinal += costoDelivery;
-      }
-
+      if (tipoEntrega === 'Delivery' && subtotal > 0) totalFinal += costoDelivery;
       document.getElementById('total-pedido').textContent = `$${totalFinal}`;
     }
 
@@ -450,101 +496,57 @@
       const tipo = document.getElementById('tipo-entrega').value;
       const campo = document.getElementById('campo-direccion');
       const labelDeliveryInfo = document.getElementById('label-delivery-info');
-
       if (tipo === 'Retiro') {
         campo.classList.add('hidden');
         labelDeliveryInfo.classList.add('hidden');
       } else {
         campo.classList.remove('hidden');
-        if (configNegocio.costo_delivery > 0) {
-          labelDeliveryInfo.classList.remove('hidden');
-        }
+        if (configNegocio.costo_delivery > 0) labelDeliveryInfo.classList.remove('hidden');
       }
       actualizarTotal();
     }
 
     function toggleDatosTransferencia() {
       const formaPago = document.getElementById('forma-pago').value;
-      const boxTransferencia = document.getElementById('datos-transferencia');
-      
-      if (formaPago === 'Transferencia') {
-        boxTransferencia.classList.remove('hidden');
-      } else {
-        boxTransferencia.classList.add('hidden');
-      }
+      const box = document.getElementById('datos-transferencia');
+      if (formaPago === 'Transferencia') box.classList.remove('hidden');
+      else box.classList.add('hidden');
     }
 
     function obtenerUbicacionGPS() {
       const statusElem = document.getElementById('gps-status');
-      
-      if (!navigator.geolocation) {
-        alert("Tu navegador no soporta geolocalización.");
-        return;
-      }
-
-      statusElem.textContent = "⌛ Obteniendo tu ubicación...";
-      statusElem.className = "text-[11px] text-gray-400 font-medium";
+      if (!navigator.geolocation) { alert("Geolocalización no soportada."); return; }
+      statusElem.textContent = "⌛ Obteniendo ubicación...";
       statusElem.classList.remove('hidden');
-
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
-          
-          ubicacionGPSUrl = `https://maps.google.com/?q=${lat},${lng}`;
-          
-          statusElem.textContent = "✓ ¡Ubicación GPS capturada correctamente!";
+        (pos) => {
+          ubicacionGPSUrl = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
+          statusElem.textContent = "✓ Ubicación GPS capturada";
           statusElem.className = "text-[11px] text-emerald-400 font-bold";
         },
-        (error) => {
-          statusElem.textContent = "❌ No se pudo obtener la ubicación. Por favor, escríbela abajo.";
-          statusElem.className = "text-[11px] text-red-400 font-medium";
-        },
+        () => { statusElem.textContent = "❌ No se obtuvo ubicación."; statusElem.className = "text-[11px] text-red-400 font-medium"; },
         { enableHighAccuracy: true, timeout: 10000 }
       );
     }
 
     function enviarPedidoWhatsApp() {
-      if (configNegocio.abierto === false) {
-        alert("Lo sentimos, en este momento el local se encuentra cerrado y no acepta nuevos pedidos.");
-        return;
-      }
-
+      if (configNegocio.abierto === false) { alert("El local está cerrado."); return; }
       const nombre = document.getElementById('cliente-nombre').value.trim();
       const tipoEntrega = document.getElementById('tipo-entrega').value;
       const direccion = document.getElementById('cliente-direccion').value.trim();
       const formaPago = document.getElementById('forma-pago').value;
 
-      if (Object.keys(carrito).length === 0) {
-        alert("Tu carrito está vacío. Agrega productos para realizar el pedido.");
+      if (Object.keys(carrito).length === 0 || !nombre || (tipoEntrega === 'Delivery' && !direccion)) {
+        alert("Por favor completa los datos y productos.");
         return;
       }
 
-      if (!nombre) {
-        alert("Por favor, ingresa tu nombre.");
-        return;
-      }
-
-      if (tipoEntrega === 'Delivery' && !direccion) {
-        alert("Por favor, ingresa la dirección de entrega.");
-        return;
-      }
-
-      let mensaje = `*📦 NUEVO PEDIDO - ${configNegocio.nombre}*\n`;
-      mensaje += `-----------------------------------\n`;
-      mensaje += `👤 *Cliente:* ${nombre}\n`;
-      mensaje += `🚚 *Entrega:* ${tipoEntrega}\n`;
-      
+      let mensaje = `*📦 NUEVO PEDIDO - ${configNegocio.nombre}*\n-----------------------------------\n👤 *Cliente:* ${nombre}\n🚚 *Entrega:* ${tipoEntrega}\n`;
       if (tipoEntrega === 'Delivery') {
         mensaje += `📍 *Dirección:* ${direccion}\n`;
-        if (ubicacionGPSUrl) {
-          mensaje += `🗺️ *Ubicación GPS:* ${ubicacionGPSUrl}\n`;
-        }
+        if (ubicacionGPSUrl) mensaje += `🗺️ *GPS:* ${ubicacionGPSUrl}\n`;
       }
-
-      mensaje += `💳 *Forma de Pago:* ${formaPago}\n`;
-      mensaje += `-----------------------------------\n`;
-      mensaje += `*DETALLE DEL PEDIDO:*\n`;
+      mensaje += `💳 *Pago:* ${formaPago}\n-----------------------------------\n*DETALLE:*\n`;
 
       let subtotal = 0;
       Object.values(carrito).forEach(item => {
@@ -555,25 +557,14 @@
 
       const costoDelivery = parseFloat(configNegocio.costo_delivery) || 0;
       let totalFinal = subtotal;
-
       if (tipoEntrega === 'Delivery' && costoDelivery > 0) {
         totalFinal += costoDelivery;
-        mensaje += `• Envío a domicilio: $${costoDelivery}\n`;
+        mensaje += `• Delivery: $${costoDelivery}\n`;
       }
+      mensaje += `-----------------------------------\n💰 *TOTAL:* $${totalFinal}\n\n¡Gracias!`;
 
-      mensaje += `-----------------------------------\n`;
-      mensaje += `💰 *TOTAL:* $${totalFinal}\n\n`;
-      mensaje += `¡Muchas gracias!`;
-
-      const numWhatsApp = configNegocio.whatsapp_1 || configNegocio.whatsapp || configNegocio.whatsapp_2;
-      
-      if (!numWhatsApp) {
-        alert("No hay un número de WhatsApp configurado en el sistema.");
-        return;
-      }
-
-      const urlWs = `https://wa.me/${numWhatsApp}?text=${encodeURIComponent(mensaje)}`;
-      window.open(urlWs, '_blank');
+      const num = configNegocio.whatsapp_1 || configNegocio.whatsapp_2;
+      window.open(`https://wa.me/${num}?text=${encodeURIComponent(mensaje)}`, '_blank');
     }
   </script>
 </body>
