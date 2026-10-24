@@ -127,14 +127,34 @@
         <option value="Retiro" class="bg-dark-card">🛍️ Retiro en el Local</option>
       </select>
 
-      <div id="campo-direccion" class="space-y-2">
-        <input type="text" id="cliente-direccion" placeholder="Dirección completa y altura" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-custom-primary">
+             <div id="campo-direccion" class="space-y-3">
+        <input type="text" id="cliente-direccion" placeholder="Dirección completa y altura (Calle, número, depto)" class="w-full p-3.5 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:outline-none focus:border-custom-primary">
         
-        <button type="button" onclick="obtenerUbicacionGPS()" class="w-full py-2.5 px-3 bg-dark-pill hover:bg-dark-card text-custom-primary font-medium text-xs rounded-xl flex items-center justify-center gap-2 border border-dark-border transition-colors">
-          <span>📍 Adjuntar mi ubicación GPS exacta</span>
+        <!-- BOTÓN GPS MEJORADO Y LLAMATIVO -->
+        <button type="button" onclick="obtenerUbicacionGPS()" class="w-full p-4 bg-gradient-to-r from-dark-pill to-dark-card hover:border-custom-primary text-left rounded-2xl flex items-center gap-3.5 border-2 border-dashed border-custom-primary/60 shadow-lg transition-all transform active:scale-[0.98] group relative overflow-hidden">
+          <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-custom-primary/10 rounded-full blur-xl group-hover:bg-custom-primary/20 transition-all"></div>
+          
+          <div class="w-12 h-12 rounded-xl bg-custom-primary/20 border border-custom-primary/40 flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform">
+            📍
+          </div>
+          
+          <div class="flex-1">
+            <p class="font-black text-sm text-white flex items-center gap-1.5">
+              <span>¡Enviar mi ubicación exacta!</span>
+              <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            </p>
+            <p class="text-[11px] text-gray-400 leading-tight mt-0.5">
+              Tocá acá para capturar tu GPS automático y evitar que el delivery se pierda.
+            </p>
+          </div>
         </button>
-        <p id="gps-status" class="text-[11px] text-emerald-400 font-medium hidden">✓ Ubicación GPS capturada correctamente</p>
+
+        <div id="gps-status" class="p-3 rounded-xl bg-emerald-950/40 border border-emerald-800/50 text-xs text-emerald-400 font-bold flex items-center gap-2 hidden">
+          <span>✓</span> 
+          <span>¡Ubicación GPS capturada con éxito! El repartidor ya tiene el mapa.</span>
+        </div>
       </div>
+
 
       <h2 class="font-bold text-custom-primary text-xs tracking-widest uppercase pt-2">2. Forma de Pago</h2>
       <select id="forma-pago" onchange="toggleDatosTransferencia()" class="w-full p-3 bg-dark-bg border border-dark-border rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-custom-primary">
