@@ -500,26 +500,44 @@
       }
 
       const precioOriginalInput = document.getElementById('prod-precio-original').value.trim();
+      const nombreVal = document.getElementById('prod-nombre').value.trim();
+      const precioVal = document.getElementById('prod-precio').value.trim();
+
+      if (!nombreVal || !precioVal) {
+        alert("Por favor completa al menos el nombre y el precio del producto.");
+        return;
+      }
 
       const datosProd = {
-        nombre: document.getElementById('prod-nombre').value.trim(),
-        precio: parseFloat(document.getElementById('prod-precio').value),
+        nombre: nombreVal,
+        precio: parseFloat(precioVal),
         precio_original: precioOriginalInput ? parseFloat(precioOriginalInput) : null,
         categoria: document.getElementById('prod-categoria').value.trim(),
         descripcion: document.getElementById('prod-descripcion').value.trim(),
         imagen_url: imagenUrl
       };
 
-      if (id) await _supabaseClient.from('productos').update(datosProd).eq('id', id);
-      else await _supabaseClient.from('productos').insert([datosProd]);
+      let res;
+      if (id) {
+        res = await _supabaseClient.from('productos').update(datosProd).eq('id', id);
+      } else {
+        res = await _supabaseClient.from('productos').insert([datosProd]);
+      }
+
+      if (res.error) {
+        alert("Error al guardar el producto: " + res.error.message);
+        return;
+      }
 
       limpiarFormularioProducto();
       await cargarProductosAdmin();
+      alert("¡Producto guardado correctamente!");
     }
 
     async function prepararEdicion(id) {
       const p = listaProductos.find(item => item.id === id);
       if (!p) return;
+      
       document.getElementById('prod-id').value = p.id;
       document.getElementById('prod-nombre').value = p.nombre || '';
       document.getElementById('prod-precio').value = p.precio || '';
@@ -527,6 +545,10 @@
       document.getElementById('prod-categoria').value = p.categoria || '';
       document.getElementById('prod-descripcion').value = p.descripcion || '';
       document.getElementById('prod-imagen').value = p.imagen_url || '';
+      
+      const formTitle = document.getElementById('form-title');
+      if (formTitle) formTitle.textContent = "✏️ Editar Producto";
+
       document.getElementById('btn-cancelar').classList.remove('hidden');
       
       cambiarSolapa('productos');
@@ -540,6 +562,13 @@
       document.getElementById('prod-categoria').value = '';
       document.getElementById('prod-descripcion').value = '';
       document.getElementById('prod-imagen').value = '';
+      
+      const fileInput = document.getElementById('file-producto');
+      if (fileInput) fileInput.value = '';
+
+      const formTitle = document.getElementById('form-title');
+      if (formTitle) formTitle.textContent = "🍔 Agregar Producto";
+
       document.getElementById('btn-cancelar').classList.add('hidden');
     }
 
