@@ -344,6 +344,9 @@
     };
 
     document.addEventListener('DOMContentLoaded', async () => {
+      // 📊 Registrar visita al index automáticamente
+      registrarVisitaIndex();
+
       await cargarConfiguracion();
       await cargarPromocionActiva();
       await cargarProductos();
@@ -357,6 +360,22 @@
         }, 800);
       }
     });
+
+    async function registrarVisitaIndex() {
+      try {
+        await _supabaseClient.from('estadisticas_visitas').insert([{ tipo: 'visita_index' }]);
+      } catch (err) {
+        console.error("Error registrando visita:", err);
+      }
+    }
+
+    async function registrarPedidoEnviado() {
+      try {
+        await _supabaseClient.from('estadisticas_visitas').insert([{ tipo: 'pedido_enviado' }]);
+      } catch (err) {
+        console.error("Error registrando pedido:", err);
+      }
+    }
 
     async function cargarPromocionActiva() {
       try {
@@ -748,7 +767,7 @@
       copiarAliasYAbrirMP();
     }
 
-    function enviarPedidoWhatsAppTrasPago() {
+    async function enviarPedidoWhatsAppTrasPago() {
       const pedidoTemp = JSON.parse(localStorage.getItem('nexo_pedido_temp'));
       if (!pedidoTemp) return;
 
@@ -767,6 +786,9 @@
       mensaje += `-----------------------------------\n💰 *TOTAL PAGADO:* ${pedidoTemp.total}\n\n¡Gracias!`;
 
       localStorage.removeItem('nexo_pedido_temp');
+
+      // 🛒 Registrar estadística de pedido enviado
+      await registrarPedidoEnviado();
 
       const num = configNegocio.whatsapp_1 || configNegocio.whatsapp_2;
       window.open(`https://wa.me/${num}?text=${encodeURIComponent(mensaje)}`, '_blank');
@@ -826,7 +848,7 @@
       );
     }
 
-    function enviarPedidoWhatsApp() {
+    async function enviarPedidoWhatsApp() {
       if (configNegocio.abierto === false) { alert("El local está cerrado."); return; }
       const nombre = document.getElementById('cliente-nombre').value.trim();
       const tipoEntrega = document.getElementById('tipo-entrega').value;
@@ -861,6 +883,9 @@
         mensaje += `• Delivery: $${costoDelivery}\n`;
       }
       mensaje += `-----------------------------------\n💰 *TOTAL:* $${totalFinal}\n\n¡Gracias!`;
+
+      // 🛒 Registrar estadística de pedido enviado
+      await registrarPedidoEnviado();
 
       const num = configNegocio.whatsapp_1 || configNegocio.whatsapp_2;
       window.open(`https://wa.me/${num}?text=${encodeURIComponent(mensaje)}`, '_blank');
