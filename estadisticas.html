@@ -30,6 +30,8 @@
       background-color: #09090b;
       color: #f4f4f5;
     }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="bg-dark-bg text-gray-100 font-sans pb-20">
@@ -55,9 +57,17 @@
   <!-- CONTENIDO PRINCIPAL -->
   <main class="max-w-md mx-auto p-4 space-y-4 pt-6">
 
-    <div class="text-center space-y-1 mb-6">
+    <div class="text-center space-y-1 mb-4">
       <h1 class="font-black text-2xl tracking-wide text-white">Métricas del Comercio</h1>
-      <p class="text-xs text-gray-400">Resumen en tiempo real de la actividad digital</p>
+      <p class="text-xs text-gray-400">Resumen analítico de la actividad digital</p>
+    </div>
+
+    <!-- FILTROS DE FECHA RÁPIDOS -->
+    <div id="bar-filtros" class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+      <button onclick="cambiarFiltro('hoy', this)" class="filtro-btn bg-custom-primary text-black font-extrabold text-xs px-3.5 py-2 rounded-full whitespace-nowrap shadow-md border border-custom-primary transition-all">📅 Hoy</button>
+      <button onclick="cambiarFiltro('7dias', this)" class="filtro-btn bg-dark-card text-gray-300 font-semibold text-xs px-3.5 py-2 rounded-full whitespace-nowrap border border-dark-border hover:border-custom-primary/50 transition-all">⚡ Últimos 7 días</button>
+      <button onclick="cambiarFiltro('30dias', this)" class="filtro-btn bg-dark-card text-gray-300 font-semibold text-xs px-3.5 py-2 rounded-full whitespace-nowrap border border-dark-border hover:border-custom-primary/50 transition-all">📈 Último mes</button>
+      <button onclick="cambiarFiltro('todo', this)" class="filtro-btn bg-dark-card text-gray-300 font-semibold text-xs px-3.5 py-2 rounded-full whitespace-nowrap border border-dark-border hover:border-custom-primary/50 transition-all">🌐 Todo el historial</button>
     </div>
 
     <!-- TARJETA 1: VISITAS AL INDEX -->
@@ -66,7 +76,7 @@
       <div class="space-y-1">
         <p class="text-xs font-bold uppercase tracking-wider text-gray-400">Visitas al Index</p>
         <h2 id="contador-visitas" class="text-3xl font-black text-white">Cargando...</h2>
-        <p class="text-[11px] text-emerald-400 font-medium">👤 Total de ingresos al catálogo</p>
+        <p class="text-[11px] text-emerald-400 font-medium">👤 Ingresos al catálogo</p>
       </div>
       <div class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-2xl shrink-0">
         👀
@@ -77,9 +87,9 @@
     <div class="bg-dark-card border border-dark-border rounded-2xl p-5 shadow-lg flex items-center justify-between relative overflow-hidden">
       <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl"></div>
       <div class="space-y-1">
-        <p class="text-xs font-bold uppercase tracking-wider text-gray-400">Menús / Pedidos Enviados</p>
+        <p class="text-xs font-bold uppercase tracking-wider text-gray-400">Menús Enviados</p>
         <h2 id="contador-pedidos" class="text-3xl font-black text-white">Cargando...</h2>
-        <p class="text-[11px] text-emerald-400 font-medium">🛒 Órdenes generadas hacia WhatsApp</p>
+        <p class="text-[11px] text-emerald-400 font-medium">🛒 Pedidos generados hacia WhatsApp</p>
       </div>
       <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-2xl shrink-0">
         🚀
@@ -94,7 +104,7 @@
       </div>
       <div class="flex items-baseline gap-2">
         <h2 id="tasa-conversion" class="text-2xl font-black text-white">0%</h2>
-        <p class="text-xs text-gray-400">de visitantes que realizaron un pedido</p>
+        <p class="text-xs text-gray-400">de visitantes que enviaron su pedido</p>
       </div>
     </div>
 
@@ -105,36 +115,75 @@
 
   </main>
 
-  <!-- LÓGICA DE SUPABASE -->
+  <!-- LÓGICA DE SUPABASE Y FILTROS -->
   <script>
     const SUPABASE_URL = 'https://ahyvmupqzgcrxrbvjzsb.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFoeXZtdXBxemdjcnhyYnZqenNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1MTg5MzcsImV4cCI6MjEwODA5NDkzN30.oBfYP5Pf0hXDymQtMqE2pFbWCVllRKWcYGew0iuca4Q';
 
     const _supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    let filtroActual = 'hoy';
+
     document.addEventListener('DOMContentLoaded', () => {
       cargarEstadisticas();
     });
+
+    function cambiarFiltro(tipo, elemento) {
+      filtroActual = tipo;
+      
+      // Actualizar estilos visuales de los botones de filtro
+      document.querySelectorAll('.filtro-btn').forEach(btn => {
+        btn.className = 'filtro-btn bg-dark-card text-gray-300 font-semibold text-xs px-3.5 py-2 rounded-full whitespace-nowrap border border-dark-border hover:border-custom-primary/50 transition-all';
+      });
+      elemento.className = 'filtro-btn bg-custom-primary text-black font-extrabold text-xs px-3.5 py-2 rounded-full whitespace-nowrap shadow-md border border-custom-primary transition-all';
+
+      cargarEstadisticas();
+    }
+
+    function obtenerFechaFiltroISO() {
+      const ahora = new Date();
+      if (filtroActual === 'hoy') {
+        ahora.setHours(0, 0, 0, 0);
+        return ahora.toISOString();
+      } else if (filtroActual === '7dias') {
+        ahora.setDate(ahora.getDate() - 7);
+        return ahora.toISOString();
+      } else if (filtroActual === '30dias') {
+        ahora.setDate(ahora.getDate() - 30);
+        return ahora.toISOString();
+      }
+      return null; // 'todo'
+    }
 
     async function cargarEstadisticas() {
       try {
         document.getElementById('contador-visitas').textContent = '...';
         document.getElementById('contador-pedidos').textContent = '...';
 
-        // Consultar visitas al index
-        const { count: totalVisitas, error: errVisitas } = await _supabaseClient
+        const fechaMinima = obtenerFechaFiltroISO();
+
+        // Consulta de visitas
+        let queryVisitas = _supabaseClient
           .from('estadisticas_visitas')
           .select('*', { count: 'exact', head: true })
           .eq('tipo', 'visita_index');
 
+        if (fechaMinima) {
+          queryVisitas = queryVisitas.gte('creado_en', fechaMinima);
+        }
+        const { count: totalVisitas, error: errVisitas } = await queryVisitas;
         if (errVisitas) throw errVisitas;
 
-        // Consultar pedidos enviados
-        const { count: totalPedidos, error: errPedidos } = await _supabaseClient
+        // Consulta de pedidos
+        let queryPedidos = _supabaseClient
           .from('estadisticas_visitas')
           .select('*', { count: 'exact', head: true })
           .eq('tipo', 'pedido_enviado');
 
+        if (fechaMinima) {
+          queryPedidos = queryPedidos.gte('creado_en', fechaMinima);
+        }
+        const { count: totalPedidos, error: errPedidos } = await queryPedidos;
         if (errPedidos) throw errPedidos;
 
         const visitas = totalVisitas || 0;
@@ -143,7 +192,7 @@
         document.getElementById('contador-visitas').textContent = visitas;
         document.getElementById('contador-pedidos').textContent = pedidos;
 
-        // Calcular conversión
+        // Tasa de conversión
         if (visitas > 0) {
           const conversion = ((pedidos / visitas) * 100).toFixed(1);
           document.getElementById('tasa-conversion').textContent = `${conversion}%`;
