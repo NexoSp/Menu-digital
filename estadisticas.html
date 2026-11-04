@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Estadísticas - NexoServ</title>
+
+  <!-- Tailwind CSS & Supabase JS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'custom-primary': '#eab308',
+            'dark-bg': '#09090b',
+            'dark-card': '#141417',
+            'dark-border': '#27272a',
+            'dark-pill': '#1c1c21'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #09090b;
+      color: #f4f4f5;
+    }
+  </style>
+</head>
+<body class="bg-dark-bg text-gray-100 font-sans pb-20">
+
+  <!-- BARRA SUPERIOR -->
+  <header class="bg-dark-bg/90 backdrop-blur-md border-b border-dark-border sticky top-0 z-40 px-4 py-3">
+    <div class="max-w-md mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-dark-card border border-dark-border flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+          <span class="font-black text-xs text-custom-primary">N</span>
+        </div>
+        <div>
+          <p class="text-[10px] font-black tracking-wider uppercase text-gray-300">NEXO</p>
+          <p class="text-[9px] text-gray-500 font-medium">Panel de Estadísticas</p>
+        </div>
+      </div>
+      <a href="index.html" class="bg-dark-card hover:bg-dark-pill text-gray-300 px-3 py-1.5 rounded-xl text-xs font-semibold border border-dark-border transition-colors">
+        Volver al Menú
+      </a>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="max-w-md mx-auto p-4 space-y-4 pt-6">
+
+    <div class="text-center space-y-1 mb-6">
+      <h1 class="font-black text-2xl tracking-wide text-white">Métricas del Comercio</h1>
+      <p class="text-xs text-gray-400">Resumen en tiempo real de la actividad digital</p>
+    </div>
+
+    <!-- TARJETA 1: VISITAS AL INDEX -->
+    <div class="bg-dark-card border border-dark-border rounded-2xl p-5 shadow-lg flex items-center justify-between relative overflow-hidden">
+      <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-amber-500/10 rounded-full blur-xl"></div>
+      <div class="space-y-1">
+        <p class="text-xs font-bold uppercase tracking-wider text-gray-400">Visitas al Index</p>
+        <h2 id="contador-visitas" class="text-3xl font-black text-white">Cargando...</h2>
+        <p class="text-[11px] text-emerald-400 font-medium">👤 Total de ingresos al catálogo</p>
+      </div>
+      <div class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-2xl shrink-0">
+        👀
+      </div>
+    </div>
+
+    <!-- TARJETA 2: MENÚS ENVIADOS AL COMERCIO -->
+    <div class="bg-dark-card border border-dark-border rounded-2xl p-5 shadow-lg flex items-center justify-between relative overflow-hidden">
+      <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl"></div>
+      <div class="space-y-1">
+        <p class="text-xs font-bold uppercase tracking-wider text-gray-400">Menús / Pedidos Enviados</p>
+        <h2 id="contador-pedidos" class="text-3xl font-black text-white">Cargando...</h2>
+        <p class="text-[11px] text-emerald-400 font-medium">🛒 Órdenes generadas hacia WhatsApp</p>
+      </div>
+      <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-2xl shrink-0">
+        🚀
+      </div>
+    </div>
+
+    <!-- TARJETA 3: TASA DE CONVERSIÓN -->
+    <div class="bg-dark-card border border-dark-border rounded-2xl p-5 shadow-lg space-y-2">
+      <div class="flex items-center justify-between">
+        <p class="text-xs font-bold uppercase tracking-wider text-gray-400">Tasa de Conversión</p>
+        <span class="text-xs text-custom-primary font-bold">💡 Rendimiento</span>
+      </div>
+      <div class="flex items-baseline gap-2">
+        <h2 id="tasa-conversion" class="text-2xl font-black text-white">0%</h2>
+        <p class="text-xs text-gray-400">de visitantes que realizaron un pedido</p>
+      </div>
+    </div>
+
+    <!-- BOTÓN DE ACTUALIZAR -->
+    <button onclick="cargarEstadisticas()" class="w-full py-3.5 bg-dark-pill hover:bg-dark-border text-white font-bold text-xs rounded-2xl border border-dark-border shadow-md transition-all flex items-center justify-center gap-2">
+      <span>🔄 Actualizar Métricas</span>
+    </button>
+
+  </main>
+
+  <!-- LÓGICA DE SUPABASE -->
+  <script>
+    const SUPABASE_URL = 'https://ahyvmupqzgcrxrbvjzsb.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFoeXZtdXBxemdjcnhyYnZqenNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1MTg5MzcsImV4cCI6MjEwODA5NDkzN30.oBfYP5Pf0hXDymQtMqE2pFbWCVllRKWcYGew0iuca4Q';
+
+    const _supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    document.addEventListener('DOMContentLoaded', () => {
+      cargarEstadisticas();
+    });
+
+    async function cargarEstadisticas() {
+      try {
+        document.getElementById('contador-visitas').textContent = '...';
+        document.getElementById('contador-pedidos').textContent = '...';
+
+        // Consultar visitas al index
+        const { count: totalVisitas, error: errVisitas } = await _supabaseClient
+          .from('estadisticas_visitas')
+          .select('*', { count: 'exact', head: true })
+          .eq('tipo', 'visita_index');
+
+        if (errVisitas) throw errVisitas;
+
+        // Consultar pedidos enviados
+        const { count: totalPedidos, error: errPedidos } = await _supabaseClient
+          .from('estadisticas_visitas')
+          .select('*', { count: 'exact', head: true })
+          .eq('tipo', 'pedido_enviado');
+
+        if (errPedidos) throw errPedidos;
+
+        const visitas = totalVisitas || 0;
+        const pedidos = totalPedidos || 0;
+
+        document.getElementById('contador-visitas').textContent = visitas;
+        document.getElementById('contador-pedidos').textContent = pedidos;
+
+        // Calcular conversión
+        if (visitas > 0) {
+          const conversion = ((pedidos / visitas) * 100).toFixed(1);
+          document.getElementById('tasa-conversion').textContent = `${conversion}%`;
+        } else {
+          document.getElementById('tasa-conversion').textContent = '0%';
+        }
+
+      } catch (err) {
+        console.error("Error al cargar estadísticas:", err);
+        document.getElementById('contador-visitas').textContent = 'Error';
+        document.getElementById('contador-pedidos').textContent = 'Error';
+      }
+    }
+  </script>
+</body>
+</html>
